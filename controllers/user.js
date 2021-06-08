@@ -1,5 +1,7 @@
 const userService = require("../service/user");
-const type = require("../config/enum");
+const statusCode = require("../utils/statusCode");
+const responseMessage = require("../utils/responseMessage");
+const utils = require("../utils/utils");
 
 // 회원가입
 const join = async (req, res) => {
@@ -7,29 +9,25 @@ const join = async (req, res) => {
     const IsJoinSuccess = await userService.join({ joinUser });
 
     switch (IsJoinSuccess) {
-        case type.joinEnum.JOIN_SUCCESS:
-            res.status(200).json({
-                success: true,
-                message: "회원가입 성공"
-            });
+        case responseMessage.JOIN_SUCCESS:
+            res.status(statusCode.OK).json(
+                utils.successTrue(responseMessage.JOIN_SUCCESS)
+            );
             break;
-        case type.joinEnum.DB_ERROR:
-            res.status(500).json({
-                success: false,
-                message: "db 에러"
-            });
+        case responseMessage.DB_ERROR:
+            res.status(statusCode.DB_ERROR).json(
+                utils.successFalse(responseMessage.DB_ERROR)
+            );
             break;
-        case type.joinEnum.EXIST_EMAIL:
-            res.status(400).json({
-                success: false,
-                message: "이미 존재하는 이메일"
-            });
+        case responseMessage.ALREADY_EMAIL:
+            res.status(statusCode.BAD_REQUEST).json(
+                utils.successFalse(responseMessage.ALREADY_EMAIL)
+            );
             break;
-        case type.joinEnum.INCORRECT_PASSWORD:
-            res.status(400).json({
-                success: false,
-                message: "잘못된 비밀번호"
-            });
+        case responseMessage.MISS_MATCH_PW:
+            res.status(statusCode.BAD_REQUEST).json(
+                utils.successFalse(responseMessage.MISS_MATCH_PW)
+            );
             break;
     }
 };
@@ -40,29 +38,25 @@ const login = async (req, res) => {
     const IsLoginSuccess = await userService.login({ loginUser });
 
     switch (IsLoginSuccess) {
-        case type.loginEnum.LOGIN_SUCCESS:
-            res.status(200).json({
-                success: true,
-                message: "로그인 성공"
-            });
+        case responseMessage.LOGIN_SUCCESS:
+            res.status(statusCode.OK).json(
+                utils.successTrue(responseMessage.LOGIN_SUCCESS)
+            );
             break;
-        case type.loginEnum.NOT_VERIFY:
-            res.status(400).json({
-                success: false,
-                message: "이메일 인증 안됐음"
-            });
+        case responseMessage.NOT_VERIFY_EMAIL:
+            res.status(statusCode.BAD_REQUEST).json(
+                utils.successFalse(responseMessage.NOT_VERIFY_EMAIL)
+            );
             break;
-        case type.loginEnum.INCORRECT_PASSWORD:
-            res.status(400).json({
-                success: false,
-                message: "잘못된 비밀번호"
-            });
+        case responseMessage.MISS_MATCH_PW:
+            res.status(statusCode.BAD_REQUEST).json(
+                utils.successFalse(responseMessage.MISS_MATCH_PW)
+            );
             break;
-        case type.loginEnum.INCORRECT_EMAIL:
-            res.status(400).json({
-                success: false,
-                message: "없는 이메일"
-            });
+        case responseMessage.NO_USER:
+            res.status(statusCode.BAD_REQUEST).json(
+                utils.successFalse(responseMessage.NO_USER)
+            );
             break;
     }
 };
@@ -72,39 +66,34 @@ const emailVerify = async (req, res) => {
     const emailVerifyUser = req.body;
     const IsCorrectEmailVerifyKey = await userService.emailVerify(
         emailVerifyUser.email,
-        emailVerifyUser.inputEmailVerifyKey
-    );
-    
+        emailVerifyUser.emailVerifyKey
+        );
+
     switch (IsCorrectEmailVerifyKey) {
-        case type.emailVerifyEnum.EMAIL_VERIFY_SUCCESS:
-            res.status(200).json({
-                success: true,
-                message: "인증 성공"
-            });
+        case responseMessage.EMAIL_VERIFY_SUCCESS:
+            res.status(statusCode.OK).json(
+                utils.successTrue(responseMessage.EMAIL_VERIFY_SUCCESS)
+            );
             break;
-        case type.emailVerifyEnum.DB_ERROR:
-            res.status(500).json({
-                success: false,
-                message: "DB 에러"
-            });
+        case responseMessage.DB_ERROR:
+            res.status(statusCode.DB_ERROR).json(
+                utils.successFalse(responseMessage.DB_ERROR)
+            );
             break;
-        case type.emailVerifyEnum.NOT_EXIST_EMAIL:
-            res.status(400).json({
-                success: false,
-                message: "없는 이메일"
-            });
+        case responseMessage.NO_USER:
+            res.status(statusCode.BAD_REQUEST).json(
+                utils.successFalse(responseMessage.NO_USER)
+            );
             break;
-        case type.emailVerifyEnum.INCORRECT_KEY:
-            res.status(400).json({
-                success: false,
-                message: "잘못된 인증 번호"
-            });
+        case responseMessage.MISS_MATCH_VERIFY_KEY:
+            res.status(statusCode.BAD_REQUEST).json(
+                utils.successFalse(responseMessage.MISS_MATCH_VERIFY_KEY)
+            );
             break;
-            case type.emailVerifyEnum.ALREADY_VERIFY:
-            res.status(400).json({
-                success: false,
-                message: "이미 인증된 사용자"
-            });
+        case responseMessage.ALREADY_VERIFY_USER:
+            res.status(statusCode.BAD_REQUEST).json(
+                utils.successFalse(responseMessage.ALREADY_VERIFY_USER)
+            );
             break;
     }
 };

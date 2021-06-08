@@ -1,7 +1,7 @@
 const userDao = require("../dao/user");
 const encrypt = require("../utils/encrypt");
 const emailSender = require("../utils/emailSender");
-const type = require("../config/enum");
+const responseMessage = require("../utils/responseMessage");
 
 // 회원가입
 const join = async ({ joinUser }) => {
@@ -16,22 +16,21 @@ const join = async ({ joinUser }) => {
                     joinUser.email,
                     joinUser.keyForVerify
                 );
-                return type.joinEnum.JOIN_SUCCESS;
+                return responseMessage.JOIN_SUCCESS;
             } else {
-                return type.joinEnum.DB_ERROR;
+                return responseMessage.DB_ERROR;
             }
         } else {
-            return type.joinEnum.EXIST_EMAIL;
+            return responseMessage.ALREADY_EMAIL;
         }
     } else {
-        return type.joinEnum.INCORRECT_PASSWORD;
+        return responseMessage.MISS_MATCH_PW;
     }
 };
 
 // 로그인
 const login = async ({ loginUser }) => {
     const daoRows = await userDao.login(loginUser.email);
-    console.log(daoRows[0]);
     if (daoRows.length > 0) {
         const hashPassword = daoRows[0].password;
         const IsCorrectPassword = await encrypt.comparePassword(
@@ -40,15 +39,15 @@ const login = async ({ loginUser }) => {
         );
         if (IsCorrectPassword) {
             if (daoRows[0].is_email_verify) {
-                return type.loginEnum.LOGIN_SUCCESS;
+                return responseMessage.LOGIN_SUCCESS;
             } else {
-                return type.loginEnum.NOT_VERIFY;
+                return responseMessage.NOT_VERIFY_EMAIL;
             }
         } else {
-            return type.loginEnum.INCORRECT_PASSWORD;
+            return responseMessage.MISS_MATCH_PW;
         }
     } else {
-        return type.loginEnum.INCORRECT_EMAIL;
+        return responseMessage.NO_USER;
     }
 };
 
@@ -63,28 +62,28 @@ const findUser = async email => {
 };
 
 // 이메일 인증
-const emailVerify = async (email, inputEmailVerifyKey) => {
+const emailVerify = async (email, emailVerifyKey) => {
     const IsExistUser = await findUser(email);
     if (IsExistUser.length > 0) {
         if (IsExistUser[0].is_email_verify) {
-            return type.emailVerifyEnum.ALREADY_VERIFY;
+            return responseMessage.ALREADY_VERIFY_USER;
         } else {
-            if (IsExistUser[0].email_verify_key === inputEmailVerifyKey) {
+            if (IsExistUser[0].email_verify_key === emailVerifyKey) {
                 const daoRows = await userDao.emailVerify(
                     email,
-                    inputEmailVerifyKey
+                    emailVerifyKey
                 );
                 if (daoRows) {
-                    return type.emailVerifyEnum.EMAIL_VERIFY_SUCCESS;
+                    return responseMessage.EMAIL_VERIFY_SUCCESS;
                 } else {
-                    return type.emailVerifyEnum.DB_ERROR;
+                    return responseMessage.DB_ERROR;
                 }
             } else {
-                return type.emailVerifyEnum.INCORRECT_KEY;
+                return responseMessage.MISS_MATCH_VERIFY_KEY;
             }
         }
     } else {
-        return type.emailVerifyEnum.NOT_EXIST_EMAIL;
+        return responseMessage.NO_USER;
     }
 };
 module.exports = {
