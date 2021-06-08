@@ -6,6 +6,27 @@ const utils = require("../utils/utils");
 // 회원가입
 const join = async (req, res) => {
     let joinUser = req.body;
+    const { email, password, confirmPassword, name } = req.body;
+    if (
+        !joinUser.email ||
+        !joinUser.password ||
+        !joinUser.confirmPassword ||
+        !joinUser.name
+    ) {
+        const missParameters = Object.entries({
+            email,
+            password,
+            confirmPassword,
+            name
+        })
+            .filter(it => it[1] == undefined)
+            .map(it => it[0])
+            .join(",");
+        res.status(statusCode.BAD_REQUEST).json(
+            utils.successFalse(responseMessage.X_NULL_VALUE(missParameters))
+        );
+    }
+
     const IsJoinSuccess = await userService.join({ joinUser });
 
     switch (IsJoinSuccess) {
@@ -35,12 +56,27 @@ const join = async (req, res) => {
 // 로그인
 const login = async (req, res) => {
     const loginUser = req.body;
+    const { email, password } = req.body;
+    if (!loginUser.email || !loginUser.password) {
+        const missParameters = Object.entries({
+            email,
+            password
+        })
+            .filter(it => it[1] == undefined)
+            .map(it => it[0])
+            .join(",");
+        res.status(statusCode.BAD_REQUEST).json(
+            utils.successFalse(responseMessage.X_NULL_VALUE(missParameters))
+        );
+        return;
+    }
+
     const IsLoginSuccess = await userService.login({ loginUser });
 
     switch (IsLoginSuccess) {
         case responseMessage.LOGIN_SUCCESS:
             res.status(statusCode.OK).json(
-                utils.successTrue(responseMessage.LOGIN_SUCCESS)
+                utils.successTrue(responseMessage.LOGIN_SUCCESS, loginUser)
             );
             break;
         case responseMessage.NOT_VERIFY_EMAIL:
@@ -64,10 +100,25 @@ const login = async (req, res) => {
 // 이메일 인증
 const emailVerify = async (req, res) => {
     const emailVerifyUser = req.body;
+
+    const { email, emailVerifyKey } = req.body;
+    if (!emailVerifyUser.email || !emailVerifyUser.emailVerifyKey) {
+        const missParameters = Object.entries({
+            email,
+            emailVerifyKey
+        })
+            .filter(it => it[1] == undefined)
+            .map(it => it[0])
+            .join(",");
+        res.status(statusCode.BAD_REQUEST).json(
+            utils.successFalse(responseMessage.X_NULL_VALUE(missParameters))
+        );
+    }
+
     const IsCorrectEmailVerifyKey = await userService.emailVerify(
         emailVerifyUser.email,
         emailVerifyUser.emailVerifyKey
-        );
+    );
 
     switch (IsCorrectEmailVerifyKey) {
         case responseMessage.EMAIL_VERIFY_SUCCESS:
