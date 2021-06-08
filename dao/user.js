@@ -42,7 +42,7 @@ const findUser = async email => {
     try {
         const connection = await pool.getConnection(async conn => conn);
         try {
-            const sql = `SELECT user_idx, email, password, name, email_verify_key FROM user WHERE email = '${email}'`;
+            const sql = `SELECT user_idx, email, password, name, is_email_verify, email_verify_key FROM user WHERE email = '${email}'`;
             const [rows] = await connection.query(sql);
             connection.release();
             return rows;

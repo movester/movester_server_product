@@ -1,6 +1,7 @@
 const userService = require("../service/user");
 const type = require("../config/enum");
 
+// 회원가입
 const join = async (req, res) => {
     let joinUser = req.body;
     const IsJoinSuccess = await userService.join({ joinUser });
@@ -33,9 +34,11 @@ const join = async (req, res) => {
     }
 };
 
+// 로그인
 const login = async (req, res) => {
     const loginUser = req.body;
     const IsLoginSuccess = await userService.login({ loginUser });
+
     switch (IsLoginSuccess) {
         case type.loginEnum.LOGIN_SUCCESS:
             res.status(200).json({
@@ -64,12 +67,14 @@ const login = async (req, res) => {
     }
 };
 
+// 이메일 인증
 const emailVerify = async (req, res) => {
     const emailVerifyUser = req.body;
     const IsCorrectEmailVerifyKey = await userService.emailVerify(
         emailVerifyUser.email,
         emailVerifyUser.inputEmailVerifyKey
     );
+    
     switch (IsCorrectEmailVerifyKey) {
         case type.emailVerifyEnum.EMAIL_VERIFY_SUCCESS:
             res.status(200).json({
@@ -93,6 +98,12 @@ const emailVerify = async (req, res) => {
             res.status(400).json({
                 success: false,
                 message: "잘못된 인증 번호"
+            });
+            break;
+            case type.emailVerifyEnum.ALREADY_VERIFY:
+            res.status(400).json({
+                success: false,
+                message: "이미 인증된 사용자"
             });
             break;
     }

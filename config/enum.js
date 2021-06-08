@@ -16,7 +16,8 @@ const emailVerifyEnum = Object.freeze({
     EMAIL_VERIFY_SUCCESS: 0,
     DB_ERROR: 1,
     NOT_EXIST_EMAIL: 2,
-    INCORRECT_KEY: 3
+    INCORRECT_KEY: 3,
+    ALREADY_VERIFY : 4
 })
 
 module.exports = {

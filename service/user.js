@@ -3,6 +3,7 @@ const encrypt = require("../utils/encrypt");
 const emailSender = require("../utils/emailSender");
 const type = require("../config/enum");
 
+// 회원가입
 const join = async ({ joinUser }) => {
     if (joinUser.password === joinUser.confirmPassword) {
         const IsEmail = await findUser(joinUser.email);
@@ -27,6 +28,7 @@ const join = async ({ joinUser }) => {
     }
 };
 
+// 로그인
 const login = async ({ loginUser }) => {
     const daoRows = await userDao.login(loginUser.email);
     console.log(daoRows[0]);
@@ -62,26 +64,26 @@ const findUser = async email => {
 
 // 이메일 인증
 const emailVerify = async (email, inputEmailVerifyKey) => {
-    const daoRows1 = await findUser(email);
-    if (daoRows1.length > 0) {
-        if (daoRows1[0].email_verify_key === inputEmailVerifyKey) {
-            // 이메일 인증!
-            const daoRows2 = await userDao.emailVerify(
-                email,
-                inputEmailVerifyKey
-            );
-            if (daoRows2) {
-                // db update 성공
-                return type.emailVerifyEnum.EMAIL_VERIFY_SUCCESS;
-            } else {
-                // db update 실패
-                return type.emailVerifyEnum.DB_ERROR;
-            }
+    const IsExistUser = await findUser(email);
+    if (IsExistUser.length > 0) {
+        if (IsExistUser[0].is_email_verify) {
+            return type.emailVerifyEnum.ALREADY_VERIFY;
         } else {
-            return type.emailVerifyEnum.INCORRECT_KEY;
+            if (IsExistUser[0].email_verify_key === inputEmailVerifyKey) {
+                const daoRows = await userDao.emailVerify(
+                    email,
+                    inputEmailVerifyKey
+                );
+                if (daoRows) {
+                    return type.emailVerifyEnum.EMAIL_VERIFY_SUCCESS;
+                } else {
+                    return type.emailVerifyEnum.DB_ERROR;
+                }
+            } else {
+                return type.emailVerifyEnum.INCORRECT_KEY;
+            }
         }
     } else {
-        // 해당 계정 없는 경우
         return type.emailVerifyEnum.NOT_EXIST_EMAIL;
     }
 };
