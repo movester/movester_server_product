@@ -9,12 +9,11 @@ const join = async ({ joinUser }) => {
             connection.release();
             return rows;
         } catch (err) {
-            console.log("Query Error");
+            console.log(`Query Error > ${row}`);
             connection.release();
             return false;
         }
     } catch (err) {
-        console.log("DB Error");
         return false;
     }
 };
@@ -24,21 +23,21 @@ const login = async email => {
         const connection = await pool.getConnection(async conn => conn);
         try {
             const sql = `SELECT user_idx, email, password, name, is_email_verify FROM user WHERE email = '${email}'`;
-            const [rows] = await connection.query(sql);
+            const [row] = await connection.query(sql);
             connection.release();
-            return rows;
+            return row;
         } catch (err) {
-            console.log("Query Error");
+            console.log(`Query Error > ${row}`);
             connection.release();
             return false;
         }
     } catch (err) {
-        console.log("DB Error");
+        console.log(`DB Error > ${row}`);
         return false;
     }
 };
 
-const findUser = async email => {
+const findUserByEmail = async email => {
     try {
         const connection = await pool.getConnection(async conn => conn);
         try {
@@ -47,12 +46,12 @@ const findUser = async email => {
             connection.release();
             return rows;
         } catch (err) {
-            console.log("Query Error");
+            console.log(`Query Error > ${row}`);
             connection.release();
             return false;
         }
     } catch (err) {
-        console.log("DB Error");
+        console.log(`DB Error > ${row}`);
         return false;
     }
 };
@@ -66,12 +65,12 @@ const emailVerify = async email => {
             connection.release();
             return rows;
         } catch (err) {
-            console.log("Query Error");
+            console.log(`Query Error > ${row}`);
             connection.release();
             return false;
         }
     } catch (err) {
-        console.log("DB Error");
+        console.log(`DB Error > ${row}`);
         return false;
     }
 };
@@ -79,6 +78,6 @@ const emailVerify = async email => {
 module.exports = {
     join,
     login,
-    findUser,
+    findUserByEmail,
     emailVerify
 };

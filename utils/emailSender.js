@@ -10,16 +10,14 @@ const emailVerifySender = async (email, emailVerifyKey) => {
 
     const emailSender = await smtpTransport.sendMail(
         mailOptions,
-        function (error, info) {
+        (error, info) => {
             if (error) {
                 console.log(error);
-            } else {
-                console.log(info);
-                smtpTransport.close();
             }
+            console.log(info);
+            smtpTransport.close();
         }
     );
-
     return emailSender;
 };
 
