@@ -10,5 +10,5 @@ module.exports = {
     NOT_FOUND: 404,
     INTERNAL_SERVER_ERROR: 500,
     SERVICE_UNAVAILABLE: 503,
-    DB_ERROR: 600,
+    DB_ERROR: 555,
 }

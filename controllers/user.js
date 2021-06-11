@@ -29,14 +29,14 @@ const join = async (req, res) => {
     if (joinUser.password !== joinUser.confirmPassword) {
         return res
             .status(statusCode.BAD_REQUEST)
-            .json(utils.successFalse(responseMessage.MISS_MATCH_PW));
+            .json(utils.successFalse(responseMessage.PW_MISMATCH));
     }
 
     const IsEmail = await userService.findUserByEmail(joinUser.email);
     if (IsEmail) {
         return res
             .status(statusCode.BAD_REQUEST)
-            .json(utils.successFalse(responseMessage.ALREADY_EMAIL));
+            .json(utils.successFalse(responseMessage.EMAIL_ALREADY_EXIST));
     }
 
     const IsJoinSuccess = await userService.join({ joinUser }, res);

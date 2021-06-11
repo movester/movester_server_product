@@ -27,7 +27,7 @@ const login = async ({ loginUser }, res) => {
     if (!daoRow[0]) {
         const IsLoginSuccess = res
             .status(statusCode.BAD_REQUEST)
-            .json(utils.successFalse(responseMessage.NO_USER));
+            .json(utils.successFalse(responseMessage.EMAIL_NOT_EXIST));
         return IsLoginSuccess;
     }
     const hashPassword = daoRow[0].password;
@@ -39,13 +39,13 @@ const login = async ({ loginUser }, res) => {
     if (!IsCorrectPassword) {
         const IsLoginSuccess = res
             .status(statusCode.BAD_REQUEST)
-            .json(utils.successFalse(responseMessage.MISS_MATCH_PW));
+            .json(utils.successFalse(responseMessage.PW_MISMATCH));
         return IsLoginSuccess;
     }
     if (!daoRow[0].is_email_verify) {
         const IsLoginSuccess = res
             .status(statusCode.BAD_REQUEST)
-            .json(utils.successFalse(responseMessage.NOT_VERIFY_EMAIL));
+            .json(utils.successFalse(responseMessage.EMAIL_VERIFY_NOT));
         return IsLoginSuccess;
     }
     const IsLoginSuccess = res
@@ -67,19 +67,19 @@ const emailVerify = async (email, emailVerifyKey, res) => {
     if (!IsExistUser) {
         const IsEmailVerifySuccess = res
             .status(statusCode.BAD_REQUEST)
-            .json(utils.successFalse(responseMessage.NO_USER));
+            .json(utils.successFalse(responseMessage.EMAIL_NOT_EXIST));
         return IsEmailVerifySuccess;
     }
     if (IsExistUser[0].is_email_verify) {
         const IsEmailVerifySuccess = res
             .status(statusCode.BAD_REQUEST)
-            .json(utils.successFalse(responseMessage.ALREADY_VERIFY_USER));
+            .json(utils.successFalse(responseMessage.EMAIL_VERIFY_ALREADY));
         return IsEmailVerifySuccess;
     }
     if (IsExistUser[0].email_verify_key !== emailVerifyKey) {
         const IsEmailVerifySuccess = res
             .status(statusCode.BAD_REQUEST)
-            .json(utils.successFalse(responseMessage.MISS_MATCH_VERIFY_KEY));
+            .json(utils.successFalse(responseMessage.EMAIL_VERIFY_KEY_MISMATCH));
         return IsEmailVerifySuccess;
     }
     const daoRow = await userDao.emailVerify(email, emailVerifyKey);

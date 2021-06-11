@@ -1,28 +1,28 @@
 module.exports = {
-    NULL_VALUE: "필요한 값이 없습니다.",
-    OUT_OF_VALUE: "파라미터 값이 잘못 되었습니다.",
     JOIN_SUCCESS: "회원가입 성공",
     JOIN_FAIL: "회원 가입 실패",
+
     LOGIN_SUCCESS: "로그인 성공",
     LOGIN_FAIL: "로그인 실패",
-    NOT_VERIFY_EMAIL : "이메일 인증을 하지 않았습니다.",
-    EMAIL_VERIFY_SUCCESS : "이메일 인증 성공",
-    ALREADY_VERIFY_USER : "이미 이메일 인증된 사용자입니다.",
-    MISS_MATCH_VERIFY_KEY: "이메일 인증 번호가 일치하지 않습니다",
-    ALREADY_EMAIL: "존재하는 email 입니다.",
-    NO_USER: "존재하지 않는 유저 email 입니다.",
-    MISS_MATCH_PW: "비밀번호가 일치하지 않습니다",
-    EMPTY_TOKEN: "토큰이 없습니다",
 
-    DB_ERROR:"데이터베이스 오류",
+    EMAIL_VERIFY_NOT: "이메일 인증을 하지 않았습니다.",
+    EMAIL_VERIFY_SUCCESS: "이메일 인증 성공",
+    EMAIL_VERIFY_ALREADY: "이미 이메일 인증된 사용자입니다.",
+    EMAIL_VERIFY_KEY_MISMATCH: "이메일 인증 번호가 일치하지 않습니다",
+
+    EMAIL_ALREADY_EXIST: "존재하는 email 입니다.",
+    EMAIL_NOT_EXIST: "존재하지 않는 유저 email 입니다.",
+
+    PW_MISMATCH: "비밀번호가 일치하지 않습니다",
+
+    TOKEN_EMPTY: "토큰이 없습니다",
+    TOKEN_INVALID: "올바르지 않은 토큰",
     
-    ALREADY_ID: "존재하는 ID 입니다.",
-    NO_USER: "존재하지 않는 유저 입니다.",
-    MISS_MATCH_PW: "비밀번호가 일치하지 않습니다",
+    VALUE_NULL: "필요한 값이 없습니다.",
+    VALUE_INVALID: "파라미터 값이 잘못 되었습니다.",
+    
+    DB_ERROR:"데이터베이스 오류",
     INTERNAL_SERVER_ERROR: "서버 내부 오류",
-    INVALID_TOKEN: "올바르지 않은 토큰",
-    SEARCH_SUCCESS: "검색 성공",
-    SEARCH_FAIL: "검색 실패",
 
     X_NULL_VALUE: (x) => `${x}가 존재하지 않습니다.`,
     X_CREATE_SUCCESS: (x) => `${x} 작성 성공`,
