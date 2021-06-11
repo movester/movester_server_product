@@ -21,7 +21,9 @@ module.exports = {
     VALUE_NULL: "필요한 값이 없습니다.",
     VALUE_INVALID: "파라미터 값이 잘못 되었습니다.",
     
-    DB_ERROR:"데이터베이스 오류",
+    ENCRYPT_ERROR: "비밀번호 암호화/복호화 에러",
+    EMIAL_SENDER_ERROR: "이메일 인증 메일 전송 오류",
+    DB_ERROR: "데이터베이스 오류",
     INTERNAL_SERVER_ERROR: "서버 내부 오류",
 
     X_NULL_VALUE: (x) => `${x}가 존재하지 않습니다.`,

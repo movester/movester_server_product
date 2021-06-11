@@ -8,16 +8,22 @@ const emailVerifySender = async (email, emailVerifyKey) => {
         html: `<h1>MOVESTER 회원가입을 위한 이메일 인증 절차입니다.</h1><br>오른쪽 숫자 6자리를 입력해주세요 :  ${emailVerifyKey}`
     };
 
-    const emailSender = await smtpTransport.sendMail(
-        mailOptions,
-        (error, info) => {
-            if (error) {
-                console.log(error);
+    const emailSender = await new Promise((resolve, reject) => {
+        const IsEmailSenderSuccess = smtpTransport.sendMail(
+            mailOptions,
+            (err, info) => {
+                if (err) {
+                    console.log(`emailSender Error > ${err}`);
+                    resolve(false);
+                }
+                smtpTransport.close();
+                console.log(info.response);
+                resolve(true);
             }
-            console.log(info);
-            smtpTransport.close();
-        }
-    );
+        );
+        return IsEmailSenderSuccess;
+    });
+
     return emailSender;
 };
 

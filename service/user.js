@@ -6,23 +6,38 @@ const responseMessage = require("../utils/responseMessage");
 const utils = require("../utils/utils");
 
 const join = async ({ joinUser }, res) => {
-    joinUser.password = await encrypt.hashPassword(joinUser.password);
+    const hashPassword = await encrypt.hashPassword(joinUser.password);
+    if (!hashPassword) {
+        const IsJoinSuccess = res
+            .status(statusCode.INTERNAL_SERVER_ERROR)
+            .json(utils.successFalse(responseMessage.ENCRYPT_ERROR));
+        return IsJoinSuccess;
+    }
+    joinUser.password = hashPassword;
     joinUser.emailVerifyKey = Math.random().toString().substr(2, 6);
+
     const daoRow = await userDao.join({ joinUser });
     if (!daoRow) {
-        const IsLoginSuccess = res
+        const IsJoinSuccess = res
             .status(statusCode.DB_ERROR)
             .json(utils.successFalse(responseMessage.DB_ERROR));
-        return IsLoginSuccess;
+        return IsJoinSuccess;
     }
-    await emailSender.emailVerifySender(
+    const IsEmailSenderSuccess = await emailSender.emailVerifySender(
         joinUser.email,
         joinUser.emailVerifyKey
     );
-    const IsLoginSuccess = res
+
+    if (!IsEmailSenderSuccess) {
+        const IsJoinSuccess = res
+            .status(statusCode.INTERNAL_SERVER_ERROR)
+            .json(utils.successFalse(responseMessage.EMIAL_SENDER_ERROR));
+        return IsJoinSuccess;
+    }
+    const IsJoinSuccess = res
         .status(statusCode.OK)
         .json(utils.successTrue(responseMessage.JOIN_SUCCESS));
-    return IsLoginSuccess;
+    return IsJoinSuccess;
 };
 
 const login = async ({ loginUser }, res) => {
@@ -33,7 +48,7 @@ const login = async ({ loginUser }, res) => {
             .json(utils.successFalse(responseMessage.DB_ERROR));
         return IsLoginSuccess;
     }
-    if (Object.keys(daoRow).length === 0){
+    if (Object.keys(daoRow).length === 0) {
         const IsLoginSuccess = res
             .status(statusCode.BAD_REQUEST)
             .json(utils.successFalse(responseMessage.EMAIL_NOT_EXIST));
@@ -42,7 +57,8 @@ const login = async ({ loginUser }, res) => {
     const hashPassword = daoRow[0].password;
     const IsCorrectPassword = await encrypt.comparePassword(
         loginUser.password,
-        hashPassword
+        hashPassword,
+        res
     );
 
     if (!IsCorrectPassword) {
@@ -79,7 +95,7 @@ const emailVerify = async (email, emailVerifyKey, res) => {
             .json(utils.successFalse(responseMessage.DB_ERROR));
         return IsEmailVerifySuccess;
     }
-    if (Object.keys(IsExistUser).length === 0){
+    if (Object.keys(IsExistUser).length === 0) {
         const IsEmailVerifySuccess = res
             .status(statusCode.BAD_REQUEST)
             .json(utils.successFalse(responseMessage.EMAIL_NOT_EXIST));
