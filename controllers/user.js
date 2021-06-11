@@ -33,12 +33,16 @@ const join = async (req, res) => {
     }
 
     const IsEmail = await userService.findUserByEmail(joinUser.email);
-    if (IsEmail) {
+    if (!IsEmail) {
+        return res
+            .status(statusCode.DB_ERROR)
+            .json(utils.successFalse(responseMessage.DB_ERROR));
+    }
+    if (Object.keys(IsEmail).length > 0) {
         return res
             .status(statusCode.BAD_REQUEST)
             .json(utils.successFalse(responseMessage.EMAIL_ALREADY_EXIST));
     }
-
     const IsJoinSuccess = await userService.join({ joinUser }, res);
     return IsJoinSuccess;
 };

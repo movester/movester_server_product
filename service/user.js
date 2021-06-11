@@ -8,14 +8,17 @@ const utils = require("../utils/utils");
 const join = async ({ joinUser }, res) => {
     joinUser.password = await encrypt.hashPassword(joinUser.password);
     joinUser.emailVerifyKey = Math.random().toString().substr(2, 6);
-    const daoRows = await userDao.join({ joinUser });
-    if (!daoRows) {
+    const daoRow = await userDao.join({ joinUser });
+    if (!daoRow) {
         const IsLoginSuccess = res
             .status(statusCode.DB_ERROR)
             .json(utils.successFalse(responseMessage.DB_ERROR));
         return IsLoginSuccess;
     }
-    await emailSender.emailVerifySender(joinUser.email, joinUser.keyForVerify);
+    await emailSender.emailVerifySender(
+        joinUser.email,
+        joinUser.emailVerifyKey
+    );
     const IsLoginSuccess = res
         .status(statusCode.OK)
         .json(utils.successTrue(responseMessage.JOIN_SUCCESS));
@@ -24,7 +27,13 @@ const join = async ({ joinUser }, res) => {
 
 const login = async ({ loginUser }, res) => {
     const daoRow = await userDao.login(loginUser.email);
-    if (!daoRow[0]) {
+    if (!daoRow) {
+        const IsLoginSuccess = res
+            .status(statusCode.DB_ERROR)
+            .json(utils.successFalse(responseMessage.DB_ERROR));
+        return IsLoginSuccess;
+    }
+    if (Object.keys(daoRow).length === 0){
         const IsLoginSuccess = res
             .status(statusCode.BAD_REQUEST)
             .json(utils.successFalse(responseMessage.EMAIL_NOT_EXIST));
@@ -56,7 +65,7 @@ const login = async ({ loginUser }, res) => {
 
 const findUserByEmail = async email => {
     const daoRow = await userDao.findUserByEmail(email);
-    if (!daoRow[0]) {
+    if (!daoRow) {
         return false;
     }
     return daoRow;
@@ -65,6 +74,12 @@ const findUserByEmail = async email => {
 const emailVerify = async (email, emailVerifyKey, res) => {
     const IsExistUser = await findUserByEmail(email);
     if (!IsExistUser) {
+        const IsEmailVerifySuccess = res
+            .status(statusCode.DB_ERROR)
+            .json(utils.successFalse(responseMessage.DB_ERROR));
+        return IsEmailVerifySuccess;
+    }
+    if (Object.keys(IsExistUser).length === 0){
         const IsEmailVerifySuccess = res
             .status(statusCode.BAD_REQUEST)
             .json(utils.successFalse(responseMessage.EMAIL_NOT_EXIST));
@@ -79,7 +94,9 @@ const emailVerify = async (email, emailVerifyKey, res) => {
     if (IsExistUser[0].email_verify_key !== emailVerifyKey) {
         const IsEmailVerifySuccess = res
             .status(statusCode.BAD_REQUEST)
-            .json(utils.successFalse(responseMessage.EMAIL_VERIFY_KEY_MISMATCH));
+            .json(
+                utils.successFalse(responseMessage.EMAIL_VERIFY_KEY_MISMATCH)
+            );
         return IsEmailVerifySuccess;
     }
     const daoRow = await userDao.emailVerify(email, emailVerifyKey);
