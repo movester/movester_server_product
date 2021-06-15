@@ -4,6 +4,9 @@ const emailSender = require("../utils/emailSender");
 const statusCode = require("../utils/statusCode");
 const responseMessage = require("../utils/responseMessage");
 const utils = require("../utils/utils");
+const jwt = require("jsonwebtoken");
+const auth = require("../middleware/auth");
+const redisClient = require("../config/redis");
 
 const join = async ({ joinUser }, res) => {
     const hashPassword = await encrypt.hashPassword(joinUser.password);
@@ -73,6 +76,17 @@ const login = async ({ loginUser }, res) => {
             .json(utils.successFalse(responseMessage.EMAIL_VERIFY_NOT));
         return IsLoginSuccess;
     }
+
+    const accessToken = jwt.sign(
+        { sub: loginUser.email },
+        process.env.JWT_ACCESS_SECRET,
+        { expiresIn: process.env.JWT_ACCESS_TIME }
+    );
+    const refreshToken = auth.GenerateRefreshToken(loginUser.email);
+
+    loginUser.accessToken = accessToken;
+    loginUser.refreshToken = refreshToken;
+
     const IsLoginSuccess = res
         .status(statusCode.OK)
         .json(utils.successTrue(responseMessage.LOGIN_SUCCESS, loginUser));
@@ -127,9 +141,44 @@ const emailVerify = async (email, emailVerifyKey, res) => {
         .json(utils.successTrue(responseMessage.EMAIL_VERIFY_SUCCESS));
     return IsEmailVerifySuccess;
 };
+
+const getAccessToken = (email, res) => {
+    const accessToken = jwt.sign(
+        { sub: email },
+        process.env.JWT_ACCESS_SECRET,
+        { expiresIn: process.env.JWT_ACCESS_TIME }
+    );
+    const refreshToken = auth.GenerateRefreshToken(email);
+
+    const token = {
+        accessToken: accessToken,
+        refreshToken: refreshToken
+    };
+
+    const isGetAccessTokenSuccess = res
+        .status(statusCode.OK)
+        .json(
+            utils.successTrue(
+                responseMessage.TOKEN_GENERATE_REFRESH_SUCCESS,
+                token
+            )
+        );
+    return isGetAccessTokenSuccess;
+};
+
+const logout = async (email, res) => {
+    await redisClient.del(email.toString());
+
+    const isLogoutSuccess = res
+        .status(statusCode.OK)
+        .json(utils.successTrue(responseMessage.LOGOUT_SUCCESS));
+    return isLogoutSuccess;
+};
 module.exports = {
     join,
     login,
     findUserByEmail,
-    emailVerify
+    emailVerify,
+    getAccessToken,
+    logout
 };

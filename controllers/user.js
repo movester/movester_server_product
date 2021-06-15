@@ -42,8 +42,30 @@ const emailVerify = async (req, res) => {
     return IsEmailVerifySuccess;
 };
 
+const getAccessToken = async (req, res) => {
+    const email = req.decodeRefreshToken.sub;
+    const isGetAccessTokenSuccess = userService.getAccessToken(email, res);
+    return isGetAccessTokenSuccess;
+};
+
+// test api
+const dashboard = async (req, res) => {
+    return res.json({ status: true, message: "hello from dashboard" });
+};
+
+const logout = async (req, res) => {
+    const email = req.decodeData.sub;
+
+    const isLogoutSuccess = await userService.logout(email, res);
+
+    return isLogoutSuccess;
+};
+
 module.exports = {
     join,
     login,
-    emailVerify
+    emailVerify,
+    getAccessToken,
+    dashboard,
+    logout
 };

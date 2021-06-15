@@ -76,9 +76,29 @@ const emailVerify = async email => {
     }
 };
 
+const tokenSave = async (email, token)  => {
+    try {
+        const connection = await pool.getConnection(async conn => conn);
+        try {
+            const sql = `UPDATE user SET token = '${token}' WHERE email = '${email}'`;
+            const [row] = await connection.query(sql);
+            connection.release();
+            return row;
+        } catch (err) {
+            console.log(`Query Error > ${err}`);
+            connection.release();
+            return false;
+        }
+    } catch (err) {
+        console.log(`DB Error > ${err}`);
+        return false;
+    }
+};
+
 module.exports = {
     join,
     login,
     findUserByEmail,
-    emailVerify
+    emailVerify,
+    tokenSave
 };
