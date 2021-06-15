@@ -17,7 +17,7 @@ const verifyToken = (req, res, next) => {
         req.accessToken = accessToken;
         next();
     } catch (err) {
-        console.log(`verifyToken Error > ${err}`);
+        console.log(`verifyToken > ${err}`);
         return res
             .status(statusCode.BAD_REQUEST)
             .json(utils.successFalse(responseMessage.TOKEN_INVALID));
@@ -53,7 +53,7 @@ const verifyRefreshToken = (req, res, next) => {
             next();
         });
     } catch (err) {
-        console.log(`verifyRefreshToken Error > ${err}`);
+        console.log(`verifyRefreshToken > ${err}`);
         res.status(statusCode.BAD_REQUEST).json(
             utils.successFalse(responseMessage.TOKEN_INVALID)
         );
