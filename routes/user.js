@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const userCtrl = require("../controllers/user");
-const Validator = require("../utils/validator");
-const ValidatorError = require("../utils/validatorError");
+const Validator = require("../middleware/validator");
+const ValidatorError = require("../middleware/validatorError");
 const auth = require("../middleware/auth")
 
 router.post("/join", Validator.join, ValidatorError.join, userCtrl.join);
