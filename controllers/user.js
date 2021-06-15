@@ -11,35 +11,35 @@ const join = async (req, res) => {
             .json(utils.successFalse(responseMessage.PW_MISMATCH));
     }
 
-    const IsEmail = await userService.findUserByEmail(joinUser.email);
-    if (!IsEmail) {
+    const isEmail = await userService.findUserByEmail(joinUser.email);
+    if (!isEmail) {
         return res
             .status(statusCode.DB_ERROR)
             .json(utils.successFalse(responseMessage.DB_ERROR));
     }
-    if (Object.keys(IsEmail).length !== 0) {
+    if (Object.keys(isEmail).length !== 0) {
         return res
             .status(statusCode.BAD_REQUEST)
             .json(utils.successFalse(responseMessage.EMAIL_ALREADY_EXIST));
     }
-    const IsJoinSuccess = await userService.join({ joinUser }, res);
-    return IsJoinSuccess;
+    const isJoinSuccess = await userService.join({ joinUser }, res);
+    return isJoinSuccess;
 };
 
 const login = async (req, res) => {
     const loginUser = req.body;
-    const IsLoginSuccess = await userService.login({ loginUser }, res);
-    return IsLoginSuccess;
+    const isLoginSuccess = await userService.login({ loginUser }, res);
+    return isLoginSuccess;
 };
 
 const emailVerify = async (req, res) => {
     const emailVerifyUser = req.body;
-    const IsEmailVerifySuccess = await userService.emailVerify(
+    const isEmailVerifySuccess = await userService.emailVerify(
         emailVerifyUser.email,
         emailVerifyUser.emailVerifyKey,
         res
     );
-    return IsEmailVerifySuccess;
+    return isEmailVerifySuccess;
 };
 
 module.exports = {
