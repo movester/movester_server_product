@@ -9,7 +9,7 @@ const emailVerifySender = async (email, emailVerifyKey) => {
     };
 
     const emailSender = await new Promise((resolve, reject) => {
-        const IsEmailSenderSuccess = smtpTransport.sendMail(
+        const isEmailSenderSuccess = smtpTransport.sendMail(
             mailOptions,
             (err, info) => {
                 if (err) {
@@ -21,7 +21,7 @@ const emailVerifySender = async (email, emailVerifyKey) => {
                 resolve(true);
             }
         );
-        return IsEmailSenderSuccess;
+        return isEmailSenderSuccess;
     });
 
     return emailSender;

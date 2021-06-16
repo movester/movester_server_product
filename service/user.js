@@ -11,70 +11,70 @@ const redisClient = require("../config/redis");
 const join = async ({ joinUser }, res) => {
     const hashPassword = await encrypt.hashPassword(joinUser.password);
     if (!hashPassword) {
-        const IsJoinSuccess = res
+        const isJoinSuccess = res
             .status(statusCode.INTERNAL_SERVER_ERROR)
             .json(utils.successFalse(responseMessage.ENCRYPT_ERROR));
-        return IsJoinSuccess;
+        return isJoinSuccess;
     }
     joinUser.password = hashPassword;
     joinUser.emailVerifyKey = Math.random().toString().substr(2, 6);
 
     const daoRow = await userDao.join({ joinUser });
     if (!daoRow) {
-        const IsJoinSuccess = res
+        const isJoinSuccess = res
             .status(statusCode.DB_ERROR)
             .json(utils.successFalse(responseMessage.DB_ERROR));
-        return IsJoinSuccess;
+        return isJoinSuccess;
     }
-    const IsEmailSenderSuccess = await emailSender.emailVerifySender(
+    const isEmailSenderSuccess = await emailSender.emailVerifySender(
         joinUser.email,
         joinUser.emailVerifyKey
     );
 
-    if (!IsEmailSenderSuccess) {
-        const IsJoinSuccess = res
+    if (!isEmailSenderSuccess) {
+        const isJoinSuccess = res
             .status(statusCode.INTERNAL_SERVER_ERROR)
             .json(utils.successFalse(responseMessage.EMIAL_SENDER_ERROR));
-        return IsJoinSuccess;
+        return isJoinSuccess;
     }
-    const IsJoinSuccess = res
+    const isJoinSuccess = res
         .status(statusCode.OK)
         .json(utils.successTrue(responseMessage.JOIN_SUCCESS));
-    return IsJoinSuccess;
+    return isJoinSuccess;
 };
 
 const login = async ({ loginUser }, res) => {
     const daoRow = await userDao.login(loginUser.email);
     if (!daoRow) {
-        const IsLoginSuccess = res
+        const isLoginSuccess = res
             .status(statusCode.DB_ERROR)
             .json(utils.successFalse(responseMessage.DB_ERROR));
-        return IsLoginSuccess;
+        return isLoginSuccess;
     }
     if (Object.keys(daoRow).length === 0) {
-        const IsLoginSuccess = res
+        const isLoginSuccess = res
             .status(statusCode.BAD_REQUEST)
             .json(utils.successFalse(responseMessage.EMAIL_NOT_EXIST));
-        return IsLoginSuccess;
+        return isLoginSuccess;
     }
     const hashPassword = daoRow[0].password;
-    const IsCorrectPassword = await encrypt.comparePassword(
+    const isCorrectPassword = await encrypt.comparePassword(
         loginUser.password,
         hashPassword,
         res
     );
 
-    if (!IsCorrectPassword) {
-        const IsLoginSuccess = res
+    if (!isCorrectPassword) {
+        const isLoginSuccess = res
             .status(statusCode.BAD_REQUEST)
             .json(utils.successFalse(responseMessage.PW_MISMATCH));
-        return IsLoginSuccess;
+        return isLoginSuccess;
     }
     if (!daoRow[0].is_email_verify) {
-        const IsLoginSuccess = res
+        const isLoginSuccess = res
             .status(statusCode.BAD_REQUEST)
             .json(utils.successFalse(responseMessage.EMAIL_VERIFY_NOT));
-        return IsLoginSuccess;
+        return isLoginSuccess;
     }
 
     const accessToken = jwt.sign(
@@ -87,10 +87,10 @@ const login = async ({ loginUser }, res) => {
     loginUser.accessToken = accessToken;
     loginUser.refreshToken = refreshToken;
 
-    const IsLoginSuccess = res
+    const isLoginSuccess = res
         .status(statusCode.OK)
         .json(utils.successTrue(responseMessage.LOGIN_SUCCESS, loginUser));
-    return IsLoginSuccess;
+    return isLoginSuccess;
 };
 
 const findUserByEmail = async email => {
@@ -102,44 +102,44 @@ const findUserByEmail = async email => {
 };
 
 const emailVerify = async (email, emailVerifyKey, res) => {
-    const IsExistUser = await findUserByEmail(email);
-    if (!IsExistUser) {
-        const IsEmailVerifySuccess = res
+    const isExistUser = await findUserByEmail(email);
+    if (!isExistUser) {
+        const isEmailVerifySuccess = res
             .status(statusCode.DB_ERROR)
             .json(utils.successFalse(responseMessage.DB_ERROR));
-        return IsEmailVerifySuccess;
+        return isEmailVerifySuccess;
     }
-    if (Object.keys(IsExistUser).length === 0) {
-        const IsEmailVerifySuccess = res
+    if (Object.keys(isExistUser).length === 0) {
+        const isEmailVerifySuccess = res
             .status(statusCode.BAD_REQUEST)
             .json(utils.successFalse(responseMessage.EMAIL_NOT_EXIST));
-        return IsEmailVerifySuccess;
+        return isEmailVerifySuccess;
     }
-    if (IsExistUser[0].is_email_verify) {
-        const IsEmailVerifySuccess = res
+    if (isExistUser[0].is_email_verify) {
+        const isEmailVerifySuccess = res
             .status(statusCode.BAD_REQUEST)
             .json(utils.successFalse(responseMessage.EMAIL_VERIFY_ALREADY));
-        return IsEmailVerifySuccess;
+        return isEmailVerifySuccess;
     }
-    if (IsExistUser[0].email_verify_key !== emailVerifyKey) {
-        const IsEmailVerifySuccess = res
+    if (isExistUser[0].email_verify_key !== emailVerifyKey) {
+        const isEmailVerifySuccess = res
             .status(statusCode.BAD_REQUEST)
             .json(
                 utils.successFalse(responseMessage.EMAIL_VERIFY_KEY_MISMATCH)
             );
-        return IsEmailVerifySuccess;
+        return isEmailVerifySuccess;
     }
     const daoRow = await userDao.emailVerify(email, emailVerifyKey);
     if (!daoRow) {
-        const IsEmailVerifySuccess = res
+        const isEmailVerifySuccess = res
             .status(statusCode.DB_ERROR)
             .json(utils.successFalse(responseMessage.DB_ERROR));
-        return IsEmailVerifySuccess;
+        return isEmailVerifySuccess;
     }
-    const IsEmailVerifySuccess = res
+    const isEmailVerifySuccess = res
         .status(statusCode.OK)
         .json(utils.successTrue(responseMessage.EMAIL_VERIFY_SUCCESS));
-    return IsEmailVerifySuccess;
+    return isEmailVerifySuccess;
 };
 
 const getAccessToken = (email, res) => {
