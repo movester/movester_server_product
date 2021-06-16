@@ -1,94 +1,135 @@
 const userDao = require("../dao/user");
 const encrypt = require("../utils/encrypt");
 const emailSender = require("../utils/emailSender");
+const statusCode = require("../utils/statusCode");
 const responseMessage = require("../utils/responseMessage");
+const utils = require("../utils/utils");
 
-// 회원가입
-const join = async ({ joinUser }) => {
-    if (joinUser.password === joinUser.confirmPassword) {
-        const IsEmail = await findUser(joinUser.email);
-        if (!IsEmail) {
-            joinUser.password = await encrypt.hashPassword(joinUser.password);
-            joinUser.emailVerifyKey = Math.random().toString().substr(2, 6);
-            const daoRows = await userDao.join({ joinUser });
-            if (daoRows) {
-                await emailSender.emailVerifySender(
-                    joinUser.email,
-                    joinUser.keyForVerify
-                );
-                return responseMessage.JOIN_SUCCESS;
-            } else {
-                return responseMessage.DB_ERROR;
-            }
-        } else {
-            return responseMessage.ALREADY_EMAIL;
-        }
-    } else {
-        return responseMessage.MISS_MATCH_PW;
+const join = async ({ joinUser }, res) => {
+    const hashPassword = await encrypt.hashPassword(joinUser.password);
+    if (!hashPassword) {
+        const isJoinSuccess = res
+            .status(statusCode.INTERNAL_SERVER_ERROR)
+            .json(utils.successFalse(responseMessage.ENCRYPT_ERROR));
+        return isJoinSuccess;
     }
+    joinUser.password = hashPassword;
+    joinUser.emailVerifyKey = Math.random().toString().substr(2, 6);
+
+    const daoRow = await userDao.join({ joinUser });
+    if (!daoRow) {
+        const isJoinSuccess = res
+            .status(statusCode.DB_ERROR)
+            .json(utils.successFalse(responseMessage.DB_ERROR));
+        return isJoinSuccess;
+    }
+    const isEmailSenderSuccess = await emailSender.emailVerifySender(
+        joinUser.email,
+        joinUser.emailVerifyKey
+    );
+
+    if (!isEmailSenderSuccess) {
+        const isJoinSuccess = res
+            .status(statusCode.INTERNAL_SERVER_ERROR)
+            .json(utils.successFalse(responseMessage.EMIAL_SENDER_ERROR));
+        return isJoinSuccess;
+    }
+    const isJoinSuccess = res
+        .status(statusCode.OK)
+        .json(utils.successTrue(responseMessage.JOIN_SUCCESS));
+    return isJoinSuccess;
 };
 
-// 로그인
-const login = async ({ loginUser }) => {
-    const daoRows = await userDao.login(loginUser.email);
-    if (daoRows.length > 0) {
-        const hashPassword = daoRows[0].password;
-        const IsCorrectPassword = await encrypt.comparePassword(
-            loginUser.password,
-            hashPassword
-        );
-        if (IsCorrectPassword) {
-            if (daoRows[0].is_email_verify) {
-                return responseMessage.LOGIN_SUCCESS;
-            } else {
-                return responseMessage.NOT_VERIFY_EMAIL;
-            }
-        } else {
-            return responseMessage.MISS_MATCH_PW;
-        }
-    } else {
-        return responseMessage.NO_USER;
+const login = async ({ loginUser }, res) => {
+    const daoRow = await userDao.login(loginUser.email);
+    if (!daoRow) {
+        const isLoginSuccess = res
+            .status(statusCode.DB_ERROR)
+            .json(utils.successFalse(responseMessage.DB_ERROR));
+        return isLoginSuccess;
     }
+    if (Object.keys(daoRow).length === 0) {
+        const isLoginSuccess = res
+            .status(statusCode.BAD_REQUEST)
+            .json(utils.successFalse(responseMessage.EMAIL_NOT_EXIST));
+        return isLoginSuccess;
+    }
+    const hashPassword = daoRow[0].password;
+    const isCorrectPassword = await encrypt.comparePassword(
+        loginUser.password,
+        hashPassword,
+        res
+    );
+
+    if (!isCorrectPassword) {
+        const isLoginSuccess = res
+            .status(statusCode.BAD_REQUEST)
+            .json(utils.successFalse(responseMessage.PW_MISMATCH));
+        return isLoginSuccess;
+    }
+    if (!daoRow[0].is_email_verify) {
+        const isLoginSuccess = res
+            .status(statusCode.BAD_REQUEST)
+            .json(utils.successFalse(responseMessage.EMAIL_VERIFY_NOT));
+        return isLoginSuccess;
+    }
+    const isLoginSuccess = res
+        .status(statusCode.OK)
+        .json(utils.successTrue(responseMessage.LOGIN_SUCCESS, loginUser));
+    return isLoginSuccess;
 };
 
-// email 로 user 찾기
-const findUser = async email => {
-    const daoRows = await userDao.findUser(email);
-    if (daoRows.length > 0) {
-        return daoRows;
-    } else {
+const findUserByEmail = async email => {
+    const daoRow = await userDao.findUserByEmail(email);
+    if (!daoRow) {
         return false;
     }
+    return daoRow;
 };
 
-// 이메일 인증
-const emailVerify = async (email, emailVerifyKey) => {
-    const IsExistUser = await findUser(email);
-    if (IsExistUser.length > 0) {
-        if (IsExistUser[0].is_email_verify) {
-            return responseMessage.ALREADY_VERIFY_USER;
-        } else {
-            if (IsExistUser[0].email_verify_key === emailVerifyKey) {
-                const daoRows = await userDao.emailVerify(
-                    email,
-                    emailVerifyKey
-                );
-                if (daoRows) {
-                    return responseMessage.EMAIL_VERIFY_SUCCESS;
-                } else {
-                    return responseMessage.DB_ERROR;
-                }
-            } else {
-                return responseMessage.MISS_MATCH_VERIFY_KEY;
-            }
-        }
-    } else {
-        return responseMessage.NO_USER;
+const emailVerify = async (email, emailVerifyKey, res) => {
+    const isExistUser = await findUserByEmail(email);
+    if (!isExistUser) {
+        const isEmailVerifySuccess = res
+            .status(statusCode.DB_ERROR)
+            .json(utils.successFalse(responseMessage.DB_ERROR));
+        return isEmailVerifySuccess;
     }
+    if (Object.keys(isExistUser).length === 0) {
+        const isEmailVerifySuccess = res
+            .status(statusCode.BAD_REQUEST)
+            .json(utils.successFalse(responseMessage.EMAIL_NOT_EXIST));
+        return isEmailVerifySuccess;
+    }
+    if (isExistUser[0].is_email_verify) {
+        const isEmailVerifySuccess = res
+            .status(statusCode.BAD_REQUEST)
+            .json(utils.successFalse(responseMessage.EMAIL_VERIFY_ALREADY));
+        return isEmailVerifySuccess;
+    }
+    if (isExistUser[0].email_verify_key !== emailVerifyKey) {
+        const isEmailVerifySuccess = res
+            .status(statusCode.BAD_REQUEST)
+            .json(
+                utils.successFalse(responseMessage.EMAIL_VERIFY_KEY_MISMATCH)
+            );
+        return isEmailVerifySuccess;
+    }
+    const daoRow = await userDao.emailVerify(email, emailVerifyKey);
+    if (!daoRow) {
+        const isEmailVerifySuccess = res
+            .status(statusCode.DB_ERROR)
+            .json(utils.successFalse(responseMessage.DB_ERROR));
+        return isEmailVerifySuccess;
+    }
+    const isEmailVerifySuccess = res
+        .status(statusCode.OK)
+        .json(utils.successTrue(responseMessage.EMAIL_VERIFY_SUCCESS));
+    return isEmailVerifySuccess;
 };
 module.exports = {
     join,
     login,
-    findUser,
+    findUserByEmail,
     emailVerify
 };

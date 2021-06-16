@@ -3,150 +3,43 @@ const statusCode = require("../utils/statusCode");
 const responseMessage = require("../utils/responseMessage");
 const utils = require("../utils/utils");
 
-// 회원가입
 const join = async (req, res) => {
-    let joinUser = req.body;
-    const { email, password, confirmPassword, name } = req.body;
-    if (
-        !joinUser.email ||
-        !joinUser.password ||
-        !joinUser.confirmPassword ||
-        !joinUser.name
-    ) {
-        const missParameters = Object.entries({
-            email,
-            password,
-            confirmPassword,
-            name
-        })
-            .filter(it => it[1] == undefined)
-            .map(it => it[0])
-            .join(",");
-        res.status(statusCode.BAD_REQUEST).json(
-            utils.successFalse(responseMessage.X_NULL_VALUE(missParameters))
-        );
+    const joinUser = req.body;
+    if (joinUser.password !== joinUser.confirmPassword) {
+        return res
+            .status(statusCode.BAD_REQUEST)
+            .json(utils.successFalse(responseMessage.PW_MISMATCH));
     }
 
-    const IsJoinSuccess = await userService.join({ joinUser });
-
-    switch (IsJoinSuccess) {
-        case responseMessage.JOIN_SUCCESS:
-            res.status(statusCode.OK).json(
-                utils.successTrue(responseMessage.JOIN_SUCCESS)
-            );
-            break;
-        case responseMessage.DB_ERROR:
-            res.status(statusCode.DB_ERROR).json(
-                utils.successFalse(responseMessage.DB_ERROR)
-            );
-            break;
-        case responseMessage.ALREADY_EMAIL:
-            res.status(statusCode.BAD_REQUEST).json(
-                utils.successFalse(responseMessage.ALREADY_EMAIL)
-            );
-            break;
-        case responseMessage.MISS_MATCH_PW:
-            res.status(statusCode.BAD_REQUEST).json(
-                utils.successFalse(responseMessage.MISS_MATCH_PW)
-            );
-            break;
+    const isEmail = await userService.findUserByEmail(joinUser.email);
+    if (!isEmail) {
+        return res
+            .status(statusCode.DB_ERROR)
+            .json(utils.successFalse(responseMessage.DB_ERROR));
     }
+    if (Object.keys(isEmail).length !== 0) {
+        return res
+            .status(statusCode.BAD_REQUEST)
+            .json(utils.successFalse(responseMessage.EMAIL_ALREADY_EXIST));
+    }
+    const isJoinSuccess = await userService.join({ joinUser }, res);
+    return isJoinSuccess;
 };
 
-// 로그인
 const login = async (req, res) => {
     const loginUser = req.body;
-    const { email, password } = req.body;
-    if (!loginUser.email || !loginUser.password) {
-        const missParameters = Object.entries({
-            email,
-            password
-        })
-            .filter(it => it[1] == undefined)
-            .map(it => it[0])
-            .join(",");
-        res.status(statusCode.BAD_REQUEST).json(
-            utils.successFalse(responseMessage.X_NULL_VALUE(missParameters))
-        );
-        return;
-    }
-
-    const IsLoginSuccess = await userService.login({ loginUser });
-
-    switch (IsLoginSuccess) {
-        case responseMessage.LOGIN_SUCCESS:
-            res.status(statusCode.OK).json(
-                utils.successTrue(responseMessage.LOGIN_SUCCESS, loginUser)
-            );
-            break;
-        case responseMessage.NOT_VERIFY_EMAIL:
-            res.status(statusCode.BAD_REQUEST).json(
-                utils.successFalse(responseMessage.NOT_VERIFY_EMAIL)
-            );
-            break;
-        case responseMessage.MISS_MATCH_PW:
-            res.status(statusCode.BAD_REQUEST).json(
-                utils.successFalse(responseMessage.MISS_MATCH_PW)
-            );
-            break;
-        case responseMessage.NO_USER:
-            res.status(statusCode.BAD_REQUEST).json(
-                utils.successFalse(responseMessage.NO_USER)
-            );
-            break;
-    }
+    const isLoginSuccess = await userService.login({ loginUser }, res);
+    return isLoginSuccess;
 };
 
-// 이메일 인증
 const emailVerify = async (req, res) => {
     const emailVerifyUser = req.body;
-
-    const { email, emailVerifyKey } = req.body;
-    if (!emailVerifyUser.email || !emailVerifyUser.emailVerifyKey) {
-        const missParameters = Object.entries({
-            email,
-            emailVerifyKey
-        })
-            .filter(it => it[1] == undefined)
-            .map(it => it[0])
-            .join(",");
-        res.status(statusCode.BAD_REQUEST).json(
-            utils.successFalse(responseMessage.X_NULL_VALUE(missParameters))
-        );
-    }
-
-    const IsCorrectEmailVerifyKey = await userService.emailVerify(
+    const isEmailVerifySuccess = await userService.emailVerify(
         emailVerifyUser.email,
-        emailVerifyUser.emailVerifyKey
+        emailVerifyUser.emailVerifyKey,
+        res
     );
-
-    switch (IsCorrectEmailVerifyKey) {
-        case responseMessage.EMAIL_VERIFY_SUCCESS:
-            res.status(statusCode.OK).json(
-                utils.successTrue(responseMessage.EMAIL_VERIFY_SUCCESS)
-            );
-            break;
-        case responseMessage.DB_ERROR:
-            res.status(statusCode.DB_ERROR).json(
-                utils.successFalse(responseMessage.DB_ERROR)
-            );
-            break;
-        case responseMessage.NO_USER:
-            res.status(statusCode.BAD_REQUEST).json(
-                utils.successFalse(responseMessage.NO_USER)
-            );
-            break;
-        case responseMessage.MISS_MATCH_VERIFY_KEY:
-            res.status(statusCode.BAD_REQUEST).json(
-                utils.successFalse(responseMessage.MISS_MATCH_VERIFY_KEY)
-            );
-            break;
-        case responseMessage.ALREADY_VERIFY_USER:
-            res.status(statusCode.BAD_REQUEST).json(
-                utils.successFalse(responseMessage.ALREADY_VERIFY_USER)
-            );
-            break;
-    }
+    return isEmailVerifySuccess;
 };
 
 module.exports = {
