@@ -60,11 +60,17 @@ const login = async ({ loginUser }, res) => {
     const hashPassword = daoRow[0].password;
     const isCorrectPassword = await encrypt.comparePassword(
         loginUser.password,
-        hashPassword,
-        res
+        hashPassword
     );
 
-    if (!isCorrectPassword) {
+    if (isCorrectPassword === 0) {
+        const isLoginSuccess = res
+            .status(statusCode.INTERNAL_SERVER_ERROR)
+            .json(utils.successFalse(responseMessage.ENCRYPT_ERROR));
+        return isLoginSuccess;
+    }
+
+    if (isCorrectPassword === false) {
         const isLoginSuccess = res
             .status(statusCode.BAD_REQUEST)
             .json(utils.successFalse(responseMessage.PW_MISMATCH));
