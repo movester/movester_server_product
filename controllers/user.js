@@ -17,6 +17,7 @@ const join = async (req, res) => {
             .status(statusCode.DB_ERROR)
             .json(utils.successFalse(responseMessage.DB_ERROR));
     }
+
     if (Object.keys(isEmail).length > 0) {
         return res
             .status(statusCode.BAD_REQUEST)
