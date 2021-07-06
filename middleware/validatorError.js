@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const statusCode = require("./statusCode");
+const statusCode = require("../utils/statusCode");
 
 const join = (req, res, next) => {
     const err = validationResult(req);

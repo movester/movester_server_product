@@ -17,7 +17,8 @@ const join = async (req, res) => {
             .status(statusCode.DB_ERROR)
             .json(utils.successFalse(responseMessage.DB_ERROR));
     }
-    if (Object.keys(isEmail).length !== 0) {
+
+    if (Object.keys(isEmail).length > 0) {
         return res
             .status(statusCode.BAD_REQUEST)
             .json(utils.successFalse(responseMessage.EMAIL_ALREADY_EXIST));
@@ -42,8 +43,30 @@ const emailVerify = async (req, res) => {
     return isEmailVerifySuccess;
 };
 
+const getAccessToken = async (req, res) => {
+    const email = req.decodeRefreshToken.sub;
+    const isGetAccessTokenSuccess = userService.getAccessToken(email, res);
+    return isGetAccessTokenSuccess;
+};
+
+// test api
+const dashboard = async (req, res) => {
+    return res.json({ status: true, message: "hello from dashboard" });
+};
+
+const logout = async (req, res) => {
+    const email = req.decodeData.sub;
+
+    const isLogoutSuccess = await userService.logout(email, res);
+
+    return isLogoutSuccess;
+};
+
 module.exports = {
     join,
     login,
-    emailVerify
+    emailVerify,
+    getAccessToken,
+    dashboard,
+    logout
 };

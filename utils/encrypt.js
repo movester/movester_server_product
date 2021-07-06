@@ -17,14 +17,12 @@ const hashPassword = async password => {
     return hashedPassword;
 };
 
-const comparePassword = async (password, hashPassword, res) => {
+const comparePassword = async (password, hashPassword) => {
     const comparedPassword = await new Promise((resolve, reject) => {
         bcrypt.compare(password, hashPassword, (err, res) => {
             if (err) {
                 console.log(`encrypt Error > ${err}`);
-                res.status(statusCode.INTERNAL_SERVER_ERROR).json(
-                    utils.successFalse(responseMessage.ENCRYPT_ERROR)
-                );
+                resolve(0)
             }
             resolve(res);
         });
