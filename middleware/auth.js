@@ -6,9 +6,8 @@ const utils = require("../utils/utils");
 
 const verifyToken = (req, res, next) => {
     try {
-        // bearer tokenstring
-        const accessToken = req.headers.authorization.split(" ")[1];
-        console.log(accessToken);
+        const accessToken = req.headers.authorization.split("Bearer ")[1];
+
         const decodeAccessToken = jwt.verify(
             accessToken,
             process.env.JWT_ACCESS_SECRET
@@ -17,10 +16,8 @@ const verifyToken = (req, res, next) => {
         req.accessToken = accessToken;
         next();
     } catch (err) {
-        console.log(`verifyToken > ${err}`);
-        return res
-            .status(statusCode.BAD_REQUEST)
-            .json(utils.successFalse(responseMessage.TOKEN_INVALID));
+        const body = { isAuth: false, accessToken: null, email: null };
+        return res.json(utils.successTrue(responseMessage.TOKEN_INVALID, body));
     }
 };
 

@@ -9,11 +9,13 @@ const auth = require("../middleware/auth");
 const redisClient = require("../config/redis");
 
 const join = async ({ joinUser }, res) => {
+    const missDataToSubmit = {};
+    missDataToSubmit.email = null;
     const hashPassword = await encrypt.hashPassword(joinUser.password);
     if (!hashPassword) {
         const isJoinSuccess = res
             .status(statusCode.INTERNAL_SERVER_ERROR)
-            .json(utils.successFalse(responseMessage.ENCRYPT_ERROR));
+            .json(utils.successFalse(responseMessage.ENCRYPT_ERROR,missDataToSubmit));
         return isJoinSuccess;
     }
     joinUser.password = hashPassword;
@@ -23,7 +25,7 @@ const join = async ({ joinUser }, res) => {
     if (!daoRow) {
         const isJoinSuccess = res
             .status(statusCode.DB_ERROR)
-            .json(utils.successFalse(responseMessage.DB_ERROR));
+            .json(utils.successFalse(responseMessage.DB_ERROR,missDataToSubmit));
         return isJoinSuccess;
     }
     const isEmailSenderSuccess = await emailSender.emailVerifySender(
@@ -34,16 +36,21 @@ const join = async ({ joinUser }, res) => {
     if (!isEmailSenderSuccess) {
         const isJoinSuccess = res
             .status(statusCode.INTERNAL_SERVER_ERROR)
-            .json(utils.successFalse(responseMessage.EMIAL_SENDER_ERROR));
+            .json(utils.successFalse(responseMessage.EMIAL_SENDER_ERROR,missDataToSubmit));
         return isJoinSuccess;
     }
+    const dataToSubmit = {};
+    dataToSubmit.email = joinUser.email;
     const isJoinSuccess = res
         .status(statusCode.OK)
-        .json(utils.successTrue(responseMessage.JOIN_SUCCESS));
+        .json(utils.successTrue(responseMessage.JOIN_SUCCESS, dataToSubmit));
     return isJoinSuccess;
 };
 
 const login = async ({ loginUser }, res) => {
+    const body = {
+        isAuth: false
+    };
     const daoRow = await userDao.login(loginUser.email);
     if (!daoRow) {
         const isLoginSuccess = res
@@ -54,7 +61,7 @@ const login = async ({ loginUser }, res) => {
     if (Object.keys(daoRow).length === 0) {
         const isLoginSuccess = res
             .status(statusCode.BAD_REQUEST)
-            .json(utils.successFalse(responseMessage.EMAIL_NOT_EXIST));
+            .json(utils.successFalse(responseMessage.EMAIL_NOT_EXIST, body));
         return isLoginSuccess;
     }
     const hashPassword = daoRow[0].password;
@@ -73,13 +80,13 @@ const login = async ({ loginUser }, res) => {
     if (isCorrectPassword === false) {
         const isLoginSuccess = res
             .status(statusCode.BAD_REQUEST)
-            .json(utils.successFalse(responseMessage.PW_MISMATCH));
+            .json(utils.successFalse(responseMessage.PW_MISMATCH, body));
         return isLoginSuccess;
     }
     if (!daoRow[0].is_email_verify) {
         const isLoginSuccess = res
             .status(statusCode.BAD_REQUEST)
-            .json(utils.successFalse(responseMessage.EMAIL_VERIFY_NOT));
+            .json(utils.successFalse(responseMessage.EMAIL_VERIFY_NOT, body));
         return isLoginSuccess;
     }
 
@@ -92,6 +99,8 @@ const login = async ({ loginUser }, res) => {
 
     loginUser.accessToken = accessToken;
     loginUser.refreshToken = refreshToken;
+    loginUser.isAuth = true;
+    delete loginUser.password;
 
     const isLoginSuccess = res
         .status(statusCode.OK)
@@ -175,9 +184,13 @@ const getAccessToken = (email, res) => {
 const logout = async (email, res) => {
     await redisClient.del(email.toString());
 
+    const body = {
+        isAuth: false
+    };
+
     const isLogoutSuccess = res
         .status(statusCode.OK)
-        .json(utils.successTrue(responseMessage.LOGOUT_SUCCESS));
+        .json(utils.successTrue(responseMessage.LOGOUT_SUCCESS, body));
     return isLogoutSuccess;
 };
 module.exports = {
