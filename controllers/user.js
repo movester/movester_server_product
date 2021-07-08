@@ -63,11 +63,21 @@ const logout = async (req, res) => {
     return isLogoutSuccess;
 };
 
+const auth = async (req, res) => {
+    const authUser = {
+        isAuth: true,
+        email: req.decodeData.sub,
+        accessToken: req.accessToken
+    };
+    res.json(utils.successTrue(responseMessage.LOGIN_SUCCESS, authUser));
+};
+
 module.exports = {
     join,
     login,
     emailVerify,
     getAccessToken,
     dashboard,
-    logout
+    logout,
+    auth
 };
