@@ -6,10 +6,11 @@ const successTrue = (message, data) => {
     };
 };
 
-const successFalse = message => {
+const successFalse = (message, data) => {
     return {
         success: false,
-        message: message
+        message: message,
+        data: data
     };
 };
 

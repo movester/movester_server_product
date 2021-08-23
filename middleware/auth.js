@@ -6,9 +6,8 @@ const utils = require("../utils/utils");
 
 const verifyToken = (req, res, next) => {
     try {
-        // bearer tokenstring
-        const accessToken = req.headers.authorization.split(" ")[1];
-        console.log(accessToken);
+        const accessToken = req.headers.authorization.split("Bearer ")[1];
+
         const decodeAccessToken = jwt.verify(
             accessToken,
             process.env.JWT_ACCESS_SECRET
@@ -17,10 +16,14 @@ const verifyToken = (req, res, next) => {
         req.accessToken = accessToken;
         next();
     } catch (err) {
-        console.log(`verifyToken > ${err}`);
-        return res
-            .status(statusCode.BAD_REQUEST)
-            .json(utils.successFalse(responseMessage.TOKEN_INVALID));
+        const missDataToSubmit = {
+            isAuth: false,
+            accessToken: null,
+            email: null
+        };
+        return res.json(
+            utils.successFalse(responseMessage.TOKEN_INVALID, missDataToSubmit)
+        );
     }
 };
 
@@ -60,7 +63,7 @@ const verifyRefreshToken = (req, res, next) => {
     }
 };
 
-const GenerateRefreshToken = email => {
+const generateRefreshToken = email => {
     const refreshToken = jwt.sign(
         { sub: email, secret: "movester" },
         process.env.JWT_REFRESH_SECRET,
@@ -82,5 +85,5 @@ const GenerateRefreshToken = email => {
 module.exports = {
     verifyToken,
     verifyRefreshToken,
-    GenerateRefreshToken
+    generateRefreshToken
 };
