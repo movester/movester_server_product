@@ -44,10 +44,10 @@ const emailVerify = async (req, res) => {
     return isEmailVerifySuccess;
 };
 
-const getAccessToken = async (req, res) => {
+const reissueAccessToken = async (req, res) => {
     const email = req.decodeRefreshToken.sub;
-    const isGetAccessTokenSuccess = userService.getAccessToken(email, res);
-    return isGetAccessTokenSuccess;
+    const isReissueAccessTokenSuccess = userService.reissueAccessToken(email, res);
+    return isReissueAccessTokenSuccess;
 };
 
 // test api
@@ -76,7 +76,7 @@ module.exports = {
     join,
     login,
     emailVerify,
-    getAccessToken,
+    reissueAccessToken,
     dashboard,
     logout,
     auth

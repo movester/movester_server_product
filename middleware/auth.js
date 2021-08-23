@@ -63,7 +63,7 @@ const verifyRefreshToken = (req, res, next) => {
     }
 };
 
-const GenerateRefreshToken = email => {
+const generateRefreshToken = email => {
     const refreshToken = jwt.sign(
         { sub: email, secret: "movester" },
         process.env.JWT_REFRESH_SECRET,
@@ -85,5 +85,5 @@ const GenerateRefreshToken = email => {
 module.exports = {
     verifyToken,
     verifyRefreshToken,
-    GenerateRefreshToken
+    generateRefreshToken
 };

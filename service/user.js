@@ -132,7 +132,7 @@ const login = async ({ loginUser }, res) => {
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: process.env.JWT_ACCESS_TIME }
     );
-    const refreshToken = auth.GenerateRefreshToken(loginUser.email);
+    const refreshToken = auth.generateRefreshToken(loginUser.email);
 
     const dataToSubmit = {
         accessToken: accessToken,
@@ -195,20 +195,20 @@ const emailVerify = async (email, emailVerifyKey, res) => {
     return isEmailVerifySuccess;
 };
 
-const getAccessToken = (email, res) => {
+const reissueAccessToken = (email, res) => {
     const accessToken = jwt.sign(
         { sub: email },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: process.env.JWT_ACCESS_TIME }
     );
-    const refreshToken = auth.GenerateRefreshToken(email);
+    const refreshToken = auth.generateRefreshToken(email);
 
     const token = {
         accessToken: accessToken,
         refreshToken: refreshToken
     };
 
-    const isGetAccessTokenSuccess = res
+    const isReissueAccessToken = res
         .status(statusCode.OK)
         .json(
             utils.successTrue(
@@ -216,7 +216,7 @@ const getAccessToken = (email, res) => {
                 token
             )
         );
-    return isGetAccessTokenSuccess;
+    return isReissueAccessToken;
 };
 
 const logout = async (email, res) => {
@@ -236,6 +236,6 @@ module.exports = {
     login,
     findUserByEmail,
     emailVerify,
-    getAccessToken,
+    reissueAccessToken,
     logout
 };
