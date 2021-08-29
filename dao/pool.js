@@ -1,5 +1,5 @@
 const mysql = require("mysql2/promise");
-const conn = require("../config/key.js");
+const conn = require("../config/operationEnv.js");
 
 const pool = mysql.createPool(conn);
 

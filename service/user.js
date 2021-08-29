@@ -92,6 +92,7 @@ const login = async ({ loginUser }, res) => {
         hashPassword
     );
 
+    // TODO : 0 과 false 는 둘 다 falsy 한 값으로 명확한 네이밍으로 수정 필요
     if (isCorrectPassword === 0) {
         const isLoginSuccess = res
             .status(statusCode.INTERNAL_SERVER_ERROR)

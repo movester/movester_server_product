@@ -50,7 +50,7 @@ const reissueAccessToken = async (req, res) => {
     return isReissueAccessTokenSuccess;
 };
 
-// test api
+// accessToken, refeshToken 재발급 과정 동작이 원활한지 테스트를 만들도록 함
 const dashboard = async (req, res) => {
     return res.json({ status: true, message: "hello from dashboard" });
 };
