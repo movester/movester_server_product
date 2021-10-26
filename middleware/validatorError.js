@@ -5,39 +5,36 @@ const utils = require("../utils/utils");
 
 const join = (req, res, next) => {
     const err = validationResult(req);
-    const missDataToSubmit = {
-        requestParameteError: err.array()
-    };
     if (!err.isEmpty()) {
-        return res
-            .status(statusCode.BAD_REQUEST)
-            .json(utils.successFalse(responseMessage.VALUE_INVALID,missDataToSubmit));
+        return res.status(statusCode.BAD_REQUEST).json(
+            utils.successFalse(responseMessage.VALUE_INVALID, {
+                requestParameteError: err.array()
+            })
+        );
     }
     next();
 };
 
 const login = (req, res, next) => {
     const err = validationResult(req);
-    const missDataToSubmit = {
-        requestParameteError: err.array()
-    };
     if (!err.isEmpty()) {
-        return res
-            .status(statusCode.BAD_REQUEST)
-            .json(utils.successFalse(responseMessage.VALUE_INVALID,missDataToSubmit));
+        return res.status(statusCode.BAD_REQUEST).json(
+            utils.successFalse(responseMessage.VALUE_INVALID, {
+                requestParameteError: err.array()
+            })
+        );
     }
     next();
 };
 
 const emailVerify = (req, res, next) => {
     const err = validationResult(req);
-    const missDataToSubmit = {
-        requestParameteError: err.array()
-    };
     if (!err.isEmpty()) {
-        return res
-            .status(statusCode.BAD_REQUEST)
-            .json(utils.successFalse(responseMessage.VALUE_INVALID,missDataToSubmit));
+        return res.status(statusCode.BAD_REQUEST).json(
+            utils.successFalse(responseMessage.VALUE_INVALID, {
+                requestParameteError: err.array()
+            })
+        );
     }
     next();
 };

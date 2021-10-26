@@ -4,8 +4,6 @@ const responseMessage = require("../utils/responseMessage");
 const utils = require("../utils/utils");
 
 const join = async (req, res) => {
-    const missDataToSubmit = {};
-    missDataToSubmit.email = null;
     const joinUser = req.body;
     if (joinUser.password !== joinUser.confirmPassword) {
         return res
@@ -17,12 +15,12 @@ const join = async (req, res) => {
     if (!isEmail) {
         return res
             .status(statusCode.DB_ERROR)
-            .json(utils.successFalse(responseMessage.DB_ERROR,missDataToSubmit));
+            .json(utils.successFalse(responseMessage.DB_ERROR));
     }
     if (Object.keys(isEmail).length > 0) {
         return res
             .status(statusCode.BAD_REQUEST)
-            .json(utils.successFalse(responseMessage.EMAIL_ALREADY_EXIST,missDataToSubmit));
+            .json(utils.successFalse(responseMessage.EMAIL_ALREADY_EXIST));
     }
     const isJoinSuccess = await userService.join({ joinUser }, res);
     return isJoinSuccess;
@@ -46,7 +44,10 @@ const emailVerify = async (req, res) => {
 
 const reissueAccessToken = async (req, res) => {
     const email = req.decodeRefreshToken.sub;
-    const isReissueAccessTokenSuccess = userService.reissueAccessToken(email, res);
+    const isReissueAccessTokenSuccess = userService.reissueAccessToken(
+        email,
+        res
+    );
     return isReissueAccessTokenSuccess;
 };
 
@@ -64,12 +65,13 @@ const logout = async (req, res) => {
 };
 
 const auth = async (req, res) => {
-    const authUser = {
-        isAuth: true,
-        email: req.decodeData.sub,
-        accessToken: req.accessToken
-    };
-    res.json(utils.successTrue(responseMessage.LOGIN_SUCCESS, authUser));
+    res.json(
+        utils.successTrue(responseMessage.LOGIN_SUCCESS, {
+            isAuth: true,
+            email: req.decodeData.sub,
+            accessToken: req.accessToken
+        })
+    );
 };
 
 module.exports = {
