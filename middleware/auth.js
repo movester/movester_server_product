@@ -16,13 +16,10 @@ const verifyToken = (req, res, next) => {
         req.accessToken = accessToken;
         next();
     } catch (err) {
-        const missDataToSubmit = {
-            isAuth: false,
-            accessToken: null,
-            email: null
-        };
         return res.json(
-            utils.successFalse(responseMessage.TOKEN_INVALID, missDataToSubmit)
+            utils.successFalse(responseMessage.TOKEN_INVALID, {
+                isAuth: false
+            })
         );
     }
 };
@@ -44,7 +41,7 @@ const verifyRefreshToken = (req, res, next) => {
         redisClient.get(decodeRefreshToken.sub.toString(), (err, data) => {
             if (err) throw err;
 
-            if (!data) { 
+            if (!data) {
                 return res
                     .status(statusCode.BAD_REQUEST)
                     .json(utils.successFalse(responseMessage.TOKEN_EMPTY));

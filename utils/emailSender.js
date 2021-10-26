@@ -17,7 +17,6 @@ const emailVerifySender = async (email, emailVerifyKey) => {
                     resolve(false);
                 }
                 smtpTransport.close();
-                console.log(info.response);
                 resolve(true);
             }
         );

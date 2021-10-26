@@ -1,16 +1,16 @@
-const successTrue = (message, data) => {
+const successTrue = (message, resData) => {
     return {
         success: true,
         message: message,
-        data: data
+        resData: resData
     };
 };
 
-const successFalse = (message, data) => {
+const successFalse = (message, resData) => {
     return {
         success: false,
         message: message,
-        data: data
+        resData: resData
     };
 };
 

@@ -86,9 +86,12 @@ const login = async ({ loginUser }, res) => {
 
     return res.status(statusCode.OK).json(
         utils.successTrue(responseMessage.LOGIN_SUCCESS, {
+            isAuth: true,
+            userIdx: daoRow[0].user_idx,
+            email: daoRow[0].email,
+            name: daoRow[0].name,
             accessToken: accessToken,
-            refreshToken: refreshToken,
-            isAuth: true
+            refreshToken: refreshToken
         })
     );
 };
