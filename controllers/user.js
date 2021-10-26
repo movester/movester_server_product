@@ -22,33 +22,30 @@ const join = async (req, res) => {
             .status(statusCode.BAD_REQUEST)
             .json(utils.successFalse(responseMessage.EMAIL_ALREADY_EXIST));
     }
-    const isJoinSuccess = await userService.join({ joinUser }, res);
-    return isJoinSuccess;
+
+    return await userService.join({ joinUser }, res);
 };
 
 const login = async (req, res) => {
     const loginUser = req.body;
-    const isLoginSuccess = await userService.login({ loginUser }, res);
-    return isLoginSuccess;
+    return await userService.login({ loginUser }, res);
 };
 
 const emailVerify = async (req, res) => {
     const emailVerifyUser = req.body;
-    const isEmailVerifySuccess = await userService.emailVerify(
+    return await userService.emailVerify(
         emailVerifyUser.email,
         emailVerifyUser.emailVerifyKey,
         res
     );
-    return isEmailVerifySuccess;
 };
 
 const reissueAccessToken = async (req, res) => {
     const email = req.decodeRefreshToken.sub;
-    const isReissueAccessTokenSuccess = userService.reissueAccessToken(
+    return userService.reissueAccessToken(
         email,
         res
     );
-    return isReissueAccessTokenSuccess;
 };
 
 // accessToken, refeshToken 재발급 과정 동작이 원활한지 테스트를 만들도록 함
@@ -58,10 +55,7 @@ const dashboard = async (req, res) => {
 
 const logout = async (req, res) => {
     const email = req.decodeData.sub;
-
-    const isLogoutSuccess = await userService.logout(email, res);
-
-    return isLogoutSuccess;
+    return await userService.logout(email, res);
 };
 
 const auth = async (req, res) => {
