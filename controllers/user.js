@@ -1,27 +1,28 @@
 const userService = require('../service/user');
-const statusCode = require('../utils/statusCode');
-const responseMessage = require('../utils/responseMessage');
-const utils = require('../utils/responseForm');
+const CODE = require('../utils/statusCode');
+const MSG = require('../utils/responseMessage');
+const form = require('../utils/responseForm');
 
 const join = async (req, res) => {
-  const missDataToSubmit = {};
-  missDataToSubmit.email = null;
   const joinUser = req.body;
   if (joinUser.password !== joinUser.confirmPassword) {
-    return res.status(statusCode.BAD_REQUEST).json(utils.successFalse(responseMessage.PW_MISMATCH));
+    return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.CONFIRM_PW_MISMATCH));
   }
 
-  const isEmail = await userService.findUserByEmail(joinUser.email);
-  if (!isEmail) {
-    return res.status(statusCode.DB_ERROR).json(utils.successFalse(responseMessage.DB_ERROR, missDataToSubmit));
+  try {
+    const isEmailDuplicate = await userService.findUserByEmail(joinUser.email);
+    if (isEmailDuplicate) {
+      return res.status(CODE.DUPLICATE).json(form.fail(MSG.EMAIL_ALREADY_EXIST));
+    }
+  } catch (err) {
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
-  if (Object.keys(isEmail).length > 0) {
-    return res
-      .status(statusCode.BAD_REQUEST)
-      .json(utils.successFalse(responseMessage.EMAIL_ALREADY_EXIST, missDataToSubmit));
+  const result = await userService.join(joinUser);
+
+  if (result === CODE.INTERNAL_SERVER_ERROR) {
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
-  const isJoinSuccess = await userService.join({ joinUser }, res);
-  return isJoinSuccess;
+  res.status(CODE.CREATED).json(form.success());
 };
 
 const login = async (req, res) => {
@@ -63,7 +64,7 @@ const auth = async (req, res) => {
     email: req.decodeData.sub,
     accessToken: req.accessToken,
   };
-  res.json(utils.successTrue(responseMessage.LOGIN_SUCCESS, authUser));
+  res.json(form.successTrue(MSG.LOGIN_SUCCESS, authUser));
 };
 
 module.exports = {

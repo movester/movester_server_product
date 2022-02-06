@@ -6,7 +6,7 @@ const join = async ({ joinUser }) => {
     connection = await pool.getConnection(async conn => conn);
     const sql = `INSERT INTO user (email, password, name, email_verify_key, create_at) VALUES ('${joinUser.email}', '${joinUser.password}', '${joinUser.name}', '${joinUser.emailVerifyKey}', now())`;
     const [row] = await connection.query(sql);
-    return row;
+    return row.length ? row[0] : undefined;
   } catch (err) {
     console.log(`===DB Error > ${err}===`);
     throw new Error(err);
@@ -36,7 +36,7 @@ const findUserByEmail = async email => {
     connection = await pool.getConnection(async conn => conn);
     const sql = `SELECT user_idx, email, password, name, is_email_verify, email_verify_key FROM user WHERE email = '${email}'`;
     const [row] = await connection.query(sql);
-    return row;
+    return row.length ? row[0] : undefined;
   } catch (err) {
     console.log(`===DB Error > ${err}===`);
     throw new Error(err);
