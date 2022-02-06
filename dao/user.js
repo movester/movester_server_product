@@ -1,97 +1,79 @@
 const pool = require('./pool');
 
 const join = async ({ joinUser }) => {
+  let connection;
   try {
-    const connection = await pool.getConnection(async conn => conn);
-    try {
-      const sql = `INSERT INTO user (email, password, name, email_verify_key, create_at) VALUES ('${joinUser.email}', '${joinUser.password}', '${joinUser.name}', '${joinUser.emailVerifyKey}', now())`;
-      const [row] = await connection.query(sql);
-      connection.release();
-      return row;
-    } catch (err) {
-      console.log(`Query Error > ${err}`);
-      connection.release();
-      return false;
-    }
+    connection = await pool.getConnection(async conn => conn);
+    const sql = `INSERT INTO user (email, password, name, email_verify_key, create_at) VALUES ('${joinUser.email}', '${joinUser.password}', '${joinUser.name}', '${joinUser.emailVerifyKey}', now())`;
+    const [row] = await connection.query(sql);
+    return row;
   } catch (err) {
-    console.log(`DB Error > ${err}`);
-    return false;
+    console.log(`===DB Error > ${err}===`);
+    throw new Error(err);
+  } finally {
+    connection.release();
   }
 };
 
 const login = async email => {
+  let connection;
   try {
-    const connection = await pool.getConnection(async conn => conn);
-    try {
-      const sql = `SELECT user_idx, email, password, name, is_email_verify FROM user WHERE email = '${email}'`;
-      const [row] = await connection.query(sql);
-      connection.release();
-      return row;
-    } catch (err) {
-      console.log(`Query Error > ${err}`);
-      connection.release();
-      return false;
-    }
+    connection = await pool.getConnection(async conn => conn);
+    const sql = `SELECT user_idx, email, password, name, is_email_verify FROM user WHERE email = '${email}'`;
+    const [row] = await connection.query(sql);
+    return row;
   } catch (err) {
-    console.log(`DB Error > ${err}`);
-    return false;
+    console.log(`===DB Error > ${err}===`);
+    throw new Error(err);
+  } finally {
+    connection.release();
   }
 };
 
 const findUserByEmail = async email => {
+  let connection;
   try {
-    const connection = await pool.getConnection(async conn => conn);
-    try {
-      const sql = `SELECT user_idx, email, password, name, is_email_verify, email_verify_key FROM user WHERE email = '${email}'`;
-      const [row] = await connection.query(sql);
-      connection.release();
-      return row;
-    } catch (err) {
-      console.log(`Query Error > ${err}`);
-      connection.release();
-      return false;
-    }
+    connection = await pool.getConnection(async conn => conn);
+    const sql = `SELECT user_idx, email, password, name, is_email_verify, email_verify_key FROM user WHERE email = '${email}'`;
+    const [row] = await connection.query(sql);
+    return row;
   } catch (err) {
-    console.log(`DB Error > ${err}`);
-    return false;
+    console.log(`===DB Error > ${err}===`);
+    throw new Error(err);
+  } finally {
+    connection.release();
   }
 };
 
 const emailVerify = async email => {
+  let connection;
   try {
-    const connection = await pool.getConnection(async conn => conn);
-    try {
-      const sql = `UPDATE user SET is_email_verify = 1 WHERE email = '${email}'`;
-      const [row] = await connection.query(sql);
-      connection.release();
-      return row;
-    } catch (err) {
-      console.log(`Query Error > ${err}`);
-      connection.release();
-      return false;
-    }
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `UPDATE user SET is_email_verify = 1 WHERE email = '${email}'`;
+    const [row] = await connection.query(sql);
+    return row;
   } catch (err) {
-    console.log(`DB Error > ${err}`);
-    return false;
+    console.log(`===DB Error > ${err}===`);
+    throw new Error(err);
+  } finally {
+    connection.release();
   }
 };
 
 const tokenSave = async (email, token) => {
+  let connection;
   try {
-    const connection = await pool.getConnection(async conn => conn);
-    try {
-      const sql = `UPDATE user SET token = '${token}' WHERE email = '${email}'`;
-      const [row] = await connection.query(sql);
-      connection.release();
-      return row;
-    } catch (err) {
-      console.log(`Query Error > ${err}`);
-      connection.release();
-      return false;
-    }
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `UPDATE user SET token = '${token}' WHERE email = '${email}'`;
+    const [row] = await connection.query(sql);
+    return row;
   } catch (err) {
-    console.log(`DB Error > ${err}`);
-    return false;
+    console.log(`===DB Error > ${err}===`);
+    throw new Error(err);
+  } finally {
+    connection.release();
   }
 };
 
