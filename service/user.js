@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken');
 const userDao = require('../dao/user');
-const encrypt = require('../utils/encrypt');
-const emailSender = require('../utils/emailSender');
+const encrypt = require('../modules/encrypt');
+const emailSender = require('../modules/emailSender');
 const statusCode = require('../utils/statusCode');
 const responseMessage = require('../utils/responseMessage');
-const utils = require('../utils/utils');
+const utils = require('../utils/responseForm');
 const auth = require('../middleware/auth');
 const redisClient = require('../config/redis');
 

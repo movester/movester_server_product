@@ -1,7 +1,7 @@
 const { validationResult } = require('express-validator');
 const statusCode = require('../utils/statusCode');
 const responseMessage = require('../utils/responseMessage');
-const utils = require('../utils/utils');
+const utils = require('../utils/responseForm');
 
 const join = (req, res, next) => {
   const err = validationResult(req);

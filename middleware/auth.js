@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const redisClient = require('../config/redis');
 const statusCode = require('../utils/statusCode');
 const responseMessage = require('../utils/responseMessage');
-const utils = require('../utils/utils');
+const utils = require('../utils/responseForm');
 
 const verifyToken = (req, res, next) => {
   try {
