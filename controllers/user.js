@@ -27,8 +27,28 @@ const join = async (req, res) => {
 
 const login = async (req, res) => {
   const loginUser = req.body;
-  const isLoginSuccess = await userService.login({ loginUser }, res);
-  return isLoginSuccess;
+  const result = await userService.login(loginUser);
+
+  if (typeof result === 'number') {
+    if (result === CODE.BAD_REQUEST) {
+      return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_NOT_EXIST));
+    }
+    if (result === CODE.NOT_FOUND) {
+      return res.status(CODE.NOT_FOUND).json(form.fail(MSG.PW_MISMATCH));
+    }
+    if (result === CODE.UNAUTHORIZED) {
+      return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.NOT_EMAIL_VERIFIED));
+    }
+    if (result === CODE.INTERNAL_SERVER_ERROR) {
+      return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+    }
+  }
+
+  return res
+    .status(CODE.OK)
+    .cookie('accessToken', result.token.accessToken, { httpOnly: true })
+    .cookie('refreshToken', result.token.refreshToken, { httpOnly: true })
+    .json(form.success(result.user));
 };
 
 const emailVerify = async (req, res) => {

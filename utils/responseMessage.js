@@ -41,7 +41,8 @@ const responseMessage = {
   VALUE_INVALID: '파라미터 값이 잘못 되었습니다.',
 
   ENCRYPT_ERROR: '비밀번호 암호화/복호화 에러',
-  EMIAL_SENDER_ERROR: '이메일 인증 메일 전송 오류',
+  EMAIL_SENDER_ERROR: '이메일 인증 메일 전송 오류',
+  NOT_EMAIL_VERIFIED: '이메일 인증을 하지 않았습니다.',
   DB_ERROR: '데이터베이스 오류',
   INTERNAL_SERVER_ERROR: '서버 내부 오류',
 
