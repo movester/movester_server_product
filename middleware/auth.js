@@ -1,69 +1,58 @@
-const jwt = require('jsonwebtoken');
-const redisClient = require('../config/redis');
-const statusCode = require('../utils/statusCode');
-const responseMessage = require('../utils/responseMessage');
-const utils = require('../utils/responseForm');
+const jwt = require('../modules/jwt');
+const redis = require('../modules/redis');
+const CODE = require('../utils/statusCode');
+const MSG = require('../utils/responseMessage');
+const form = require('../utils/responseForm');
 
-const verifyToken = (req, res, next) => {
-  try {
-    const accessToken = req.headers.authorization.split('Bearer ')[1];
+const TOKEN_EXPIRED = -3;
+const TOKEN_INVALID = -2;
 
-    const decodeAccessToken = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET);
-    req.decodeData = decodeAccessToken;
-    req.accessToken = accessToken;
+const checkToken = async (req, res, next) => {
+  if (!req.cookies.accessToken) {
+    return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.UNAUTHORIZED));
+  }
+
+  const accessToken = await jwt.verifyAccessToken(req.cookies.accessToken);
+  const refreshToken = await jwt.verifyRefeshToken(req.cookies.refreshToken);
+
+  if (accessToken === TOKEN_INVALID || refreshToken === TOKEN_INVALID) {
+    return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.UNAUTHORIZED));
+  }
+  if (accessToken === TOKEN_EXPIRED) {
+    if (refreshToken === TOKEN_EXPIRED) {
+      // access 만료 refesh 만료
+      return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.UNAUTHORIZED));
+    }
+    // access 만료 refesh 유효
+    const redisToken = await redis.get(refreshToken.idx);
+
+    if (req.cookies.refreshToken !== redisToken) {
+      return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.TOKEN_INVALID));
+    }
+
+    const newAccessToken = await jwt.signAccessToken({ idx: refreshToken.idx, email: refreshToken.email });
+
+    res.cookie('accessToken', newAccessToken);
+    req.cookies.accessToken = newAccessToken;
+
     next();
-  } catch (err) {
-    const missDataToSubmit = {
-      isAuth: false,
-      accessToken: null,
-      email: null,
-    };
-    return res.json(utils.successFalse(responseMessage.TOKEN_INVALID, missDataToSubmit));
+  } else if (refreshToken === TOKEN_EXPIRED) {
+    // access 유효 refesh 만료
+
+    const newRefreshToken = await jwt.signRefreshToken({ idx: accessToken.idx, email: accessToken.email });
+
+    redis.set(accessToken.idx, newRefreshToken);
+    res.cookie('refreshToken', newRefreshToken);
+    req.cookies.refreshToken = newRefreshToken;
+
+    next();
+  } else {
+    // access 유효 refesh 유효
+    req.cookies.idx = accessToken.idx;
+    next();
   }
-};
-
-const verifyRefreshToken = (req, res, next) => {
-  const refreshToken = req.body.token;
-  if (!refreshToken) {
-    return res.status(statusCode.BAD_REQUEST).json(utils.successFalse(responseMessage.VALUE_NULL));
-  }
-  try {
-    const decodeRefreshToken = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-    req.decodeRefreshToken = decodeRefreshToken;
-
-    redisClient.get(decodeRefreshToken.sub.toString(), (err, data) => {
-      if (err) throw err;
-
-      if (!data) {
-        return res.status(statusCode.BAD_REQUEST).json(utils.successFalse(responseMessage.TOKEN_EMPTY));
-      }
-      if (JSON.parse(data).token !== refreshToken) {
-        return res.status(statusCode.BAD_REQUEST).json(utils.successFalse(responseMessage.TOKEN_INVALID));
-      }
-      next();
-    });
-  } catch (err) {
-    console.log(`verifyRefreshToken > ${err}`);
-    res.status(statusCode.BAD_REQUEST).json(utils.successFalse(responseMessage.TOKEN_INVALID));
-  }
-};
-
-const generateRefreshToken = email => {
-  const refreshToken = jwt.sign({ sub: email, secret: 'movester' }, process.env.JWT_REFRESH_SECRET, {
-    expiresIn: process.env.JWT_REFRESH_TIME,
-  });
-
-  redisClient.get(email.toString(), err => {
-    if (err) throw err;
-
-    redisClient.set(email.toString(), JSON.stringify({ token: refreshToken }));
-  });
-
-  return refreshToken;
 };
 
 module.exports = {
-  verifyToken,
-  verifyRefreshToken,
-  generateRefreshToken,
+  checkToken,
 };

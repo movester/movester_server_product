@@ -5,7 +5,6 @@ const emailSender = require('../modules/emailSender');
 const CODE = require('../utils/statusCode');
 const responseMessage = require('../utils/responseMessage');
 const utils = require('../utils/responseForm');
-const auth = require('../middleware/auth');
 const redis = require('../modules/redis');
 
 const join = async joinUser => {
@@ -17,7 +16,6 @@ const join = async joinUser => {
     await emailSender.emailVerifySender(joinUser.email, joinUser.emailVerifyKey);
     const result = await userDao.join({ joinUser });
     return result;
-
   } catch (err) {
     console.log(err);
     return CODE.INTERNAL_SERVER_ERROR;
@@ -101,23 +99,6 @@ const emailVerify = async (email, emailVerifyKey, res) => {
   return isEmailVerifySuccess;
 };
 
-const reissueAccessToken = (email, res) => {
-  const accessToken = jwt.sign({ sub: email }, process.env.JWT_ACCESS_SECRET, {
-    expiresIn: process.env.JWT_ACCESS_TIME,
-  });
-  const refreshToken = auth.generateRefreshToken(email);
-
-  const token = {
-    accessToken,
-    refreshToken,
-  };
-
-  const isReissueAccessToken = res
-    .status(CODE.OK)
-    .json(utils.success(responseMessage.TOKEN_GENERATE_REFRESH_SUCCESS, token));
-  return isReissueAccessToken;
-};
-
 const logout = async (email, res) => {
   await redis.del(email.toString());
 
@@ -133,6 +114,5 @@ module.exports = {
   login,
   findUserByEmail,
   emailVerify,
-  reissueAccessToken,
   logout,
 };
