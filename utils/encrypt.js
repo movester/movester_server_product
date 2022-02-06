@@ -1,36 +1,34 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcrypt');
+
 const saltRounds = 10;
-const statusCode = require("../utils/statusCode");
-const responseMessage = require("../utils/responseMessage");
-const utils = require("../utils/utils");
 
 const hashPassword = async password => {
-    const hashedPassword = await new Promise((resolve, reject) => {
-        bcrypt.hash(password, saltRounds, (err, hash) => {
-            if (err) {
-                console.log(`encrypt Error > ${err}`);
-                resolve(false);
-            }
-            resolve(hash);
-        });
+  const hashedPassword = await new Promise(resolve => {
+    bcrypt.hash(password, saltRounds, (err, hash) => {
+      if (err) {
+        console.log(`encrypt Error > ${err}`);
+        resolve(false);
+      }
+      resolve(hash);
     });
-    return hashedPassword;
+  });
+  return hashedPassword;
 };
 
 const comparePassword = async (password, hashPassword) => {
-    const comparedPassword = await new Promise((resolve, reject) => {
-        bcrypt.compare(password, hashPassword, (err, res) => {
-            if (err) {
-                console.log(`encrypt Error > ${err}`);
-                resolve(0)
-            }
-            resolve(res);
-        });
+  const comparedPassword = await new Promise(resolve => {
+    bcrypt.compare(password, hashPassword, (err, res) => {
+      if (err) {
+        console.log(`encrypt Error > ${err}`);
+        resolve(0);
+      }
+      resolve(res);
     });
-    return comparedPassword;
+  });
+  return comparedPassword;
 };
 
 module.exports = {
-    hashPassword,
-    comparePassword
+  hashPassword,
+  comparePassword,
 };
