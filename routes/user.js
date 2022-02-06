@@ -8,7 +8,7 @@ const auth = require('../middleware/auth');
 
 router.post('/join', Validator.join, ValidatorError.join, userCtrl.join);
 router.post('/login', Validator.login, ValidatorError.login, userCtrl.login);
-router.post('/logout', auth.checkToken, userCtrl.logout);
+router.get('/logout', auth.checkToken, userCtrl.logout);
 router.patch('/email-verify', Validator.emailVerify, ValidatorError.emailVerify, userCtrl.emailVerify);
 
 
