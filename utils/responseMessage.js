@@ -23,6 +23,10 @@ const responseMessage = {
 
   UPDATE_PASSWORD_SUCCESS: '비밀번호 변경 성공',
 
+  EMAIL_VERIFY_NOT: '이메일 인증을 하지 않았습니다.',
+  EMAIL_VERIFY_ALREADY: '이미 이메일 인증된 사용자입니다.',
+  EMAIL_VERIFY_KEY_MISMATCH: '이메일 인증 번호가 일치하지 않습니다',
+
   EMAIL_ALREADY_EXIST: '존재하는 email 입니다.',
   EMAIL_NOT_EXIST: '존재하지 않는 유저 email 입니다.',
   NAME_ALREADY_EXIST: '존재하는 username 입니다.',
@@ -42,7 +46,6 @@ const responseMessage = {
 
   ENCRYPT_ERROR: '비밀번호 암호화/복호화 에러',
   EMAIL_SENDER_ERROR: '이메일 인증 메일 전송 오류',
-  NOT_EMAIL_VERIFIED: '이메일 인증을 하지 않았습니다.',
   DB_ERROR: '데이터베이스 오류',
   INTERNAL_SERVER_ERROR: '서버 내부 오류',
 

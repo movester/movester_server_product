@@ -38,7 +38,7 @@ const login = async (req, res) => {
       return res.status(CODE.NOT_FOUND).json(form.fail(MSG.PW_MISMATCH));
     }
     if (result === CODE.UNAUTHORIZED) {
-      return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.NOT_EMAIL_VERIFIED));
+      return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_VERIFY_NOT));
     }
     if (result === CODE.INTERNAL_SERVER_ERROR) {
       return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
@@ -59,14 +59,25 @@ const logout = async (req, res) => {
 
 const emailVerify = async (req, res) => {
   const emailVerifyUser = req.body;
-  const isEmailVerifySuccess = await userService.emailVerify(
-    emailVerifyUser.email,
-    emailVerifyUser.emailVerifyKey,
-    res
-  );
-  return isEmailVerifySuccess;
-};
+  const result = await userService.emailVerify(emailVerifyUser);
 
+  if (typeof result === 'number') {
+    if (result === CODE.NOT_FOUND) {
+      return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
+    }
+    if (result === CODE.UNAUTHORIZED) {
+      return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_VERIFY_ALREADY));
+    }
+    if (result === CODE.BAD_REQUEST) {
+      return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_VERIFY_KEY_MISMATCH));
+    }
+    if (result === CODE.INTERNAL_SERVER_ERROR) {
+      return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+    }
+  }
+
+  return res.status(CODE.OK).json(form.success());
+};
 
 module.exports = {
   join,

@@ -41,13 +41,7 @@ const login = [
 ];
 
 const emailVerify = [
-  check('email')
-    .notEmpty()
-    .withMessage('이메일을 입력해주세요.')
-    .isEmail()
-    .withMessage('이메일은 이메일 형식이어야 합니다.')
-    .isLength({ min: 10, max: 50 })
-    .withMessage('이메일은 최소 10글자부터 최대 50글자까지 가능합니다.'),
+  check('userIdx').notEmpty().withMessage('userIdx를 입력해주세요.').isInt(6),
   check('emailVerifyKey')
     .notEmpty()
     .withMessage('이메일 인증 번호를 입력해주세요.')

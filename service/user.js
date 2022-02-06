@@ -3,8 +3,6 @@ const userDao = require('../dao/user');
 const encrypt = require('../modules/encrypt');
 const emailSender = require('../modules/emailSender');
 const CODE = require('../utils/statusCode');
-const responseMessage = require('../utils/responseMessage');
-const utils = require('../utils/responseForm');
 const redis = require('../modules/redis');
 
 const join = async joinUser => {
@@ -13,7 +11,9 @@ const join = async joinUser => {
 
     joinUser.password = hashPassword;
     joinUser.emailVerifyKey = Math.random().toString().substr(2, 6);
+
     await emailSender.emailVerifySender(joinUser.email, joinUser.emailVerifyKey);
+
     const result = await userDao.join({ joinUser });
     return result;
   } catch (err) {
@@ -70,49 +70,38 @@ const findUserByEmail = async email => {
   }
 };
 
-const emailVerify = async (email, emailVerifyKey, res) => {
-  const isExistUser = await findUserByEmail(email);
-  if (!isExistUser) {
-    const isEmailVerifySuccess = res.status(CODE.DB_ERROR).json(utils.fail(responseMessage.DB_ERROR));
-    return isEmailVerifySuccess;
+const findUserByIdx = async idx => {
+  try {
+    const result = await userDao.findUserByIdx(idx);
+    return result;
+  } catch (err) {
+    throw new Error(err);
   }
-  if (Object.keys(isExistUser).length === 0) {
-    const isEmailVerifySuccess = res.status(CODE.BAD_REQUEST).json(utils.fail(responseMessage.EMAIL_NOT_EXIST));
-    return isEmailVerifySuccess;
-  }
-  if (isExistUser[0].is_email_verify) {
-    const isEmailVerifySuccess = res.status(CODE.BAD_REQUEST).json(utils.fail(responseMessage.EMAIL_VERIFY_ALREADY));
-    return isEmailVerifySuccess;
-  }
-  if (isExistUser[0].email_verify_key !== emailVerifyKey) {
-    const isEmailVerifySuccess = res
-      .status(CODE.BAD_REQUEST)
-      .json(utils.fail(responseMessage.EMAIL_VERIFY_KEY_MISMATCH));
-    return isEmailVerifySuccess;
-  }
-  const daoRow = await userDao.emailVerify(email, emailVerifyKey);
-  if (!daoRow) {
-    const isEmailVerifySuccess = res.status(CODE.DB_ERROR).json(utils.fail(responseMessage.DB_ERROR));
-    return isEmailVerifySuccess;
-  }
-  const isEmailVerifySuccess = res.status(CODE.OK).json(utils.success(responseMessage.EMAIL_VERIFY_SUCCESS));
-  return isEmailVerifySuccess;
 };
 
-const logout = async (email, res) => {
-  await redis.del(email.toString());
+const emailVerify = async ({ userIdx, emailVerifyKey }) => {
+  const user = await findUserByIdx(userIdx);
 
-  const dataToSubmit = {
-    isAuth: false,
-  };
+  if (!user) {
+    return CODE.NOT_FOUND;
+  }
 
-  const isLogoutSuccess = res.status(CODE.OK).json(utils.success(responseMessage.LOGOUT_SUCCESS, dataToSubmit));
-  return isLogoutSuccess;
+  if (user.is_email_verify) {
+    return CODE.UNAUTHORIZED;
+  }
+
+  if (user.email_verify_key !== emailVerifyKey) {
+    return CODE.BAD_REQUEST;
+  }
+
+  const result = await userDao.emailVerify(userIdx, emailVerifyKey);
+  return result;
 };
+
 module.exports = {
   join,
   login,
   findUserByEmail,
+  findUserByIdx,
   emailVerify,
-  logout,
 };
