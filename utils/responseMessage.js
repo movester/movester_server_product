@@ -6,17 +6,34 @@ const responseMessage = {
   LOGIN_FAIL: '로그인 실패',
   LOGOUT_SUCCESS: '로그아웃 성공',
 
-  EMAIL_VERIFY_NOT: '이메일 인증을 하지 않았습니다.',
-  EMAIL_VERIFY_SUCCESS: '이메일 인증 성공',
-  EMAIL_VERIFY_ALREADY: '이미 이메일 인증된 사용자입니다.',
-  EMAIL_VERIFY_KEY_MISMATCH: '이메일 인증 번호가 일치하지 않습니다',
+  POST_CREATE_SUCCESS: '글 등록 성공',
+  POST_LIST_SUCCESS: '글 목록 조회 성공',
+  POST_DETAIL_SUCCESS: '글 상세 조회 성공',
+  POST_UPDATE_SUCCESS: '글 수정 성공',
+  POST_DELETE_SUCCESS: '글 삭제 성공',
+
+  POST_CREATE_FAIL: '글 등록 실패',
+  POST_LIST_FAIL: '글 목록 조회 실패',
+  POST_DETAIL_FAIL: '글 상세 조회 실패',
+  POST_UPDATE_FAIL: '글 수정 실패',
+  POST_DELETE_FAIL: '글 삭제 실패',
+
+  FILE_UPLOAD_SUCCESS: '파일 업로드 성공',
+  FILE_UPLOAD_FAIL: '파일 업로드 실패',
+
+  UPDATE_PASSWORD_SUCCESS: '비밀번호 변경 성공',
 
   EMAIL_ALREADY_EXIST: '존재하는 email 입니다.',
   EMAIL_NOT_EXIST: '존재하지 않는 유저 email 입니다.',
+  NAME_ALREADY_EXIST: '존재하는 username 입니다.',
+  ID_NOT_EXIST: '존재하지 않는 id 입니다.',
 
   PW_MISMATCH: '비밀번호가 일치하지 않습니다',
+  CONFIRM_PW_MISMATCH: '비밀번호 확인이 일치하지 않습니다.',
 
+  UNAUTHORIZED: 'api 사용 권한이 없습니다.',
   TOKEN_EMPTY: '토큰이 없습니다',
+  TOKEN_EXPIRED: '만료된 토큰입니다.',
   TOKEN_INVALID: '올바르지 않은 토큰입니다.',
   TOKEN_GENERATE_REFRESH_SUCCESS: '토큰 재발급 성공',
 
