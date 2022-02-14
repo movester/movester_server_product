@@ -45,8 +45,11 @@ const emailVerify = [
   check('emailVerifyKey')
     .notEmpty()
     .withMessage('이메일 인증 번호를 입력해주세요.')
-    .isInt(6)
-    .withMessage('이메일 인증 번호는 6자리 숫자여야합니다.'),
+    .isInt()
+    .withMessage('이메일 인증 번호는 숫자여야합니다.')
+    .isLength(6)
+    .withMessage('이메일 인증 번호는 6자리입니다.')
+    .toInt(),
 ];
 
 module.exports = {

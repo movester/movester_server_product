@@ -59,7 +59,7 @@ const logout = async (req, res) => {
 
 const emailVerify = async (req, res) => {
   const emailVerifyUser = req.body;
-  const result = await userService.emailVerify(emailVerifyUser);
+  const result = await userService.emailVerify(emailVerifyUser, 0);
 
   if (typeof result === 'number') {
     if (result === CODE.NOT_FOUND) {
@@ -70,6 +70,9 @@ const emailVerify = async (req, res) => {
     }
     if (result === CODE.BAD_REQUEST) {
       return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_VERIFY_KEY_MISMATCH));
+    }
+    if (result === CODE.DUPLICATE) {
+      return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_VERIFY_NOT_FIND));
     }
     if (result === CODE.INTERNAL_SERVER_ERROR) {
       return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));

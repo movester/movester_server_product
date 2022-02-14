@@ -23,7 +23,6 @@ const join = async joinUser => {
 
     const userIdx = await userDao.join({ joinUser });
     setEmailVerifyKey(userIdx, 0, joinUser.email);
-
   } catch (err) {
     console.log(err);
     return CODE.INTERNAL_SERVER_ERROR;
@@ -87,23 +86,19 @@ const findUserByIdx = async idx => {
   }
 };
 
-const emailVerify = async ({ userIdx, emailVerifyKey }) => {
+const emailVerify = async ({ userIdx, emailVerifyKey }, type) => {
   const user = await findUserByIdx(userIdx);
 
-  if (!user) {
-    return CODE.NOT_FOUND;
-  }
+  if (!user) return CODE.NOT_FOUND;
+  if (user.isEmailVerify) return CODE.UNAUTHORIZED;
 
-  if (user.is_email_verify) {
-    return CODE.UNAUTHORIZED;
-  }
+  const key = await userDao.getEmailVerifyKey(userIdx, type);
 
-  if (user.email_verify_key !== emailVerifyKey) {
-    return CODE.BAD_REQUEST;
-  }
+  if (!key) return CODE.DUPLICATE;
+  if (key !== emailVerifyKey) return CODE.BAD_REQUEST;
 
-  const result = await userDao.emailVerify(userIdx, emailVerifyKey);
-  return result;
+  const isEmailVerify = await userDao.emailVerify(userIdx);
+  return isEmailVerify;
 };
 
 module.exports = {

@@ -27,7 +27,7 @@ const join = async ({ joinUser }) => {
                  INTO user (email, password, name, create_at) VALUES ('${joinUser.email}', '${joinUser.password}', '${joinUser.name}', now());`;
 
     const [row] = await connection.query(sql);
-    return row?.insertId
+    return row?.insertId;
   } catch (err) {
     console.log(`===DB Error > ${err}===`);
     throw new Error(err);
@@ -59,9 +59,36 @@ const findUserByIdx = async idx => {
   let connection;
   try {
     connection = await pool.getConnection(async conn => conn);
-    const sql = `SELECT user_idx, email, password, name, is_email_verify, email_verify_key FROM user WHERE user_idx = ${idx}`;
+
+    const sql = `SELECT user_idx AS userIdx, email, password, name, is_email_verify AS isEmailVerify
+                   FROM user
+                  WHERE user_idx = ${idx}`;
+
     const [row] = await connection.query(sql);
     return row.length ? row[0] : undefined;
+  } catch (err) {
+    console.log(`===DB Error > ${err}===`);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
+const getEmailVerifyKey = async (userIdx, type) => {
+  let connection;
+
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `SELECT auth_num AS emailVerifyKey
+                   FROM email_verify
+                  WHERE user_idx = ${userIdx}
+                    AND auth_type = ${type}
+               ORDER BY create_at DESC
+                  LIMIT 1;`;
+
+    const [row] = await connection.query(sql);
+    return row[0]?.emailVerifyKey;
   } catch (err) {
     console.log(`===DB Error > ${err}===`);
     throw new Error(err);
@@ -75,7 +102,10 @@ const emailVerify = async idx => {
   try {
     connection = await pool.getConnection(async conn => conn);
 
-    const sql = `UPDATE user SET is_email_verify = 1 WHERE user_idx = '${idx}'`;
+    const sql = `UPDATE user
+                    SET is_email_verify = 1
+                  WHERE user_idx = '${idx}'`;
+                  
     const [row] = await connection.query(sql);
     return !!Object.keys(row);
   } catch (err) {
@@ -91,5 +121,6 @@ module.exports = {
   join,
   findUserByEmail,
   findUserByIdx,
+  getEmailVerifyKey,
   emailVerify,
 };
