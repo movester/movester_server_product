@@ -1,23 +1,5 @@
 const pool = require('./pool');
 
-const setEmailVerifyKey = async (userIdx, emailVerifyKey, type) => {
-  let connection;
-  try {
-    connection = await pool.getConnection(async conn => conn);
-
-    const sql = `INSERT
-                 INTO user_auth (user_idx, auth_num, auth_type) VALUES (${userIdx}, ${emailVerifyKey}, ${type});`;
-
-    const [row] = await connection.query(sql);
-    return !!Object.keys(row);
-  } catch (err) {
-    console.log(`===DB Error > ${err}===`);
-    throw new Error(err);
-  } finally {
-    connection.release();
-  }
-};
-
 const join = async ({ joinUser }) => {
   let connection;
   try {
@@ -41,7 +23,7 @@ const findUserByEmail = async email => {
   try {
     connection = await pool.getConnection(async conn => conn);
 
-    const sql = `SELECT user_idx AS userIdx, email, password, name, is_email_verify AS isEmailVerify
+    const sql = `SELECT user_idx AS userIdx, email, password, name, is_email_auth AS isEmailAuth
                    FROM user
                   WHERE email = '${email}'`;
 
@@ -60,7 +42,7 @@ const findUserByIdx = async idx => {
   try {
     connection = await pool.getConnection(async conn => conn);
 
-    const sql = `SELECT user_idx AS userIdx, email, password, name, is_email_verify AS isEmailVerify
+    const sql = `SELECT user_idx AS userIdx, email, password, name, is_email_auth AS isEmailAuth
                    FROM user
                   WHERE user_idx = ${idx}`;
 
@@ -74,21 +56,16 @@ const findUserByIdx = async idx => {
   }
 };
 
-const getEmailVerifyKey = async (userIdx, type) => {
+const setEmailAuthNum = async (userIdx, emailAuthNum, type) => {
   let connection;
-
   try {
     connection = await pool.getConnection(async conn => conn);
 
-    const sql = `SELECT auth_num AS emailVerifyKey
-                   FROM user_auth
-                  WHERE user_idx = ${userIdx}
-                    AND auth_type = ${type}
-               ORDER BY create_at DESC
-                  LIMIT 1;`;
+    const sql = `INSERT
+                 INTO user_auth (user_idx, auth_num, auth_type) VALUES (${userIdx}, ${emailAuthNum}, ${type});`;
 
     const [row] = await connection.query(sql);
-    return row[0]?.emailVerifyKey;
+    return !!Object.keys(row);
   } catch (err) {
     console.log(`===DB Error > ${err}===`);
     throw new Error(err);
@@ -97,13 +74,36 @@ const getEmailVerifyKey = async (userIdx, type) => {
   }
 };
 
-const emailVerify = async idx => {
+const getEmailAuthNum = async (userIdx, type) => {
+  let connection;
+
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `SELECT auth_num AS emailAuthNum
+                   FROM user_auth
+                  WHERE user_idx = ${userIdx}
+                    AND auth_type = ${type}
+               ORDER BY create_at DESC
+                  LIMIT 1;`;
+
+    const [row] = await connection.query(sql);
+    return row[0]?.emailAuthNum;
+  } catch (err) {
+    console.log(`===DB Error > ${err}===`);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
+const setIsEmailAuth = async idx => {
   let connection;
   try {
     connection = await pool.getConnection(async conn => conn);
 
     const sql = `UPDATE user
-                    SET is_email_verify = 1
+                    SET is_email_auth = 1
                   WHERE user_idx = '${idx}'`;
 
     const [row] = await connection.query(sql);
@@ -117,10 +117,10 @@ const emailVerify = async idx => {
 };
 
 module.exports = {
-  setEmailVerifyKey,
   join,
   findUserByEmail,
   findUserByIdx,
-  getEmailVerifyKey,
-  emailVerify,
+  setEmailAuthNum,
+  getEmailAuthNum,
+  setIsEmailAuth,
 };

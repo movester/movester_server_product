@@ -40,9 +40,9 @@ const login = [
     .withMessage('비밀번호는 최소 5글자부터 최대 20글자까지 가능합니다.'),
 ];
 
-const emailVerify = [
+const emailAuth = [
   check('userIdx').notEmpty().withMessage('userIdx를 입력해주세요.').isInt(6),
-  check('emailVerifyKey')
+  check('emailAuthNum')
     .notEmpty()
     .withMessage('이메일 인증 번호를 입력해주세요.')
     .isInt()
@@ -55,5 +55,5 @@ const emailVerify = [
 module.exports = {
   join,
   login,
-  emailVerify,
+  emailAuth,
 };

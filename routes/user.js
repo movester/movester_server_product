@@ -9,7 +9,7 @@ const auth = require('../middleware/auth');
 router.post('/join', Validator.join, ValidatorError.join, userCtrl.join);
 router.post('/login', Validator.login, ValidatorError.login, userCtrl.login);
 router.get('/logout', auth.checkToken, userCtrl.logout);
-router.patch('/email-verify', Validator.emailVerify, ValidatorError.emailVerify, userCtrl.emailVerify);
+router.patch('/email-auth/join', Validator.emailAuth, ValidatorError.emailAuth, userCtrl.emailAuthForJoin);
 
 
 module.exports = router;

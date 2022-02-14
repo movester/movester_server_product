@@ -57,24 +57,24 @@ const logout = async (req, res) => {
   res.clearCookie('accessToken').clearCookie('refreshToken').status(CODE.OK).json(form.success(MSG.LOGOUT_SUCCESS));
 };
 
-const emailVerify = async (req, res) => {
-  const emailVerifyUser = req.body;
-  const result = await userService.emailVerify(emailVerifyUser, 0);
+const emailAuthForJoin = async (req, res) => {
+  const emailAuthUser = req.body;
+  const isEmailAuth = await userService.emailAuthForJoin(emailAuthUser);
 
-  if (typeof result === 'number') {
-    if (result === CODE.NOT_FOUND) {
+  if (typeof isEmailAuth === 'number') {
+    if (isEmailAuth === CODE.NOT_FOUND) {
       return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
     }
-    if (result === CODE.UNAUTHORIZED) {
+    if (isEmailAuth === CODE.UNAUTHORIZED) {
       return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_VERIFY_ALREADY));
     }
-    if (result === CODE.BAD_REQUEST) {
+    if (isEmailAuth === CODE.BAD_REQUEST) {
       return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_VERIFY_KEY_MISMATCH));
     }
-    if (result === CODE.DUPLICATE) {
+    if (isEmailAuth === CODE.DUPLICATE) {
       return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_VERIFY_NOT_FIND));
     }
-    if (result === CODE.INTERNAL_SERVER_ERROR) {
+    if (isEmailAuth === CODE.INTERNAL_SERVER_ERROR) {
       return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
     }
   }
@@ -86,5 +86,5 @@ module.exports = {
   join,
   login,
   logout,
-  emailVerify,
+  emailAuthForJoin,
 };

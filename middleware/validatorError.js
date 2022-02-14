@@ -25,7 +25,7 @@ const login = (req, res, next) => {
   next();
 };
 
-const emailVerify = (req, res, next) => {
+const emailAuth = (req, res, next) => {
   const err = validationResult(req);
   const missDataToSubmit = {
     requestParameteError: err.array(),
@@ -39,5 +39,5 @@ const emailVerify = (req, res, next) => {
 module.exports = {
   join,
   login,
-  emailVerify,
+  emailAuth,
 };

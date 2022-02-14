@@ -5,12 +5,12 @@ const emailSender = require('../modules/emailSender');
 const CODE = require('../utils/statusCode');
 const redis = require('../modules/redis');
 
-const setEmailVerifyKey = async (userIdx, type, email) => {
+const sendEmail = async (userIdx, email, type) => {
   try {
-    const emailVerifyKey = Math.floor(Math.random() * (999999 - 100000) + 100000);
+    const emailAuthNum = Math.floor(Math.random() * (999999 - 100000) + 100000);
 
-    await userDao.setEmailVerifyKey(userIdx, emailVerifyKey, type);
-    await emailSender.emailVerifySender(email, emailVerifyKey);
+    await userDao.setEmailAuthNum(userIdx, emailAuthNum, type);
+    await emailSender.emailAuthSender(email, emailAuthNum);
   } catch (err) {
     throw new Error(err);
   }
@@ -22,7 +22,7 @@ const join = async joinUser => {
     joinUser.password = hashPassword;
 
     const userIdx = await userDao.join({ joinUser });
-    setEmailVerifyKey(userIdx, 0, joinUser.email);
+    sendEmail(userIdx, joinUser.email, 1);
   } catch (err) {
     console.log(err);
     return CODE.INTERNAL_SERVER_ERROR;
@@ -43,7 +43,7 @@ const login = async ({ email, password }) => {
       return CODE.NOT_FOUND;
     }
 
-    if (!user.isEmailVerify) {
+    if (!user.isEmailAuth) {
       return CODE.UNAUTHORIZED;
     }
 
@@ -70,8 +70,8 @@ const login = async ({ email, password }) => {
 
 const findUserByEmail = async email => {
   try {
-    const result = await userDao.findUserByEmail(email);
-    return result;
+    const user = await userDao.findUserByEmail(email);
+    return user;
   } catch (err) {
     throw new Error(err);
   }
@@ -79,27 +79,29 @@ const findUserByEmail = async email => {
 
 const findUserByIdx = async idx => {
   try {
-    const result = await userDao.findUserByIdx(idx);
-    return result;
+    const user = await userDao.findUserByIdx(idx);
+    return user;
   } catch (err) {
     throw new Error(err);
   }
 };
 
-const emailVerify = async ({ userIdx, emailVerifyKey }, type) => {
+const emailAuthForJoin = async ({ userIdx, emailAuthNum:reqNum }) => {
   try {
     const user = await findUserByIdx(userIdx);
 
     if (!user) return CODE.NOT_FOUND;
-    if (user.isEmailVerify) return CODE.UNAUTHORIZED;
+    if (user.isEmailAuth) return CODE.UNAUTHORIZED;
 
-    const key = await userDao.getEmailVerifyKey(userIdx, type);
+    const type = 1;
+    const authNum = await userDao.getEmailAuthNum(userIdx, type);
 
-    if (!key) return CODE.DUPLICATE;
-    if (key !== emailVerifyKey) return CODE.BAD_REQUEST;
+    if (!authNum) return CODE.DUPLICATE;
 
-    const isEmailVerify = await userDao.emailVerify(userIdx);
-    return isEmailVerify;
+    if (authNum !== reqNum) return CODE.BAD_REQUEST;
+
+    const isEmailAuth = await userDao.setIsEmailAuth(userIdx);
+    return isEmailAuth;
   } catch (err) {
     console.log(err);
     return CODE.INTERNAL_SERVER_ERROR;
@@ -107,10 +109,10 @@ const emailVerify = async ({ userIdx, emailVerifyKey }, type) => {
 };
 
 module.exports = {
-  setEmailVerifyKey,
+  sendEmail,
   join,
   login,
   findUserByEmail,
   findUserByIdx,
-  emailVerify,
+  emailAuthForJoin,
 };

@@ -1,6 +1,6 @@
 const smtpTransport = require('../config/nodemailer');
 
-const emailVerifySender = async (email, emailVerifyKey) => {
+const emailAuthSender = async (email, emailVerifyKey) => {
   const mailOptions = {
     from: process.env.NODEMAILER_USER,
     to: `${email}`,
@@ -23,5 +23,5 @@ const emailVerifySender = async (email, emailVerifyKey) => {
 };
 
 module.exports = {
-  emailVerifySender,
+  emailAuthSender,
 };
