@@ -27,29 +27,29 @@ const join = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const loginUser = req.body;
-  const result = await userService.login(loginUser);
+  const reqUser = req.body;
+  const loginUser = await userService.login(reqUser);
 
-  if (typeof result === 'number') {
-    if (result === CODE.BAD_REQUEST) {
+  if (typeof loginUser === 'number') {
+    if (loginUser === CODE.BAD_REQUEST) {
       return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_NOT_EXIST));
     }
-    if (result === CODE.NOT_FOUND) {
+    if (loginUser === CODE.NOT_FOUND) {
       return res.status(CODE.NOT_FOUND).json(form.fail(MSG.PW_MISMATCH));
     }
-    if (result === CODE.UNAUTHORIZED) {
+    if (loginUser === CODE.UNAUTHORIZED) {
       return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_VERIFY_NOT));
     }
-    if (result === CODE.INTERNAL_SERVER_ERROR) {
+    if (loginUser === CODE.INTERNAL_SERVER_ERROR) {
       return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
     }
   }
 
   return res
     .status(CODE.OK)
-    .cookie('accessToken', result.token.accessToken, { httpOnly: true })
-    .cookie('refreshToken', result.token.refreshToken, { httpOnly: true })
-    .json(form.success(result.user));
+    .cookie('accessToken', loginUser.token.accessToken, { httpOnly: true })
+    .cookie('refreshToken', loginUser.token.refreshToken, { httpOnly: true })
+    .json(form.success(loginUser.user));
 };
 
 const logout = async (req, res) => {

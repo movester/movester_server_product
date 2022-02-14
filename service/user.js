@@ -44,20 +44,20 @@ const login = async ({ email, password }) => {
       return CODE.NOT_FOUND;
     }
 
-    if (!user.is_email_verify) {
+    if (!user.isEmailVerify) {
       return CODE.UNAUTHORIZED;
     }
 
     const token = {
-      accessToken: await jwt.signAccessToken({ idx: user.user_idx, email: user.email }),
-      refreshToken: await jwt.signRefreshToken({ idx: user.user_idx, email: user.email }),
+      accessToken: await jwt.signAccessToken({ idx: user.userIdx, email: user.email }),
+      refreshToken: await jwt.signRefreshToken({ idx: user.userIdx, email: user.email }),
     };
 
-    redis.set(user.user_idx, token.refreshToken);
+    redis.set(user.userIdx, token.refreshToken);
 
     return {
       user: {
-        userIdx: user.user_idx,
+        userIdx: user.userIdx,
         email: user.email,
         name: user.name,
       },

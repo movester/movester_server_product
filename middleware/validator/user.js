@@ -36,8 +36,8 @@ const login = [
   check('password')
     .notEmpty()
     .withMessage('비밀번호를 입력해주세요.')
-    .isLength({ min: 4, max: 20 })
-    .withMessage('비밀번호는 최소 8글자부터 최대 20글자까지 가능합니다.'),
+    .isLength({ min: 5, max: 20 })
+    .withMessage('비밀번호는 최소 5글자부터 최대 20글자까지 가능합니다.'),
 ];
 
 const emailVerify = [
@@ -46,7 +46,7 @@ const emailVerify = [
     .notEmpty()
     .withMessage('이메일 인증 번호를 입력해주세요.')
     .isInt(6)
-    .withMessage('이메일 인증 번호는 6자리 숫자입니다'),
+    .withMessage('이메일 인증 번호는 6자리 숫자여야합니다.'),
 ];
 
 module.exports = {
