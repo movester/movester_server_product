@@ -6,7 +6,7 @@ const setEmailVerifyKey = async (userIdx, emailVerifyKey, type) => {
     connection = await pool.getConnection(async conn => conn);
 
     const sql = `INSERT
-                 INTO email_verify (user_idx, auth_num, auth_type, create_at) VALUES (${userIdx}, ${emailVerifyKey}, ${type}, now());`;
+                 INTO user_auth (user_idx, auth_num, auth_type) VALUES (${userIdx}, ${emailVerifyKey}, ${type});`;
 
     const [row] = await connection.query(sql);
     return !!Object.keys(row);
@@ -24,7 +24,7 @@ const join = async ({ joinUser }) => {
     connection = await pool.getConnection(async conn => conn);
 
     const sql = `INSERT
-                 INTO user (email, password, name, create_at) VALUES ('${joinUser.email}', '${joinUser.password}', '${joinUser.name}', now());`;
+                 INTO user (email, password, name) VALUES ('${joinUser.email}', '${joinUser.password}', '${joinUser.name}');`;
 
     const [row] = await connection.query(sql);
     return row?.insertId;
@@ -81,7 +81,7 @@ const getEmailVerifyKey = async (userIdx, type) => {
     connection = await pool.getConnection(async conn => conn);
 
     const sql = `SELECT auth_num AS emailVerifyKey
-                   FROM email_verify
+                   FROM user_auth
                   WHERE user_idx = ${userIdx}
                     AND auth_type = ${type}
                ORDER BY create_at DESC
@@ -105,7 +105,7 @@ const emailVerify = async idx => {
     const sql = `UPDATE user
                     SET is_email_verify = 1
                   WHERE user_idx = '${idx}'`;
-                  
+
     const [row] = await connection.query(sql);
     return !!Object.keys(row);
   } catch (err) {

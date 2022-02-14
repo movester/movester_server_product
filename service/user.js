@@ -87,18 +87,23 @@ const findUserByIdx = async idx => {
 };
 
 const emailVerify = async ({ userIdx, emailVerifyKey }, type) => {
-  const user = await findUserByIdx(userIdx);
+  try {
+    const user = await findUserByIdx(userIdx);
 
-  if (!user) return CODE.NOT_FOUND;
-  if (user.isEmailVerify) return CODE.UNAUTHORIZED;
+    if (!user) return CODE.NOT_FOUND;
+    if (user.isEmailVerify) return CODE.UNAUTHORIZED;
 
-  const key = await userDao.getEmailVerifyKey(userIdx, type);
+    const key = await userDao.getEmailVerifyKey(userIdx, type);
 
-  if (!key) return CODE.DUPLICATE;
-  if (key !== emailVerifyKey) return CODE.BAD_REQUEST;
+    if (!key) return CODE.DUPLICATE;
+    if (key !== emailVerifyKey) return CODE.BAD_REQUEST;
 
-  const isEmailVerify = await userDao.emailVerify(userIdx);
-  return isEmailVerify;
+    const isEmailVerify = await userDao.emailVerify(userIdx);
+    return isEmailVerify;
+  } catch (err) {
+    console.log(err);
+    return CODE.INTERNAL_SERVER_ERROR;
+  }
 };
 
 module.exports = {
