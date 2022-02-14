@@ -5,17 +5,25 @@ const emailSender = require('../modules/emailSender');
 const CODE = require('../utils/statusCode');
 const redis = require('../modules/redis');
 
+const setEmailVerifyKey = async (userIdx, type, email) => {
+  try {
+    const emailVerifyKey = Math.floor(Math.random() * (999999 - 100000) + 100000);
+
+    await userDao.setEmailVerifyKey(userIdx, emailVerifyKey, type);
+    await emailSender.emailVerifySender(email, emailVerifyKey);
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
 const join = async joinUser => {
   try {
     const hashPassword = await encrypt.hash(joinUser.password);
-
     joinUser.password = hashPassword;
-    joinUser.emailVerifyKey = Math.random().toString().substr(2, 6);
 
-    await emailSender.emailVerifySender(joinUser.email, joinUser.emailVerifyKey);
+    const userIdx = await userDao.join({ joinUser });
+    setEmailVerifyKey(userIdx, 0, joinUser.email);
 
-    const result = await userDao.join({ joinUser });
-    return result;
   } catch (err) {
     console.log(err);
     return CODE.INTERNAL_SERVER_ERROR;
@@ -99,6 +107,7 @@ const emailVerify = async ({ userIdx, emailVerifyKey }) => {
 };
 
 module.exports = {
+  setEmailVerifyKey,
   join,
   login,
   findUserByEmail,

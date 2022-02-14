@@ -18,9 +18,9 @@ const join = async (req, res) => {
   } catch (err) {
     return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
-  const result = await userService.join(joinUser);
+  const isJoin = await userService.join(joinUser);
 
-  if (result === CODE.INTERNAL_SERVER_ERROR) {
+  if (isJoin === CODE.INTERNAL_SERVER_ERROR) {
     return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
   res.status(CODE.CREATED).json(form.success());

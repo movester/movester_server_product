@@ -1,12 +1,33 @@
 const pool = require('./pool');
 
+const setEmailVerifyKey = async (userIdx, emailVerifyKey, type) => {
+  let connection;
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `INSERT
+                 INTO email_verify (user_idx, auth_num, auth_type, create_at) VALUES (${userIdx}, ${emailVerifyKey}, ${type}, now());`;
+
+    const [row] = await connection.query(sql);
+    return !!Object.keys(row);
+  } catch (err) {
+    console.log(`===DB Error > ${err}===`);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
 const join = async ({ joinUser }) => {
   let connection;
   try {
     connection = await pool.getConnection(async conn => conn);
-    const sql = `INSERT INTO user (email, password, name, email_verify_key, create_at) VALUES ('${joinUser.email}', '${joinUser.password}', '${joinUser.name}', '${joinUser.emailVerifyKey}', now())`;
+
+    const sql = `INSERT
+                 INTO user (email, password, name, create_at) VALUES ('${joinUser.email}', '${joinUser.password}', '${joinUser.name}', now());`;
+
     const [row] = await connection.query(sql);
-    return row.length ? row[0] : undefined;
+    return row?.insertId
   } catch (err) {
     console.log(`===DB Error > ${err}===`);
     throw new Error(err);
@@ -36,6 +57,7 @@ const findUserByEmail = async email => {
     connection = await pool.getConnection(async conn => conn);
     const sql = `SELECT user_idx, email, password, name, is_email_verify FROM user WHERE email = '${email}'`;
     const [row] = await connection.query(sql);
+    console.log(row)
     return row.length ? row[0] : undefined;
   } catch (err) {
     console.log(`===DB Error > ${err}===`);
@@ -77,6 +99,7 @@ const emailVerify = async idx => {
 };
 
 module.exports = {
+  setEmailVerifyKey,
   join,
   login,
   findUserByEmail,

@@ -11,13 +11,13 @@ const join = [
   check('password')
     .notEmpty()
     .withMessage('비밀번호를 입력해주세요.')
-    .isLength({ min: 4, max: 20 }) // 개발시 테스트 버전
-    .withMessage('비밀번호는 최소 8글자부터 최대 20글자까지 가능합니다.'),
+    .isLength({ min: 5, max: 20 })
+    .withMessage('비밀번호는 최소 5글자부터 최대 20글자까지 가능합니다.'),
   check('confirmPassword')
     .notEmpty()
     .withMessage('확인 비밀번호를 입력해주세요.')
-    .isLength({ min: 4, max: 20 })
-    .withMessage('비밀번호는 최소 8글자부터 최대 20글자까지 가능합니다.'),
+    .isLength({ min: 5, max: 20 })
+    .withMessage('비밀번호는 최소 5글자부터 최대 20글자까지 가능합니다.'),
   check('name')
     .notEmpty()
     .withMessage('이름 입력해주세요.')
