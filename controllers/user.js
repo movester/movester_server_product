@@ -94,6 +94,7 @@ const sendEmailForPwChange = async (req, res) => {
     await userService.sendEmailForPwChange(isExistUser.userIdx, email);
     return res.status(CODE.OK).json(form.success());
   } catch (err) {
+    console.log('Ctrl Error: sendEmailForPwChange ', err);
     return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
 };
