@@ -82,9 +82,26 @@ const emailAuthForJoin = async (req, res) => {
   return res.status(CODE.OK).json(form.success());
 };
 
+const sendEmailForPwChange = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const isExistUser = await userService.findUserByEmail(email);
+    if (!isExistUser) {
+      return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
+    }
+
+    await userService.sendEmailForPwChange(isExistUser.userIdx, email);
+    return res.status(CODE.OK).json(form.success());
+  } catch (err) {
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
 module.exports = {
   join,
   login,
   logout,
   emailAuthForJoin,
+  sendEmailForPwChange,
 };

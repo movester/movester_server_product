@@ -10,8 +10,9 @@ const sendEmail = async (userIdx, email, type) => {
     const emailAuthNum = Math.floor(Math.random() * (999999 - 100000) + 100000);
 
     await userDao.setEmailAuthNum(userIdx, emailAuthNum, type);
-    await emailSender.emailAuthSender(email, emailAuthNum);
+    await emailSender.emailAuthSender(email, emailAuthNum, type);
   } catch (err) {
+    console.log('Service Error: sendEmail ', err);
     throw new Error(err);
   }
 };
@@ -86,7 +87,7 @@ const findUserByIdx = async idx => {
   }
 };
 
-const emailAuthForJoin = async ({ userIdx, emailAuthNum:reqNum }) => {
+const emailAuthForJoin = async ({ userIdx, emailAuthNum: reqNum }) => {
   try {
     const user = await findUserByIdx(userIdx);
 
@@ -108,6 +109,16 @@ const emailAuthForJoin = async ({ userIdx, emailAuthNum:reqNum }) => {
   }
 };
 
+const sendEmailForPwChange = async (userIdx, email) => {
+  try {
+    const type = 2;
+    sendEmail(userIdx, email, type);
+  } catch (err) {
+    console.log('Service Error: sendEmailForPwChange ', err);
+    throw new Error(err);
+  }
+};
+
 module.exports = {
   sendEmail,
   join,
@@ -115,4 +126,5 @@ module.exports = {
   findUserByEmail,
   findUserByIdx,
   emailAuthForJoin,
+  sendEmailForPwChange,
 };

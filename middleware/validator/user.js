@@ -52,8 +52,19 @@ const emailAuth = [
     .toInt(),
 ];
 
+const checkEmail = [
+  check('email')
+    .notEmpty()
+    .withMessage('이메일을 입력해주세요.')
+    .isEmail()
+    .withMessage('이메일은 이메일 형식이어야 합니다.')
+    .isLength({ min: 10, max: 50 })
+    .withMessage('이메일은 최소 10글자부터 최대 50글자까지 가능합니다.'),
+];
+
 module.exports = {
   join,
   login,
   emailAuth,
+  checkEmail,
 };

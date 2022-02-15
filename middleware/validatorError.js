@@ -3,29 +3,7 @@ const CODE = require('../utils/statusCode');
 const MSG = require('../utils/responseMessage');
 const form = require('../utils/responseForm');
 
-const join = (req, res, next) => {
-  const err = validationResult(req);
-  const missDataToSubmit = {
-    requestParameteError: err.array(),
-  };
-  if (!err.isEmpty()) {
-    return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.VALUE_INVALID, missDataToSubmit));
-  }
-  next();
-};
-
-const login = (req, res, next) => {
-  const err = validationResult(req);
-  const missDataToSubmit = {
-    requestParameteError: err.array(),
-  };
-  if (!err.isEmpty()) {
-    return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.VALUE_INVALID, missDataToSubmit));
-  }
-  next();
-};
-
-const emailAuth = (req, res, next) => {
+const err = (req, res, next) => {
   const err = validationResult(req);
   const missDataToSubmit = {
     requestParameteError: err.array(),
@@ -37,7 +15,5 @@ const emailAuth = (req, res, next) => {
 };
 
 module.exports = {
-  join,
-  login,
-  emailAuth,
+  err,
 };
