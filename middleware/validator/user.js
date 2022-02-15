@@ -1,24 +1,24 @@
-const { check } = require('express-validator');
+const { query, body } = require('express-validator');
 
 const join = [
-  check('email')
+  body('email')
     .notEmpty()
     .withMessage('이메일을 입력해주세요.')
     .isEmail()
     .withMessage('이메일은 이메일 형식이어야 합니다.')
     .isLength({ min: 10, max: 50 })
     .withMessage('이메일은 최소 10글자부터 최대 50글자까지 가능합니다.'),
-  check('password')
+  body('password')
     .notEmpty()
     .withMessage('비밀번호를 입력해주세요.')
     .isLength({ min: 5, max: 20 })
     .withMessage('비밀번호는 최소 5글자부터 최대 20글자까지 가능합니다.'),
-  check('confirmPassword')
+  body('confirmPassword')
     .notEmpty()
     .withMessage('확인 비밀번호를 입력해주세요.')
     .isLength({ min: 5, max: 20 })
     .withMessage('비밀번호는 최소 5글자부터 최대 20글자까지 가능합니다.'),
-  check('name')
+  body('name')
     .notEmpty()
     .withMessage('이름 입력해주세요.')
     .isLength({ min: 1, max: 12 })
@@ -26,23 +26,41 @@ const join = [
 ];
 
 const login = [
-  check('email')
+  body('email')
     .notEmpty()
     .withMessage('이메일을 입력해주세요.')
     .isEmail()
     .withMessage('이메일은 이메일 형식이어야 합니다.')
     .isLength({ min: 10, max: 50 })
     .withMessage('이메일은 최소 10글자부터 최대 50글자까지 가능합니다.'),
-  check('password')
+  body('password')
     .notEmpty()
     .withMessage('비밀번호를 입력해주세요.')
     .isLength({ min: 5, max: 20 })
     .withMessage('비밀번호는 최소 5글자부터 최대 20글자까지 가능합니다.'),
 ];
 
-const emailAuth = [
-  check('userIdx').notEmpty().withMessage('userIdx를 입력해주세요.').isInt(6),
-  check('emailAuthNum')
+const emailAuthForJoin = [
+  body('userIdx').notEmpty().withMessage('userIdx를 입력해주세요.').isInt(6),
+  body('emailAuthNum')
+    .notEmpty()
+    .withMessage('이메일 인증 번호를 입력해주세요.')
+    .isInt()
+    .withMessage('이메일 인증 번호는 숫자여야합니다.')
+    .isLength(6)
+    .withMessage('이메일 인증 번호는 6자리입니다.')
+    .toInt(),
+];
+
+const emailAuthForPw = [
+  query('email')
+    .notEmpty()
+    .withMessage('이메일을 입력해주세요.')
+    .isEmail()
+    .withMessage('이메일은 이메일 형식이어야 합니다.')
+    .isLength({ min: 10, max: 50 })
+    .withMessage('이메일은 최소 10글자부터 최대 50글자까지 가능합니다.'),
+  query('emailAuthNum')
     .notEmpty()
     .withMessage('이메일 인증 번호를 입력해주세요.')
     .isInt()
@@ -53,7 +71,7 @@ const emailAuth = [
 ];
 
 const checkEmail = [
-  check('email')
+  body('email')
     .notEmpty()
     .withMessage('이메일을 입력해주세요.')
     .isEmail()
@@ -65,6 +83,7 @@ const checkEmail = [
 module.exports = {
   join,
   login,
-  emailAuth,
+  emailAuthForJoin,
+  emailAuthForPw,
   checkEmail,
 };

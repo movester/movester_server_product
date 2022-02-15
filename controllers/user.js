@@ -99,10 +99,37 @@ const sendEmailForPwChange = async (req, res) => {
   }
 };
 
+const emailAuthForPw = async (req, res) => {
+  const { email, emailAuthNum } = req.query;
+
+  try {
+    const isExistUser = await userService.findUserByEmail(email);
+    if (!isExistUser) {
+      return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
+    }
+
+    const isEmailAuth = await userService.emailAuthForPw(isExistUser.userIdx, emailAuthNum);
+
+    switch (isEmailAuth) {
+      case CODE.NOT_FOUND:
+        return res.status(CODE.NOT_FOUND).json(form.fail('인증 번호 발송 내역이 없습니다.'));
+      case CODE.BAD_REQUEST:
+        return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_VERIFY_KEY_MISMATCH));
+      case CODE.OK:
+        return res.status(CODE.OK).json(form.success());
+      default:
+    }
+  } catch (err) {
+    console.log('Ctrl Error: emailAuthForPw ', err);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
 module.exports = {
   join,
   login,
   logout,
   emailAuthForJoin,
   sendEmailForPwChange,
+  emailAuthForPw,
 };
