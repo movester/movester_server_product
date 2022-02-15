@@ -5,11 +5,8 @@ const form = require('../utils/responseForm');
 
 const err = (req, res, next) => {
   const err = validationResult(req);
-  const missDataToSubmit = {
-    requestParameteError: err.array(),
-  };
   if (!err.isEmpty()) {
-    return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.VALUE_INVALID, missDataToSubmit));
+    return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.VALUE_INVALID, err.array()));
   }
   next();
 };
