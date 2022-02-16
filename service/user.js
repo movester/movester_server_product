@@ -122,6 +122,21 @@ const sendEmailForPwReset = async (userIdx, email) => {
   }
 };
 
+const emailAuthForPwReset = async (userIdx, reqNum) => {
+  try {
+    const type = 2;
+    const authNum = await userDao.getEmailAuthNum(userIdx, type);
+
+    if (!authNum) return CODE.NOT_FOUND;
+    if (authNum !== reqNum) return CODE.BAD_REQUEST;
+
+    return CODE.OK;
+  } catch (err) {
+    console.log('Service Error: emailAuthForPwReset ', err);
+    throw new Error(err);
+  }
+};
+
 module.exports = {
   sendEmail,
   join,
@@ -130,4 +145,5 @@ module.exports = {
   findUserByIdx,
   emailAuthForJoin,
   sendEmailForPwReset,
+  emailAuthForPwReset,
 };
