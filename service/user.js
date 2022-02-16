@@ -7,8 +7,8 @@ const redis = require('../modules/redis');
 
 const EMAIL_AUTH_TYPE = {
   JOIN: 1,
-  PASSWORD_RESET: 2
-}
+  PASSWORD_RESET: 2,
+};
 
 const sendEmail = async (userIdx, email, type) => {
   try {
@@ -124,13 +124,24 @@ const sendEmailForPwReset = async (userIdx, email) => {
 
 const emailAuthForPwReset = async (userIdx, reqNum) => {
   try {
-    const type = 2;
+    const type = EMAIL_AUTH_TYPE.PASSWORD_RESET;
     const authNum = await userDao.getEmailAuthNum(userIdx, type);
 
     if (!authNum) return CODE.NOT_FOUND;
     if (authNum !== reqNum) return CODE.BAD_REQUEST;
 
     return CODE.OK;
+  } catch (err) {
+    console.log('Service Error: emailAuthForPwReset ', err);
+    throw new Error(err);
+  }
+};
+
+const isCorrectPassword = async (userIdx, password) => {
+  try {
+    const user = await findUserByIdx(userIdx);
+    const isCorrectPassword = await encrypt.compare(password, user.password);
+    return isCorrectPassword;
   } catch (err) {
     console.log('Service Error: emailAuthForPwReset ', err);
     throw new Error(err);
@@ -146,4 +157,5 @@ module.exports = {
   emailAuthForJoin,
   sendEmailForPwReset,
   emailAuthForPwReset,
+  isCorrectPassword,
 };
