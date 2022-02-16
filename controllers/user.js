@@ -1,4 +1,5 @@
 const userService = require('../service/user');
+const encrypt = require('../modules/encrypt');
 const CODE = require('../utils/statusCode');
 const MSG = require('../utils/responseMessage');
 const form = require('../utils/responseForm');
@@ -145,6 +146,30 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  const userIdx = req.cookies.idx;
+  const { curPassword, newPassword, confirmPassword } = req.body;
+
+  if (newPassword !== confirmPassword) {
+    return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.CONFIRM_PW_MISMATCH));
+  }
+
+  try {
+    const user = await userService.findUserByIdx(userIdx);
+    if (!user) return res.status(CODE.NOT_FOUND).json(form.fail(MSG.USER_NOT_EXIST));
+
+    const isCorrectPassword = await encrypt.compare(curPassword, user.password);
+    if (!isCorrectPassword) return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.PW_MISMATCH));
+
+    await userService.resetPassword(userIdx, newPassword);
+
+    return res.status(CODE.OK).json(form.success());
+  } catch (err) {
+    console.log('Ctrl Error: changePassword ', err);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
 module.exports = {
   join,
   login,
@@ -153,4 +178,5 @@ module.exports = {
   sendEmailForPwReset,
   emailAuthForPwReset,
   resetPassword,
+  changePassword,
 };

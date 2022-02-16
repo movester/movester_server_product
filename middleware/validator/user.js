@@ -100,11 +100,30 @@ const resetPassword = [
     .withMessage('비밀번호는 최소 5글자부터 최대 20글자까지 가능합니다.'),
 ];
 
+const changePassword = [
+  body('curPassword')
+    .notEmpty()
+    .withMessage('비밀번호를 입력해주세요.')
+    .isLength({ min: 5, max: 20 })
+    .withMessage('비밀번호는 최소 5글자부터 최대 20글자까지 가능합니다.'),
+  body('newPassword')
+    .notEmpty()
+    .withMessage('비밀번호를 입력해주세요.')
+    .isLength({ min: 5, max: 20 })
+    .withMessage('비밀번호는 최소 5글자부터 최대 20글자까지 가능합니다.'),
+  body('confirmPassword')
+    .notEmpty()
+    .withMessage('확인 비밀번호를 입력해주세요.')
+    .isLength({ min: 5, max: 20 })
+    .withMessage('비밀번호는 최소 5글자부터 최대 20글자까지 가능합니다.'),
+];
+
 module.exports = {
   join,
   login,
   emailAuthForJoin,
   emailAuthForPwReset,
   checkEmail,
-  resetPassword
+  resetPassword,
+  changePassword
 };

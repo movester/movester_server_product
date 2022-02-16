@@ -14,5 +14,6 @@ router.post('/email-auth/password', Validator.checkEmail, ValidatorError.err, us
 router.get('/email-auth/password', Validator.emailAuthForPwReset, ValidatorError.err, userCtrl.emailAuthForPwReset);
 router.get('/email-auth/password', Validator.emailAuthForPwReset, ValidatorError.err, userCtrl.emailAuthForPwReset);
 router.patch('/password/reset', Validator.resetPassword, ValidatorError.err, userCtrl.resetPassword);
+router.patch('/password', auth.checkToken, Validator.changePassword, ValidatorError.err, userCtrl.changePassword);
 
 module.exports = router;
