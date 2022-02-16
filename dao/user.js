@@ -116,6 +116,26 @@ const setIsEmailAuth = async idx => {
   }
 };
 
+const resetPassword = async (idx, password) => {
+  let connection;
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `UPDATE user
+                    SET password = '${password}'
+                  WHERE user_idx = '${idx}'`;
+
+    const [row] = await connection.query(sql);
+
+    return !!Object.keys(row);
+  } catch (err) {
+    console.log(`===DB Error > ${err}===`);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
 module.exports = {
   join,
   findUserByEmail,
@@ -123,4 +143,5 @@ module.exports = {
   setEmailAuthNum,
   getEmailAuthNum,
   setIsEmailAuth,
+  resetPassword
 };

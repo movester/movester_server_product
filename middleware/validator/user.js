@@ -80,10 +80,31 @@ const checkEmail = [
     .withMessage('이메일은 최소 10글자부터 최대 50글자까지 가능합니다.'),
 ];
 
+const resetPassword = [
+  body('email')
+    .notEmpty()
+    .withMessage('이메일을 입력해주세요.')
+    .isEmail()
+    .withMessage('이메일은 이메일 형식이어야 합니다.')
+    .isLength({ min: 10, max: 50 })
+    .withMessage('이메일은 최소 10글자부터 최대 50글자까지 가능합니다.'),
+  body('password')
+    .notEmpty()
+    .withMessage('비밀번호를 입력해주세요.')
+    .isLength({ min: 5, max: 20 })
+    .withMessage('비밀번호는 최소 5글자부터 최대 20글자까지 가능합니다.'),
+  body('confirmPassword')
+    .notEmpty()
+    .withMessage('확인 비밀번호를 입력해주세요.')
+    .isLength({ min: 5, max: 20 })
+    .withMessage('비밀번호는 최소 5글자부터 최대 20글자까지 가능합니다.'),
+];
+
 module.exports = {
   join,
   login,
   emailAuthForJoin,
   emailAuthForPwReset,
   checkEmail,
+  resetPassword
 };

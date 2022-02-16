@@ -125,6 +125,26 @@ const emailAuthForPwReset = async (req, res) => {
   }
 };
 
+const resetPassword = async (req, res) => {
+  const { email, password, confirmPassword } = req.body;
+
+  if (password !== confirmPassword) {
+    return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.CONFIRM_PW_MISMATCH));
+  }
+
+  try {
+    const isExistUser = await userService.findUserByEmail(email);
+    if (!isExistUser) return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
+
+    await userService.resetPassword(isExistUser.userIdx, password);
+
+    return res.status(CODE.OK).json(form.success());
+  } catch (err) {
+    console.log('Ctrl Error: resetPassword ', err);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
 module.exports = {
   join,
   login,
@@ -132,4 +152,5 @@ module.exports = {
   emailAuthForJoin,
   sendEmailForPwReset,
   emailAuthForPwReset,
+  resetPassword,
 };

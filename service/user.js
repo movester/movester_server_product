@@ -137,6 +137,17 @@ const emailAuthForPwReset = async (userIdx, reqNum) => {
   }
 };
 
+const resetPassword = async (userIdx, password) => {
+  try {
+    const hashPassword = await encrypt.hash(password);
+    await userDao.resetPassword(userIdx, hashPassword);
+    return CODE.OK;
+  } catch (err) {
+    console.log('Service Error: emailAuthForPwReset ', err);
+    throw new Error(err);
+  }
+};
+
 module.exports = {
   sendEmail,
   join,
@@ -146,4 +157,5 @@ module.exports = {
   emailAuthForJoin,
   sendEmailForPwReset,
   emailAuthForPwReset,
+  resetPassword
 };
