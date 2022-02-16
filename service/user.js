@@ -5,6 +5,11 @@ const emailSender = require('../modules/emailSender');
 const CODE = require('../utils/statusCode');
 const redis = require('../modules/redis');
 
+const EMAIL_AUTH_TYPE = {
+  JOIN: 1,
+  PASSWORD_RESET: 2
+}
+
 const sendEmail = async (userIdx, email, type) => {
   try {
     const emailAuthNum = Math.floor(Math.random() * (999999 - 100000) + 100000);
@@ -23,7 +28,7 @@ const join = async joinUser => {
     joinUser.password = hashPassword;
 
     const userIdx = await userDao.join({ joinUser });
-    sendEmail(userIdx, joinUser.email, 1);
+    sendEmail(userIdx, joinUser.email, EMAIL_AUTH_TYPE.JOIN);
   } catch (err) {
     console.log(err);
     return CODE.INTERNAL_SERVER_ERROR;
@@ -94,8 +99,7 @@ const emailAuthForJoin = async ({ userIdx, emailAuthNum: reqNum }) => {
     if (!user) return CODE.NOT_FOUND;
     if (user.isEmailAuth) return CODE.UNAUTHORIZED;
 
-    const type = 1;
-    const authNum = await userDao.getEmailAuthNum(userIdx, type);
+    const authNum = await userDao.getEmailAuthNum(userIdx, EMAIL_AUTH_TYPE.JOIN);
 
     if (!authNum) return CODE.DUPLICATE;
 
@@ -111,8 +115,7 @@ const emailAuthForJoin = async ({ userIdx, emailAuthNum: reqNum }) => {
 
 const sendEmailForPwChange = async (userIdx, email) => {
   try {
-    const type = 2;
-    sendEmail(userIdx, email, type);
+    sendEmail(userIdx, email, EMAIL_AUTH_TYPE.PASSWORD_RESET);
   } catch (err) {
     console.log('Service Error: sendEmailForPwChange ', err);
     throw new Error(err);
