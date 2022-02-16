@@ -38,7 +38,7 @@ const login = async (req, res) => {
       return res.status(CODE.NOT_FOUND).json(form.fail(MSG.PW_MISMATCH));
     }
     if (loginUser === CODE.UNAUTHORIZED) {
-      return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_VERIFY_NOT));
+      return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_AUTH_NOT));
     }
     if (loginUser === CODE.INTERNAL_SERVER_ERROR) {
       return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
@@ -66,13 +66,13 @@ const emailAuthForJoin = async (req, res) => {
       return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
     }
     if (isEmailAuth === CODE.UNAUTHORIZED) {
-      return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_VERIFY_ALREADY));
+      return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_AUTH_ALREADY));
     }
     if (isEmailAuth === CODE.BAD_REQUEST) {
-      return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_VERIFY_KEY_MISMATCH));
+      return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_AUTH_NUM_MISMATCH));
     }
     if (isEmailAuth === CODE.DUPLICATE) {
-      return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_VERIFY_NOT_FIND));
+      return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_AUTH_NOT_FIND));
     }
     if (isEmailAuth === CODE.INTERNAL_SERVER_ERROR) {
       return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
@@ -82,19 +82,19 @@ const emailAuthForJoin = async (req, res) => {
   return res.status(CODE.OK).json(form.success());
 };
 
-const sendEmailForPwChange = async (req, res) => {
+const sendEmailForPwReset = async (req, res) => {
   const { email } = req.body;
 
   try {
     const isExistUser = await userService.findUserByEmail(email);
-    if (!isExistUser) {
-      return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
-    }
+    if (!isExistUser) return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
 
-    await userService.sendEmailForPwChange(isExistUser.userIdx, email);
+    if (!isExistUser.isEmailAuth) return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_AUTH_NOT));
+
+    await userService.sendEmailForPwReset(isExistUser.userIdx, email);
     return res.status(CODE.OK).json(form.success());
   } catch (err) {
-    console.log('Ctrl Error: sendEmailForPwChange ', err);
+    console.log('Ctrl Error: sendEmailForPwReset ', err);
     return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
 };
@@ -104,5 +104,5 @@ module.exports = {
   login,
   logout,
   emailAuthForJoin,
-  sendEmailForPwChange,
+  sendEmailForPwReset,
 };

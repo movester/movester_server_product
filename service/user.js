@@ -113,11 +113,11 @@ const emailAuthForJoin = async ({ userIdx, emailAuthNum: reqNum }) => {
   }
 };
 
-const sendEmailForPwChange = async (userIdx, email) => {
+const sendEmailForPwReset = async (userIdx, email) => {
   try {
     sendEmail(userIdx, email, EMAIL_AUTH_TYPE.PASSWORD_RESET);
   } catch (err) {
-    console.log('Service Error: sendEmailForPwChange ', err);
+    console.log('Service Error: sendEmailForPwReset ', err);
     throw new Error(err);
   }
 };
@@ -129,5 +129,5 @@ module.exports = {
   findUserByEmail,
   findUserByIdx,
   emailAuthForJoin,
-  sendEmailForPwChange,
+  sendEmailForPwReset,
 };
