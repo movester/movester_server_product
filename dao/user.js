@@ -116,6 +116,24 @@ const setIsEmailAuth = async idx => {
   }
 };
 
+const createAttendPoint = async (userIdx, year, month) => {
+  let connection;
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `INSERT
+                 INTO attend_point (user_idx, attend_year, attend_month) VALUES (${userIdx}, ${year}, ${month});`;
+
+    const [row] = await connection.query(sql);
+    return !!Object.keys(row);
+  } catch (err) {
+    console.error(`=== User Dao createAttendPoint Error: ${err} === `);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
 module.exports = {
   join,
   findUserByEmail,
@@ -123,4 +141,5 @@ module.exports = {
   setEmailAuthNum,
   getEmailAuthNum,
   setIsEmailAuth,
+  createAttendPoint,
 };
