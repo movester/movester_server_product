@@ -11,14 +11,14 @@ const createAttendPoint = async (userIdx, year, month) => {
     const [row] = await connection.query(sql);
     return !!Object.keys(row);
   } catch (err) {
-    console.error(`=== User Dao createAttendPoint Error: ${err} === `);
+    console.error(`=== AttendPoint Dao createAttendPoint Error: ${err} === `);
     throw new Error(err);
   } finally {
     connection.release();
   }
 };
 
-const findRecentAttendPoint = async (userIdx) => {
+const findRecentAttendPoint = async userIdx => {
   let connection;
 
   try {
@@ -33,7 +33,30 @@ const findRecentAttendPoint = async (userIdx) => {
     const [row] = await connection.query(sql);
     return row[0]?.date;
   } catch (err) {
-    console.log(`===DB Error > ${err}===`);
+    console.error(`=== AttendPoint Dao createAttendPoint Error: ${err} === `);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
+const getAttendPointsByYearMonth = async (userIdx, year, month) => {
+  let connection;
+
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `SELECT DATE_FORMAT(create_at,'%e') AS day
+                   FROM movester_db.attend_point
+                  WHERE user_idx = ${userIdx}
+                    AND attend_year = ${year}
+                    AND attend_month = ${month}
+               ORDER BY attend_point_idx;`;
+
+    const [row] = await connection.query(sql);
+    return row;
+  } catch (err) {
+    console.error(`=== AttendPoint Dao getAttendPointsByYearMonth Error: ${err} === `);
     throw new Error(err);
   } finally {
     connection.release();
@@ -43,4 +66,5 @@ const findRecentAttendPoint = async (userIdx) => {
 module.exports = {
   createAttendPoint,
   findRecentAttendPoint,
+  getAttendPointsByYearMonth,
 };
