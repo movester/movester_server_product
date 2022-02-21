@@ -7,8 +7,8 @@ const redis = require('../modules/redis');
 
 const EMAIL_AUTH_TYPE = {
   JOIN: 1,
-  PASSWORD_RESET: 2
-}
+  PASSWORD_RESET: 2,
+};
 
 const sendEmail = async (userIdx, email, type) => {
   try {
@@ -137,6 +137,16 @@ const emailAuthForPwReset = async (userIdx, reqNum) => {
   }
 };
 
+const deleteUser = async idx => {
+  try {
+    await userDao.deleteUser(idx);
+    redis.del(idx);
+  } catch (err) {
+    console.log('Service Error: deleteUser ', err);
+    throw new Error(err);
+  }
+};
+
 module.exports = {
   sendEmail,
   join,
@@ -146,4 +156,5 @@ module.exports = {
   emailAuthForJoin,
   sendEmailForPwReset,
   emailAuthForPwReset,
+  deleteUser,
 };

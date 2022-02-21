@@ -125,6 +125,17 @@ const emailAuthForPwReset = async (req, res) => {
   }
 };
 
+const deleteUser = async (req, res) => {
+  try {
+    const userIdx = req.cookies.idx;
+    await userService.deleteUser(userIdx);
+    return res.clearCookie('accessToken').clearCookie('refreshToken').status(CODE.OK).json(form.success());
+  } catch (err) {
+    console.log('Ctrl Error: deleteUser ', err);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
 module.exports = {
   join,
   login,
@@ -132,4 +143,5 @@ module.exports = {
   emailAuthForJoin,
   sendEmailForPwReset,
   emailAuthForPwReset,
+  deleteUser,
 };
