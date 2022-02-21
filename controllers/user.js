@@ -161,6 +161,9 @@ const changePassword = async (req, res) => {
     const isCorrectPassword = await encrypt.compare(curPassword, user.password);
     if (!isCorrectPassword) return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.PW_MISMATCH));
 
+    const isSamePassword = await encrypt.compare(newPassword, user.password);
+    if (isSamePassword) return res.status(CODE.BAD_REQUEST).json(form.fail("기존 비밀번호와 동일한 비밀번호로 변경할 수 없습니다."));
+
     await userService.resetPassword(userIdx, newPassword);
 
     return res.status(CODE.OK).json(form.success());
