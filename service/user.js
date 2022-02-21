@@ -137,17 +137,6 @@ const emailAuthForPwReset = async (userIdx, reqNum) => {
   }
 };
 
-const createAttendPoint = async userIdx => {
-  try {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1;
-    await userDao.createAttendPoint(userIdx, year, month);
-  } catch (err) {
-    console.error(`=== User Service createAttendPoint Error: ${err} === `);
-    throw new Error(err);
-  }
-};
 
 module.exports = {
   sendEmail,
@@ -158,5 +147,4 @@ module.exports = {
   emailAuthForJoin,
   sendEmailForPwReset,
   emailAuthForPwReset,
-  createAttendPoint,
 };

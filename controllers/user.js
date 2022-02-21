@@ -125,17 +125,6 @@ const emailAuthForPwReset = async (req, res) => {
   }
 };
 
-const createAttendPoint = async (req, res) => {
-  try {
-    const { userIdx } = req.cookies;
-    await userService.createAttendPoint(userIdx);
-    return res.status(CODE.OK).json(form.success());
-  } catch (err) {
-    console.error(`=== User Ctrl createAttendPoint Error: ${err} === `);
-    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
-  }
-};
-
 module.exports = {
   join,
   login,
@@ -143,5 +132,4 @@ module.exports = {
   emailAuthForJoin,
   sendEmailForPwReset,
   emailAuthForPwReset,
-  createAttendPoint,
 };

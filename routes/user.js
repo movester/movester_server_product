@@ -12,6 +12,5 @@ router.get('/logout', auth.checkToken, userCtrl.logout);
 router.patch('/email-auth/join', Validator.emailAuthForJoin, ValidatorError.err, userCtrl.emailAuthForJoin);
 router.post('/email-auth/password', Validator.checkEmail, ValidatorError.err, userCtrl.sendEmailForPwReset);
 router.get('/email-auth/password', Validator.emailAuthForPwReset, ValidatorError.err, userCtrl.emailAuthForPwReset);
-router.post('/attend-points', auth.checkToken, userCtrl.createAttendPoint);
 
 module.exports = router;
