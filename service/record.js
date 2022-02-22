@@ -31,7 +31,28 @@ const isOverlapRecord = async (userIdx, type) => {
   }
 };
 
+const isExistCurRecord = async (userIdx, type) => {
+  try {
+    const isExistCurRecord = await recordDao.isExistCurRecord(userIdx, type);
+    return !!isExistCurRecord;
+  } catch (err) {
+    console.error(`=== Record Service isExistCurRecord Error: ${err} === `);
+    throw new Error(err);
+  }
+};
+
+const updateRecord = async (userIdx, type, record) => {
+  try {
+    await recordDao.updateRecord(userIdx, type, record);
+  } catch (err) {
+    console.error(`=== Record Service updateRecord Error: ${err} === `);
+    throw new Error(err);
+  }
+};
+
 module.exports = {
   createRecord,
   isOverlapRecord,
+  isExistCurRecord,
+  updateRecord,
 };

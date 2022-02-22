@@ -19,6 +19,23 @@ const createRecord = async (req, res) => {
   }
 };
 
+const updateRecord = async (req, res) => {
+  try {
+    const { userIdx } = req.cookies;
+    const { type, record } = req.body;
+
+    const isExistCurRecord = await recordService.isExistCurRecord(userIdx, type);
+    if (!isExistCurRecord) return res.status(CODE.BAD_REQUEST).json(form.fail("당일 해당 부위 기록 내역이 없습니다."));
+
+    await recordService.updateRecord(userIdx, type, record);
+    return res.status(CODE.OK).json(form.success());
+  } catch (err) {
+    console.error(`=== Record Ctrl updateRecord Error: ${err} === `);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
 module.exports = {
   createRecord,
+  updateRecord
 };
