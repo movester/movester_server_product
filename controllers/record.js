@@ -26,7 +26,7 @@ const updateRecord = async (req, res) => {
 
     const updateRecord = await recordService.updateRecord(userIdx, type, record);
     if (!updateRecord) return res.status(CODE.BAD_REQUEST).json(form.fail('당일 해당 부위 기록 내역이 없습니다.'));
-    
+
     return res.status(CODE.OK).json(form.success());
   } catch (err) {
     console.error(`=== Record Ctrl updateRecord Error: ${err} === `);
@@ -34,7 +34,23 @@ const updateRecord = async (req, res) => {
   }
 };
 
+const deleteRecord = async (req, res) => {
+  try {
+    const { userIdx } = req.cookies;
+    const { type } = req.params;
+
+    const isDeleteRecord = await recordService.deleteRecord(userIdx, type);
+    if (!isDeleteRecord) return res.status(CODE.BAD_REQUEST).json(form.fail('당일 해당 부위 기록 내역이 없습니다.'));
+
+    return res.status(CODE.OK).json(form.success());
+  } catch (err) {
+    console.error(`=== Record Ctrl deleteRecord Error: ${err} === `);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
 module.exports = {
   createRecord,
   updateRecord,
+  deleteRecord
 };

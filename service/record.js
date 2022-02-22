@@ -41,8 +41,19 @@ const updateRecord = async (userIdx, type, record) => {
   }
 };
 
+const deleteRecord = async (userIdx, type) => {
+  try {
+    const deleteRecord = await recordDao.deleteRecord(userIdx, type);
+    return !!deleteRecord.affectedRows
+  } catch (err) {
+    console.error(`=== Record Service deleteRecord Error: ${err} === `);
+    throw new Error(err);
+  }
+};
+
 module.exports = {
   createRecord,
   isOverlapRecord,
   updateRecord,
+  deleteRecord
 };
