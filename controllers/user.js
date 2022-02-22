@@ -53,7 +53,7 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  redis.del(req.cookies.idx);
+  redis.del(req.cookies.userIdx);
   res.clearCookie('accessToken').clearCookie('refreshToken').status(CODE.OK).json(form.success(MSG.LOGOUT_SUCCESS));
 };
 

@@ -48,7 +48,7 @@ const checkToken = async (req, res, next) => {
     next();
   } else {
     // access 유효 refesh 유효
-    req.cookies.idx = accessToken.idx;
+    req.cookies.userIdx = accessToken.idx;
     next();
   }
 };
