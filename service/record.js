@@ -12,6 +12,26 @@ const createRecord = async (userIdx, type, record) => {
   }
 };
 
+const isOverlapRecord = async (userIdx, type) => {
+  try {
+    const recentRecord = await recordDao.findRecentRecord(userIdx, type);
+    if (!recentRecord) return false;
+
+    const [lastYear, lastMonth, lastDay] = recentRecord.split(' ');
+
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+
+    return +lastYear === year && +lastMonth === month && +lastDay === day;
+  } catch (err) {
+    console.error(`=== Record Service isOverlapRecord Error: ${err} === `);
+    throw new Error(err);
+  }
+};
+
 module.exports = {
-  createRecord
+  createRecord,
+  isOverlapRecord,
 };

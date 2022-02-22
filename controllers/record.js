@@ -8,6 +8,9 @@ const createRecord = async (req, res) => {
     const { userIdx } = req.cookies;
     const { type, record } = req.query;
 
+    const isOverlapRecord = await recordService.isOverlapRecord(userIdx, type);
+    if (isOverlapRecord) return res.status(CODE.BAD_REQUEST).json(form.fail("이미 당일 해당 부위를 기록하였습니다."));
+
     await recordService.createRecord(userIdx, type, record);
     return res.status(CODE.CREATED).json(form.success());
   } catch (err) {

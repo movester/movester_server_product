@@ -2,7 +2,7 @@ const pool = require('./pool');
 
 const createRecord = async (userIdx, type, record, year, month) => {
   let connection;
-  console.log(userIdx, type, record, year, month)
+
   try {
     connection = await pool.getConnection(async conn => conn);
 
@@ -19,6 +19,30 @@ const createRecord = async (userIdx, type, record, year, month) => {
   }
 };
 
+const findRecentRecord = async (userIdx, type) => {
+  let connection;
+
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `SELECT DATE_FORMAT(create_at,'%Y %m %d') AS date
+                   FROM user_record
+                  WHERE user_idx = ${userIdx}
+                    AND record_type = ${type}
+               ORDER BY create_at DESC
+                  LIMIT 1;`;
+
+    const [row] = await connection.query(sql);
+    return row[0]?.date;
+  } catch (err) {
+    console.error(`=== Record Dao findRecentRecord Error: ${err} === `);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
 module.exports = {
   createRecord,
+  findRecentRecord,
 };
