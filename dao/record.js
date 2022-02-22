@@ -52,7 +52,8 @@ const updateRecord = async (userIdx, type, record) => {
                   WHERE user_idx = ${userIdx}
                     AND record_type = ${type}
                     AND record_year = YEAR(CURDATE())
-                    AND record_month = MONTH(CURDATE())`;
+                    AND record_month = MONTH(CURDATE())
+                    AND DATE_FORMAT(create_at,'%d') = DAY(CURDATE())`;
 
     const [row] = await connection.query(sql);
     return row;
