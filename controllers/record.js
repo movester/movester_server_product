@@ -49,8 +49,22 @@ const deleteRecord = async (req, res) => {
   }
 };
 
+const getSummaryRecords = async (req, res) => {
+  try {
+    const { userIdx } = req.cookies;
+
+    const summaryRecords = await recordService.getSummaryRecords(userIdx);
+
+    return res.status(CODE.OK).json(form.success(summaryRecords));
+  } catch (err) {
+    console.error(`=== Record Ctrl getSummaryRecords Error: ${err} === `);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
 module.exports = {
   createRecord,
   updateRecord,
-  deleteRecord
+  deleteRecord,
+  getSummaryRecords,
 };
