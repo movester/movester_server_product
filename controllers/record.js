@@ -9,7 +9,7 @@ const createRecord = async (req, res) => {
     const { type, record } = req.query;
 
     const isOverlapRecord = await recordService.isOverlapRecord(userIdx, type);
-    if (isOverlapRecord) return res.status(CODE.BAD_REQUEST).json(form.fail("이미 당일 해당 부위를 기록하였습니다."));
+    if (isOverlapRecord) return res.status(CODE.BAD_REQUEST).json(form.fail('이미 당일 해당 부위를 기록하였습니다.'));
 
     await recordService.createRecord(userIdx, type, record);
     return res.status(CODE.CREATED).json(form.success());
@@ -24,10 +24,9 @@ const updateRecord = async (req, res) => {
     const { userIdx } = req.cookies;
     const { type, record } = req.body;
 
-    const isExistCurRecord = await recordService.isExistCurRecord(userIdx, type);
-    if (!isExistCurRecord) return res.status(CODE.BAD_REQUEST).json(form.fail("당일 해당 부위 기록 내역이 없습니다."));
-
-    await recordService.updateRecord(userIdx, type, record);
+    const updateRecord = await recordService.updateRecord(userIdx, type, record);
+    if (!updateRecord) return res.status(CODE.BAD_REQUEST).json(form.fail('당일 해당 부위 기록 내역이 없습니다.'));
+    
     return res.status(CODE.OK).json(form.success());
   } catch (err) {
     console.error(`=== Record Ctrl updateRecord Error: ${err} === `);
@@ -37,5 +36,5 @@ const updateRecord = async (req, res) => {
 
 module.exports = {
   createRecord,
-  updateRecord
+  updateRecord,
 };

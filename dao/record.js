@@ -42,29 +42,6 @@ const findRecentRecord = async (userIdx, type) => {
   }
 };
 
-const isExistCurRecord = async (userIdx, type) => {
-  let connection;
-  try {
-    connection = await pool.getConnection(async conn => conn);
-
-    const sql = `SELECT record
-                   FROM user_record
-                  WHERE user_idx = ${userIdx}
-                    AND record_type = ${type}
-                    AND record_year = YEAR(CURDATE())
-                    AND record_month = MONTH(CURDATE())
-                    AND DATE_FORMAT(create_at,'%d') = DAY(CURDATE())`;
-
-    const [row] = await connection.query(sql);
-    return row[0]?.record
-  } catch (err) {
-    console.error(`=== Record Dao isExistCurRecord Error: ${err} === `);
-    throw new Error(err);
-  } finally {
-    connection.release();
-  }
-};
-
 const updateRecord = async (userIdx, type, record) => {
   let connection;
   try {
@@ -78,7 +55,7 @@ const updateRecord = async (userIdx, type, record) => {
                     AND record_month = MONTH(CURDATE())`;
 
     const [row] = await connection.query(sql);
-    return !!Object.keys(row);
+    return row;
   } catch (err) {
     console.error(`=== Record Dao updateRecord Error: ${err} === `);
     throw new Error(err);
@@ -90,6 +67,5 @@ const updateRecord = async (userIdx, type, record) => {
 module.exports = {
   createRecord,
   findRecentRecord,
-  isExistCurRecord,
   updateRecord
 };
