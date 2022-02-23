@@ -27,8 +27,8 @@ const isOverlapAttendPoint = async userIdx => {
 
 const getAttendPoints = async (userIdx, year, month) => {
   try {
-    const lastDay = new Date(year, month - 1, 0).getDate();
-    const monthArray = new Array(lastDay).fill(0);
+    const lastDateOfMonth = new Date(year, month - 1, 0).getDate();
+    const monthArray = new Array(lastDateOfMonth).fill(0);
 
     const attendPoints = await attendPointDao.getAttendPointsByYearMonth(userIdx, year, month);
 
