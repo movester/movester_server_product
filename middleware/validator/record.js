@@ -1,4 +1,5 @@
 const { query, body, param } = require('express-validator');
+const { getToday } = require('../../utils/getToday');
 
 const checkQueryType = [
   query('type')
@@ -45,10 +46,50 @@ const checkParamType = [
     .toInt(),
 ];
 
+const checkQueryDate = [
+  query('startYear')
+    .notEmpty()
+    .withMessage('날짜를 정확히 입력해주세요.')
+    .isInt({ min: 2021, max: getToday().year })
+    .withMessage('날짜를 정확히 입력해주세요.')
+    .toInt(),
+  query('startMonth')
+    .notEmpty()
+    .withMessage('날짜를 정확히 입력해주세요.')
+    .isInt({ min: 1, max: 12 })
+    .withMessage('날짜를 정확히 입력해주세요.')
+    .toInt(),
+  query('startDate')
+    .notEmpty()
+    .withMessage('날짜를 정확히 입력해주세요.')
+    .isInt({ min: 1, max: 31 })
+    .withMessage('날짜를 정확히 입력해주세요.')
+    .toInt(),
+  query('endYear')
+    .notEmpty()
+    .withMessage('날짜를 정확히 입력해주세요.')
+    .isInt({ min: 1, max: getToday().year })
+    .withMessage('날짜를 정확히 입력해주세요.')
+    .toInt(),
+  query('endMonth')
+    .notEmpty()
+    .withMessage('날짜를 정확히 입력해주세요.')
+    .isInt({ min: 1, max: 12 })
+    .withMessage('날짜를 정확히 입력해주세요.')
+    .toInt(),
+  query('endDate')
+    .notEmpty()
+    .withMessage('날짜를 정확히 입력해주세요.')
+    .isInt({ min: 1, max: 31 })
+    .withMessage('날짜를 정확히 입력해주세요.')
+    .toInt(),
+];
+
 module.exports = {
   checkQueryType,
   checkQueryRecord,
   checkBodyType,
   checkBodyRecord,
-  checkParamType
+  checkParamType,
+  checkQueryDate,
 };

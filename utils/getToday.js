@@ -7,9 +7,15 @@ const getToday = () => {
   };
 };
 
+const getLastDateOfMonth = (year, month) => new Date(year, month, 0).getDate();
+
+const isValidDate = (year, month, date) => date <= getLastDateOfMonth(year, month);
+
 const lPad = num => (num < 10 ? `0${num}` : num);
 
 module.exports = {
   getToday,
-  lPad
+  getLastDateOfMonth,
+  isValidDate,
+  lPad,
 };

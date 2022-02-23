@@ -11,6 +11,6 @@ router.patch('/', auth.checkToken, validator.checkBodyType, validator.checkBodyR
 router.delete('/:type', auth.checkToken, validator.checkParamType, validatorError.err, recordCtrl.deleteRecord);
 router.get('/summary', auth.checkToken, recordCtrl.getSummaryRecords);
 router.get('/:type', auth.checkToken, validator.checkParamType, validatorError.err, recordCtrl.getRecords);
-router.get('/search/:type', auth.checkToken, validator.checkParamType, validatorError.err, recordCtrl.getSearchRecords);
+router.get('/search/:type', auth.checkToken, validator.checkParamType, validator.checkQueryDate, validatorError.err, recordCtrl.getSearchRecords);
 
 module.exports = router;
