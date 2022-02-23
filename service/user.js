@@ -7,8 +7,8 @@ const redis = require('../modules/redis');
 
 const EMAIL_AUTH_TYPE = {
   JOIN: 1,
-  PASSWORD_RESET: 2
-}
+  PASSWORD_RESET: 2,
+};
 
 const sendEmail = async (userIdx, email, type) => {
   try {
@@ -136,6 +136,7 @@ const emailAuthForPwReset = async (userIdx, reqNum) => {
     throw new Error(err);
   }
 };
+
 
 module.exports = {
   sendEmail,

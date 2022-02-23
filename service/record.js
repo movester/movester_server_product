@@ -1,10 +1,9 @@
 const recordDao = require('../dao/record');
+const { getToday } = require('../utils/getToday');
 
 const createRecord = async (userIdx, type, record) => {
   try {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1;
+    const { year, month } = getToday();
     await recordDao.createRecord(userIdx, type, record, year, month);
   } catch (err) {
     console.error(`=== Record Service createRecord Error: ${err} === `);
@@ -17,14 +16,11 @@ const isOverlapRecord = async (userIdx, type) => {
     const recentRecord = await recordDao.findRecentRecord(userIdx, type);
     if (!recentRecord) return false;
 
-    const [lastYear, lastMonth, lastDay] = recentRecord.split(' ');
+    const [lastYear, lastMonth, lastDate] = recentRecord.split(' ');
 
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1;
-    const day = today.getDate();
+    const { year, month, date } = getToday();
 
-    return +lastYear === year && +lastMonth === month && +lastDay === day;
+    return +lastYear === year && +lastMonth === month && +lastDate === date;
   } catch (err) {
     console.error(`=== Record Service isOverlapRecord Error: ${err} === `);
     throw new Error(err);

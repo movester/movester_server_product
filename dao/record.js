@@ -7,7 +7,8 @@ const createRecord = async (userIdx, type, record, year, month) => {
     connection = await pool.getConnection(async conn => conn);
 
     const sql = `INSERT
-                 INTO user_record (user_idx, record_type, record, record_year, record_month) VALUES (${userIdx}, ${type}, ${record}, ${year}, ${month});`;
+                   INTO user_record (user_idx, record_type, record, record_year, record_month)
+                 VALUES (${userIdx}, ${type}, ${record}, ${year}, ${month});`;
 
     const [row] = await connection.query(sql);
     return !!Object.keys(row);
