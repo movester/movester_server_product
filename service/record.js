@@ -56,7 +56,7 @@ const getSummaryRecords = async userIdx => {
     const summaryRecords = await recordDao.getSummaryRecords(userIdx);
     const records = summaryRecords.reduce((acc, { type, record, date }) => {
       if (!acc[type]) acc[type] = [];
-      acc[type] = [...acc[type], [record, date]];
+      acc[type] = [...acc[type], {record, date}];
       return acc;
     }, {});
 
