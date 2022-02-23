@@ -65,32 +65,8 @@ const updateRecord = async (userIdx, type, record) => {
   }
 };
 
-const deleteRecord = async (userIdx, type) => {
-  let connection;
-  try {
-    connection = await pool.getConnection(async conn => conn);
-
-    const sql = `DELETE
-                   FROM user_record
-                  WHERE user_idx = ${userIdx}
-                    AND record_type = ${type}
-                    AND record_year = YEAR(CURDATE())
-                    AND record_month = MONTH(CURDATE())
-                    AND DATE_FORMAT(create_at,'%d') = DAY(CURDATE())`;
-
-    const [row] = await connection.query(sql);
-    return row;
-  } catch (err) {
-    console.error(`=== Record Dao deleteRecord Error: ${err} === `);
-    throw new Error(err);
-  } finally {
-    connection.release();
-  }
-};
-
 module.exports = {
   createRecord,
   findRecentRecord,
-  updateRecord,
-  deleteRecord
+  updateRecord
 };
