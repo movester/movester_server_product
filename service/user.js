@@ -17,7 +17,7 @@ const sendEmail = async (userIdx, email, type) => {
     await userDao.setEmailAuthNum(userIdx, emailAuthNum, type);
     await emailSender.emailAuthSender(email, emailAuthNum, type);
   } catch (err) {
-    console.log('User Service Error: sendEmail ', err);
+    console.error('User Service Error: sendEmail ', err);
     throw new Error(err);
   }
 };
@@ -30,12 +30,12 @@ const join = async joinUser => {
     const userIdx = await userDao.join({ joinUser });
     sendEmail(userIdx, joinUser.email, EMAIL_AUTH_TYPE.JOIN);
   } catch (err) {
-    console.log('User Service Error: join ', err);
+    console.error('User Service Error: join ', err);
     return CODE.INTERNAL_SERVER_ERROR;
   }
 };
 
-const login = async ({ email, password }) => {
+const errorin = async ({ email, password }) => {
   try {
     const user = await userDao.findUserByEmail(email);
 
@@ -69,7 +69,7 @@ const login = async ({ email, password }) => {
       token,
     };
   } catch (err) {
-    console.log('User Service Error: login ', err);
+    console.error('User Service Error: errorin ', err);
     return CODE.INTERNAL_SERVER_ERROR;
   }
 };
@@ -79,7 +79,7 @@ const findUserByEmail = async email => {
     const user = await userDao.findUserByEmail(email);
     return user;
   } catch (err) {
-    console.log('User Service Error: findUserByEmail ', err);
+    console.error('User Service Error: findUserByEmail ', err);
     throw new Error(err);
   }
 };
@@ -89,7 +89,7 @@ const findUserByIdx = async idx => {
     const user = await userDao.findUserByIdx(idx);
     return user;
   } catch (err) {
-    console.log('User Service Error: findUserByIdx ', err);
+    console.error('User Service Error: findUserByIdx ', err);
     throw new Error(err);
   }
 };
@@ -110,7 +110,7 @@ const emailAuthForJoin = async ({ userIdx, emailAuthNum: reqNum }) => {
     const isEmailAuth = await userDao.setIsEmailAuth(userIdx);
     return isEmailAuth;
   } catch (err) {
-    console.log('User Service Error: emailAuthForJoin ', err);
+    console.error('User Service Error: emailAuthForJoin ', err);
     return CODE.INTERNAL_SERVER_ERROR;
   }
 };
@@ -119,7 +119,7 @@ const sendEmailForPwReset = async (userIdx, email) => {
   try {
     sendEmail(userIdx, email, EMAIL_AUTH_TYPE.PASSWORD_RESET);
   } catch (err) {
-    console.log('User Service Error: sendEmailForPwReset ', err);
+    console.error('User Service Error: sendEmailForPwReset ', err);
     throw new Error(err);
   }
 };
@@ -134,7 +134,7 @@ const emailAuthForPwReset = async (userIdx, reqNum) => {
 
     return CODE.OK;
   } catch (err) {
-    console.log('User Service Error: emailAuthForPwReset ', err);
+    console.error('User Service Error: emailAuthForPwReset ', err);
     throw new Error(err);
   }
 };
@@ -145,7 +145,7 @@ const resetPassword = async (userIdx, password) => {
     await userDao.resetPassword(userIdx, hashPassword);
     return CODE.OK;
   } catch (err) {
-    console.log('User Service Error: emailAuthForPwReset ', err);
+    console.error('User Service Error: emailAuthForPwReset ', err);
     throw new Error(err);
   }
 };
@@ -156,7 +156,7 @@ const isCorrectPassword = async (userIdx, password) => {
     const isCorrectPassword = await encrypt.compare(password, user.password);
     return isCorrectPassword;
   } catch (err) {
-    console.log('User Service Error: isCorrectPassword ', err);
+    console.error('User Service Error: isCorrectPassword ', err);
     throw new Error(err);
   }
 };
@@ -166,7 +166,7 @@ const findUserByKakaoId = async kakaoId => {
     const user = await userDao.findUserByKakaoId(kakaoId);
     return user;
   } catch (err) {
-    console.log('User Service Error: findUserByKakaoId ', err);
+    console.error('User Service Error: findUserByKakaoId ', err);
     throw new Error(err);
   }
 };
@@ -211,7 +211,7 @@ const authKaKako = async user => {
     const newUserIdx = await userDao.joinKakao(email, name, kakaoId);
     return await getTokenAndSetRedis(newUserIdx, email, name);
   } catch (err) {
-    console.log('User Service Error: authKaKako ', err);
+    console.error('User Service Error: authKaKako ', err);
     throw new Error(err);
   }
 };
@@ -219,7 +219,7 @@ const authKaKako = async user => {
 module.exports = {
   sendEmail,
   join,
-  login,
+  errorin,
   findUserByEmail,
   findUserByIdx,
   emailAuthForJoin,
