@@ -56,7 +56,7 @@ const getSummaryRecords = async userIdx => {
     const summaryRecords = await recordDao.getSummaryRecords(userIdx);
     const records = summaryRecords.reduce((acc, { type, record, date }) => {
       if (!acc[type]) acc[type] = [];
-      acc[type] = [...acc[type], {record, date}];
+      acc[type] = [...acc[type], { record, date }];
       return acc;
     }, {});
 
@@ -67,10 +67,21 @@ const getSummaryRecords = async userIdx => {
   }
 };
 
+const getRecords = async (userIdx, type) => {
+  try {
+    const records = await recordDao.getRecords(userIdx, type);
+    return records;
+  } catch (err) {
+    console.error(`=== Record Service getRecords Error: ${err} === `);
+    throw new Error(err);
+  }
+};
+
 module.exports = {
   createRecord,
   isOverlapRecord,
   updateRecord,
   deleteRecord,
   getSummaryRecords,
+  getRecords,
 };
