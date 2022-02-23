@@ -20,7 +20,7 @@ const createRecord = async (userIdx, type, record, year, month) => {
   }
 };
 
-const findTodayRecord = async (userIdx, type, year, month, date) => {
+const findRecordByDate = async (userIdx, type, year, month, date) => {
   let connection;
 
   try {
@@ -44,5 +44,5 @@ const findTodayRecord = async (userIdx, type, year, month, date) => {
 
 module.exports = {
   createRecord,
-  findTodayRecord,
+  findRecordByDate,
 };
