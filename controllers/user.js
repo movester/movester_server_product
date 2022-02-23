@@ -173,6 +173,20 @@ const changePassword = async (req, res) => {
   }
 };
 
+const isCorrectPassword = async (req, res) => {
+  const userIdx = req.cookies.idx;
+  const { password } = req.query;
+
+  try {
+    const isCorrectPassword = await userService.isCorrectPassword(userIdx, password);
+    if (!isCorrectPassword) return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.PW_MISMATCH));
+    return res.status(CODE.OK).json(form.success());
+  } catch (err) {
+    console.log('Ctrl Error: isCorrectPassword ', err);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
 module.exports = {
   join,
   login,
@@ -182,4 +196,5 @@ module.exports = {
   emailAuthForPwReset,
   resetPassword,
   changePassword,
+  isCorrectPassword,
 };

@@ -118,6 +118,14 @@ const changePassword = [
     .withMessage('비밀번호는 최소 5글자부터 최대 20글자까지 가능합니다.'),
 ];
 
+const checkPassword = [
+  query('password')
+    .notEmpty()
+    .withMessage('비밀번호를 입력해주세요.')
+    .isLength({ min: 5, max: 20 })
+    .withMessage('비밀번호는 최소 5글자부터 최대 20글자까지 가능합니다.'),
+];
+
 module.exports = {
   join,
   login,
@@ -125,5 +133,6 @@ module.exports = {
   emailAuthForPwReset,
   checkEmail,
   resetPassword,
-  changePassword
+  changePassword,
+  checkPassword,
 };
