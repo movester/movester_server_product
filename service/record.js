@@ -13,14 +13,9 @@ const createRecord = async (userIdx, type, record) => {
 
 const isOverlapRecord = async (userIdx, type) => {
   try {
-    const recentRecord = await recordDao.findRecentRecord(userIdx, type);
-    if (!recentRecord) return false;
-
-    const [lastYear, lastMonth, lastDate] = recentRecord.split(' ');
-
     const { year, month, date } = getToday();
-
-    return +lastYear === year && +lastMonth === month && +lastDate === date;
+    const isOverlapRecord = await recordDao.findTodayRecord(userIdx, type, year, month, date);
+    return isOverlapRecord;
   } catch (err) {
     console.error(`=== Record Service isOverlapRecord Error: ${err} === `);
     throw new Error(err);
