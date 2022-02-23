@@ -1,10 +1,9 @@
 const attendPointDao = require('../dao/attendPoint');
+const { getToday } = require('../utils/getToday');
 
 const createAttendPoint = async userIdx => {
   try {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1;
+    const { year, month } = getToday();
     await attendPointDao.createAttendPoint(userIdx, year, month);
   } catch (err) {
     console.error(`=== AttendPoint Service createAttendPoint Error: ${err} === `);
@@ -14,17 +13,12 @@ const createAttendPoint = async userIdx => {
 
 const isOverlapAttendPoint = async userIdx => {
   try {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1;
-    const day = today.getDate();
-
+    const { year, month, date } = getToday();
     const recentAttendPoint = await attendPointDao.findRecentAttendPoint(userIdx, year, month);
     if (!recentAttendPoint) return false;
 
-    const [lastYear, lastMonth, lastDay] = recentAttendPoint.split(' ');
-
-    return +lastYear === year && +lastMonth === month && +lastDay === day;
+    const [lastYear, lastMonth, lastDate] = recentAttendPoint.split(' ');
+    return +lastYear === year && +lastMonth === month && +lastDate === date;
   } catch (err) {
     console.error(`=== AttendPoint Service isOverlapAttendPoint Error: ${err} === `);
     throw new Error(err);
