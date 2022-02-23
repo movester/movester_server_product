@@ -6,12 +6,13 @@ const join = async ({ joinUser }) => {
     connection = await pool.getConnection(async conn => conn);
 
     const sql = `INSERT
-                 INTO user (email, password, name) VALUES ('${joinUser.email}', '${joinUser.password}', '${joinUser.name}');`;
+                   INTO user (email, password, name)
+                 VALUES ('${joinUser.email}', '${joinUser.password}', '${joinUser.name}');`;
 
     const [row] = await connection.query(sql);
     return row?.insertId;
   } catch (err) {
-    console.log(`===DB Error > ${err}===`);
+    console.error(`=== User Dao join Error: ${err} === `);
     throw new Error(err);
   } finally {
     connection.release();
@@ -30,7 +31,7 @@ const findUserByEmail = async email => {
     const [row] = await connection.query(sql);
     return row.length ? row[0] : undefined;
   } catch (err) {
-    console.log(`===DB Error > ${err}===`);
+    console.error(`=== User Dao findUserByEmail Error: ${err} === `);
     throw new Error(err);
   } finally {
     connection.release();
@@ -49,7 +50,7 @@ const findUserByIdx = async idx => {
     const [row] = await connection.query(sql);
     return row.length ? row[0] : undefined;
   } catch (err) {
-    console.log(`===DB Error > ${err}===`);
+    console.error(`=== User Dao findUserByIdx Error: ${err} === `);
     throw new Error(err);
   } finally {
     connection.release();
@@ -67,7 +68,7 @@ const setEmailAuthNum = async (userIdx, emailAuthNum, type) => {
     const [row] = await connection.query(sql);
     return !!Object.keys(row);
   } catch (err) {
-    console.log(`===DB Error > ${err}===`);
+    console.error(`=== User Dao setEmailAuthNum Error: ${err} === `);
     throw new Error(err);
   } finally {
     connection.release();
@@ -90,7 +91,7 @@ const getEmailAuthNum = async (userIdx, type) => {
     const [row] = await connection.query(sql);
     return row[0]?.emailAuthNum;
   } catch (err) {
-    console.log(`===DB Error > ${err}===`);
+    console.error(`=== User Dao getEmailAuthNum Error: ${err} === `);
     throw new Error(err);
   } finally {
     connection.release();
@@ -109,7 +110,7 @@ const setIsEmailAuth = async idx => {
     const [row] = await connection.query(sql);
     return !!Object.keys(row);
   } catch (err) {
-    console.log(`===DB Error > ${err}===`);
+    console.error(`=== User Dao setIsEmailAuth Error: ${err} === `);
     throw new Error(err);
   } finally {
     connection.release();
@@ -129,7 +130,64 @@ const resetPassword = async (idx, password) => {
 
     return !!Object.keys(row);
   } catch (err) {
-    console.log(`===DB Error > ${err}===`);
+    console.error(`=== User Dao resetPassword Error: ${err} === `);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
+const findUserByKakaoId = async kakaoId => {
+  let connection;
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `SELECT user_idx AS userIdx, email, password, name, is_email_auth AS isEmailAuth
+                   FROM user
+                  WHERE kakao_id = '${kakaoId}'`;
+
+    const [row] = await connection.query(sql);
+    return row.length ? row[0] : undefined;
+  } catch (err) {
+    console.error(`=== User Dao findUserByKakaoId Error: ${err} === `);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
+const updateUserKakaoId = async (userIdx, kakaoId) => {
+  let connection;
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `UPDATE user
+                    SET kakao_id = '${kakaoId}'
+                  WHERE user_idx = '${userIdx}'`;
+
+    const [row] = await connection.query(sql);
+    return row.length ? row : undefined;
+  } catch (err) {
+    console.error(`=== User Dao updateUserKakaoId Error: ${err} === `);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
+const joinKakao = async (email, name, kakaoId) => {
+  let connection;
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `INSERT
+                   INTO user (email, name, kakao_id, is_email_auth)
+                 VALUES ('${email}', '${name}', '${kakaoId}', 1);`;
+
+    const [row] = await connection.query(sql);
+    return row?.insertId;
+  } catch (err) {
+    console.error(`=== User Dao joinKakao Error: ${err} === `);
     throw new Error(err);
   } finally {
     connection.release();
@@ -143,5 +201,8 @@ module.exports = {
   setEmailAuthNum,
   getEmailAuthNum,
   setIsEmailAuth,
-  resetPassword
+  resetPassword,
+  findUserByKakaoId,
+  updateUserKakaoId,
+  joinKakao,
 };
