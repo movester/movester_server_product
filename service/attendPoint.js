@@ -14,11 +14,8 @@ const createAttendPoint = async userIdx => {
 const isOverlapAttendPoint = async userIdx => {
   try {
     const { year, month, date } = getToday();
-    const recentAttendPoint = await attendPointDao.findRecentAttendPoint(userIdx, year, month);
-    if (!recentAttendPoint) return false;
-
-    const [lastYear, lastMonth, lastDate] = recentAttendPoint.split(' ');
-    return +lastYear === year && +lastMonth === month && +lastDate === date;
+    const isOverlapAttendPoint = await attendPointDao.findAttendPointByDate(userIdx, year, month, date);
+    return isOverlapAttendPoint;
   } catch (err) {
     console.error(`=== User Service createAttendPoint Error: ${err} === `);
     throw new Error(err);
