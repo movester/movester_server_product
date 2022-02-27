@@ -7,7 +7,8 @@ const createRecord = async (userIdx, type, record, year, month) => {
     connection = await pool.getConnection(async conn => conn);
 
     const sql = `INSERT
-                 INTO user_record (user_idx, record_type, record, record_year, record_month) VALUES (${userIdx}, ${type}, ${record}, ${year}, ${month});`;
+                   INTO user_record (user_idx, record_type, record, record_year, record_month)
+                 VALUES (${userIdx}, ${type}, ${record}, ${year}, ${month});`;
 
     const [row] = await connection.query(sql);
     return !!Object.keys(row);
@@ -19,23 +20,22 @@ const createRecord = async (userIdx, type, record, year, month) => {
   }
 };
 
-const findRecentRecord = async (userIdx, type) => {
+const findRecordByDate = async (userIdx, type, year, month, date) => {
   let connection;
 
   try {
     connection = await pool.getConnection(async conn => conn);
 
-    const sql = `SELECT DATE_FORMAT(create_at,'%Y %m %d') AS date
+    const sql = `SELECT user_idx, record_type, record, create_at
                    FROM user_record
                   WHERE user_idx = ${userIdx}
                     AND record_type = ${type}
-               ORDER BY create_at DESC
-                  LIMIT 1;`;
+                    AND DATE(create_at) = '${year}-${month}-${date}'`;
 
     const [row] = await connection.query(sql);
-    return row[0]?.date;
+    return !!row.length;
   } catch (err) {
-    console.error(`=== Record Dao findRecentRecord Error: ${err} === `);
+    console.error(`=== Record Dao findTodayRecord Error: ${err} === `);
     throw new Error(err);
   } finally {
     connection.release();
@@ -67,6 +67,6 @@ const updateRecord = async (userIdx, type, record) => {
 
 module.exports = {
   createRecord,
-  findRecentRecord,
-  updateRecord
+  updateRecord,
+  findRecordByDate,
 };
