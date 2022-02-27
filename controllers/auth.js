@@ -6,7 +6,7 @@ const MSG = require('../utils/responseMessage');
 const form = require('../utils/responseForm');
 
 const getAuthCode = async (req, res) => {
-  const kakaoAuthURL = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.KAKAO_CLIENT_ID}&redirect_uri=${process.env.KAKAO_CALLBACK_URL}&response_type=code`;
+  const kakaoAuthURL = `${process.env.KAKAO_GET_AUTH_CODE_URL}client_id=${process.env.KAKAO_CLIENT_ID}&redirect_uri=${process.env.KAKAO_CALLBACK_URL}&response_type=code`;
   res.redirect(kakaoAuthURL);
 };
 
@@ -14,7 +14,7 @@ const getToken = async (req, res) => {
   try {
     const token = await axios({
       method: 'post',
-      url: 'https://kauth.kakao.com/oauth/token',
+      url: process.env.KAKAO_GET_TOKEN_URL,
       headers: {
         'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
       },
@@ -29,7 +29,7 @@ const getToken = async (req, res) => {
 
     const user = await axios({
       method: 'get',
-      url: 'https://kapi.kakao.com/v2/user/me',
+      url: process.env.KAKAO_GET_USER_URL,
       headers: {
         Authorization: `Bearer ${token.data.access_token}`,
       },
