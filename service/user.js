@@ -35,7 +35,7 @@ const join = async joinUser => {
   }
 };
 
-const errorin = async ({ email, password }) => {
+const login = async ({ email, password }) => {
   try {
     const user = await userDao.findUserByEmail(email);
 
@@ -69,7 +69,7 @@ const errorin = async ({ email, password }) => {
       token,
     };
   } catch (err) {
-    console.error('User Service Error: errorin ', err);
+    console.error('User Service Error: login ', err);
     return CODE.INTERNAL_SERVER_ERROR;
   }
 };
@@ -219,7 +219,7 @@ const authKaKako = async user => {
 module.exports = {
   sendEmail,
   join,
-  errorin,
+  login,
   findUserByEmail,
   findUserByIdx,
   emailAuthForJoin,
