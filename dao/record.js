@@ -117,10 +117,32 @@ const getSummaryRecords = async userIdx => {
   }
 };
 
+const getRecords = async (userIdx, type) => {
+  let connection;
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `SELECT record, DATE_FORMAT(create_at,'%Y-%m-%d') AS date
+                   FROM movester_db.user_record
+                  WHERE user_idx = ${userIdx}
+                    AND record_type = ${type}
+               ORDER BY user_record_idx DESC`;
+
+    const [row] = await connection.query(sql);
+    return row;
+  } catch (err) {
+    console.error(`=== Record Dao getRecords Error: ${err} === `);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
 module.exports = {
   createRecord,
   updateRecord,
   findRecordByDate,
   deleteRecord,
   getSummaryRecords,
+  getRecords,
 };

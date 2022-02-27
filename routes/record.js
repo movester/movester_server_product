@@ -10,5 +10,6 @@ router.post('/', auth.checkToken, validator.checkBodyType, validator.checkBodyRe
 router.patch('/', auth.checkToken, validator.checkBodyType, validator.checkBodyRecord, validatorError.err, recordCtrl.updateRecord);
 router.delete('/:type', auth.checkToken, validator.checkParamType, validatorError.err, recordCtrl.deleteRecord);
 router.get('/summary', auth.checkToken, recordCtrl.getSummaryRecords);
+router.get('/:type', auth.checkToken, validator.checkParamType, validatorError.err, recordCtrl.getRecords);
 
 module.exports = router;
