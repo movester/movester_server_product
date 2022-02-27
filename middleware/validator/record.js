@@ -13,8 +13,8 @@ const checkRecord = [
   query('record')
     .notEmpty()
     .withMessage('기록 종류를 입력해주세요.')
-    .isFloat({ min: -20, max: 40 })
-    .withMessage('-20 ~ 40 사이의 숫자여야합니다.')
+    .isFloat({ min: -15, max: 40 })
+    .withMessage('-15 ~ 40 사이의 숫자여야합니다.')
     .toFloat(),
 ];
 
