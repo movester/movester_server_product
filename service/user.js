@@ -17,7 +17,7 @@ const sendEmail = async (userIdx, email, type) => {
     await userDao.setEmailAuthNum(userIdx, emailAuthNum, type);
     await emailSender.emailAuthSender(email, emailAuthNum, type);
   } catch (err) {
-    console.log('Service Error: sendEmail ', err);
+    console.log('User Service Error: sendEmail ', err);
     throw new Error(err);
   }
 };
@@ -30,8 +30,8 @@ const join = async joinUser => {
     const userIdx = await userDao.join({ joinUser });
     sendEmail(userIdx, joinUser.email, EMAIL_AUTH_TYPE.JOIN);
   } catch (err) {
-    console.log(err);
-    return CODE.INTERNAL_SERVER_ERROR;
+    console.log('User Service Error: join ', err);
+    throw new Error(err);
   }
 };
 
@@ -69,8 +69,8 @@ const login = async ({ email, password }) => {
       token,
     };
   } catch (err) {
-    console.log(err);
-    return CODE.INTERNAL_SERVER_ERROR;
+    console.log('User Service Error: login ', err);
+    throw new Error(err);
   }
 };
 
@@ -79,6 +79,7 @@ const findUserByEmail = async email => {
     const user = await userDao.findUserByEmail(email);
     return user;
   } catch (err) {
+    console.log('User Service Error: findUserByEmail ', err);
     throw new Error(err);
   }
 };
@@ -88,6 +89,7 @@ const findUserByIdx = async idx => {
     const user = await userDao.findUserByIdx(idx);
     return user;
   } catch (err) {
+    console.log('User Service Error: findUserByIdx ', err);
     throw new Error(err);
   }
 };
@@ -108,8 +110,8 @@ const emailAuthForJoin = async ({ userIdx, emailAuthNum: reqNum }) => {
     const isEmailAuth = await userDao.setIsEmailAuth(userIdx);
     return isEmailAuth;
   } catch (err) {
-    console.log(err);
-    return CODE.INTERNAL_SERVER_ERROR;
+    console.log('User Service Error: emailAuthForJoin ', err);
+    throw new Error(err);
   }
 };
 
@@ -117,7 +119,7 @@ const sendEmailForPwReset = async (userIdx, email) => {
   try {
     sendEmail(userIdx, email, EMAIL_AUTH_TYPE.PASSWORD_RESET);
   } catch (err) {
-    console.log('Service Error: sendEmailForPwReset ', err);
+    console.log('User Service Error: sendEmailForPwReset ', err);
     throw new Error(err);
   }
 };
@@ -132,7 +134,7 @@ const emailAuthForPwReset = async (userIdx, reqNum) => {
 
     return CODE.OK;
   } catch (err) {
-    console.log('Service Error: emailAuthForPwReset ', err);
+    console.log('User Service Error: emailAuthForPwReset ', err);
     throw new Error(err);
   }
 };
@@ -143,7 +145,7 @@ const resetPassword = async (userIdx, password) => {
     await userDao.resetPassword(userIdx, hashPassword);
     return CODE.OK;
   } catch (err) {
-    console.log('Service Error: emailAuthForPwReset ', err);
+    console.log('User Service Error: resetPassword ', err);
     throw new Error(err);
   }
 };
@@ -154,7 +156,7 @@ const isCorrectPassword = async (userIdx, password) => {
     const isCorrectPassword = await encrypt.compare(password, user.password);
     return isCorrectPassword;
   } catch (err) {
-    console.log('Service Error: emailAuthForPwReset ', err);
+    console.log('User Service Error: isCorrectPassword ', err);
     throw new Error(err);
   }
 };

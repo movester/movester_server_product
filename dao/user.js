@@ -11,7 +11,7 @@ const join = async ({ joinUser }) => {
     const [row] = await connection.query(sql);
     return row?.insertId;
   } catch (err) {
-    console.log(`===DB Error > ${err}===`);
+    console.error(`=== User Dao join Error: ${err} === `);
     throw new Error(err);
   } finally {
     connection.release();
@@ -30,7 +30,7 @@ const findUserByEmail = async email => {
     const [row] = await connection.query(sql);
     return row.length ? row[0] : undefined;
   } catch (err) {
-    console.log(`===DB Error > ${err}===`);
+    console.error(`=== User Dao findUserByEmail Error: ${err} === `);
     throw new Error(err);
   } finally {
     connection.release();
@@ -49,7 +49,7 @@ const findUserByIdx = async idx => {
     const [row] = await connection.query(sql);
     return row.length ? row[0] : undefined;
   } catch (err) {
-    console.log(`===DB Error > ${err}===`);
+    console.error(`=== User Dao findUserByIdx Error: ${err} === `);
     throw new Error(err);
   } finally {
     connection.release();
@@ -67,7 +67,7 @@ const setEmailAuthNum = async (userIdx, emailAuthNum, type) => {
     const [row] = await connection.query(sql);
     return !!Object.keys(row);
   } catch (err) {
-    console.log(`===DB Error > ${err}===`);
+    console.error(`=== User Dao setEmailAuthNum Error: ${err} === `);
     throw new Error(err);
   } finally {
     connection.release();
@@ -90,7 +90,7 @@ const getEmailAuthNum = async (userIdx, type) => {
     const [row] = await connection.query(sql);
     return row[0]?.emailAuthNum;
   } catch (err) {
-    console.log(`===DB Error > ${err}===`);
+    console.error(`=== User Dao getEmailAuthNum Error: ${err} === `);
     throw new Error(err);
   } finally {
     connection.release();
@@ -109,7 +109,7 @@ const setIsEmailAuth = async idx => {
     const [row] = await connection.query(sql);
     return !!Object.keys(row);
   } catch (err) {
-    console.log(`===DB Error > ${err}===`);
+    console.error(`=== User Dao setIsEmailAuth Error: ${err} === `);
     throw new Error(err);
   } finally {
     connection.release();
@@ -129,7 +129,7 @@ const resetPassword = async (idx, password) => {
 
     return !!Object.keys(row);
   } catch (err) {
-    console.log(`===DB Error > ${err}===`);
+    console.error(`=== User Dao resetPassword Error: ${err} === `);
     throw new Error(err);
   } finally {
     connection.release();
