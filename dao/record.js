@@ -98,14 +98,14 @@ const getSummaryRecords = async userIdx => {
                    WHERE user_idx = ${userIdx}
                      AND record_type = 1
                 ORDER BY create_at DESC
-                   LIMIT 0,10)
+                   LIMIT 0,7)
                    UNION
                  (SELECT record_type AS type, record, DATE_FORMAT(create_at,'%Y-%m-%d') AS date
                     FROM user_record
                    WHERE user_idx = ${userIdx}
                      AND record_type = 2
                 ORDER BY create_at DESC
-                   LIMIT 0,10)`;
+                   LIMIT 0,7)`;
 
     const [row] = await connection.query(sql);
     return row;
