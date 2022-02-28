@@ -17,8 +17,8 @@ const join = async (req, res) => {
       return res.status(CODE.DUPLICATE).json(form.fail(MSG.EMAIL_ALREADY_EXIST));
     }
 
-    await userService.join(joinUser);
-    res.status(CODE.CREATED).json(form.success());
+    const userIdx = await userService.join(joinUser);
+    res.status(CODE.CREATED).json(form.success({ userIdx }));
   } catch (err) {
     console.error(`=== User Ctrl join Error: ${err} === `);
     return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
@@ -179,7 +179,7 @@ const isCorrectPassword = async (req, res) => {
 
     const isCorrectPassword = await userService.isCorrectPassword(userIdx, password);
     if (!isCorrectPassword) return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.PW_MISMATCH));
-    
+
     return res.status(CODE.OK).json(form.success());
   } catch (err) {
     console.error(`=== User Ctrl isCorrectPassword Error: ${err} === `);

@@ -28,7 +28,9 @@ const join = async joinUser => {
     joinUser.password = hashPassword;
 
     const userIdx = await userDao.join({ joinUser });
-    sendEmail(userIdx, joinUser.email, EMAIL_AUTH_TYPE.JOIN);
+    await sendEmail(userIdx, joinUser.email, EMAIL_AUTH_TYPE.JOIN);
+
+    return userIdx
   } catch (err) {
     console.log('User Service Error: join ', err);
     throw new Error(err);
