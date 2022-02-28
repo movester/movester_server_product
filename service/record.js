@@ -42,18 +42,12 @@ const deleteRecord = async (userIdx, type) => {
   }
 };
 
-const getSummaryRecords = async userIdx => {
+const getGraphRecords = async (userIdx, type) => {
   try {
-    const summaryRecords = await recordDao.getSummaryRecords(userIdx);
-    const records = summaryRecords.reduce((acc, { type, record, date }) => {
-      if (!acc[type]) acc[type] = [];
-      acc[type] = [...acc[type], { record, date }];
-      return acc;
-    }, {});
-
-    return { shoulder: records[1], leg: records[2] };
+    const records = await recordDao.getGraphRecords(userIdx, type);
+    return records
   } catch (err) {
-    console.error(`=== Record Service getSummaryRecords Error: ${err} === `);
+    console.error(`=== Record Service getGraphRecords Error: ${err} === `);
     throw new Error(err);
   }
 };
@@ -73,6 +67,6 @@ module.exports = {
   isOverlapRecord,
   updateRecord,
   deleteRecord,
-  getSummaryRecords,
+  getGraphRecords,
   getRecords,
 };
