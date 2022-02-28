@@ -30,7 +30,7 @@ const join = async joinUser => {
     const userIdx = await userDao.join({ joinUser });
     await sendEmail(userIdx, joinUser.email, EMAIL_AUTH_TYPE.JOIN);
 
-    return userIdx
+    return userIdx;
   } catch (err) {
     console.log('User Service Error: join ', err);
     throw new Error(err);
@@ -39,20 +39,25 @@ const join = async joinUser => {
 
 const login = async ({ email, password }) => {
   try {
+    const isLogin = {};
     const user = await userDao.findUserByEmail(email);
 
     if (!user) {
-      return CODE.BAD_REQUEST;
+      isLogin.code = CODE.BAD_REQUEST;
+      return isLogin;
     }
 
     const isCorrectPassword = await encrypt.compare(password, user.password);
 
     if (!isCorrectPassword) {
-      return CODE.NOT_FOUND;
+      isLogin.code = CODE.NOT_FOUND;
+      return isLogin;
     }
 
     if (!user.isEmailAuth) {
-      return CODE.UNAUTHORIZED;
+      isLogin.code = CODE.UNAUTHORIZED;
+      isLogin.userIdx = user.userIdx;
+      return isLogin;
     }
 
     const token = {

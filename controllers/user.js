@@ -30,13 +30,13 @@ const login = async (req, res) => {
     const reqUser = req.body;
     const loginUser = await userService.login(reqUser);
 
-    switch (loginUser) {
+    switch (loginUser.code) {
       case CODE.BAD_REQUEST:
         return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_NOT_EXIST));
       case CODE.NOT_FOUND:
         return res.status(CODE.NOT_FOUND).json(form.fail(MSG.PW_MISMATCH));
       case CODE.UNAUTHORIZED:
-        return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_AUTH_NOT));
+        return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_AUTH_NOT, { userIdx: loginUser.userIdx }));
       default:
     }
 
