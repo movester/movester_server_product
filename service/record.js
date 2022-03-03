@@ -1,5 +1,6 @@
 const recordDao = require('../dao/record');
 const { getToday } = require('../utils/getToday');
+const { lPad } = require('../utils/getToday');
 
 const createRecord = async (userIdx, type, record) => {
   try {
@@ -68,6 +69,18 @@ const getRecords = async (userIdx, type) => {
   }
 };
 
+const getSearchRecords = async (userIdx, type, date) => {
+  try {
+    const startDate = `${date.startYear}${lPad(date.startMonth)}${lPad(date.startDate)}`;
+    const endDate = `${date.endYear}${lPad(date.endMonth)}${lPad(date.endDate)}`;
+    const records = await recordDao.getSearchRecords(userIdx, type, startDate, endDate);
+    return records;
+  } catch (err) {
+    console.error(`=== Record Service getSearchRecords Error: ${err} === `);
+    throw new Error(err);
+  }
+};
+
 module.exports = {
   createRecord,
   isOverlapRecord,
@@ -75,4 +88,5 @@ module.exports = {
   deleteRecord,
   getSummaryRecords,
   getRecords,
+  getSearchRecords,
 };

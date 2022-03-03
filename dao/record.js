@@ -98,14 +98,14 @@ const getSummaryRecords = async userIdx => {
                    WHERE user_idx = ${userIdx}
                      AND record_type = 1
                 ORDER BY create_at DESC
-                   LIMIT 0,10)
+                   LIMIT 0,7)
                    UNION
                  (SELECT record_type AS type, record, DATE_FORMAT(create_at,'%Y-%m-%d') AS date
                     FROM user_record
                    WHERE user_idx = ${userIdx}
                      AND record_type = 2
                 ORDER BY create_at DESC
-                   LIMIT 0,10)`;
+                   LIMIT 0,7)`;
 
     const [row] = await connection.query(sql);
     return row;
@@ -123,7 +123,7 @@ const getRecords = async (userIdx, type) => {
     connection = await pool.getConnection(async conn => conn);
 
     const sql = `SELECT record, DATE_FORMAT(create_at,'%Y-%m-%d') AS date
-                   FROM movester_db.user_record
+                   FROM user_record
                   WHERE user_idx = ${userIdx}
                     AND record_type = ${type}
                ORDER BY user_record_idx DESC`;
@@ -138,6 +138,28 @@ const getRecords = async (userIdx, type) => {
   }
 };
 
+const getSearchRecords = async (userIdx, type, startDate, endDate) => {
+  let connection;
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `SELECT record, DATE_FORMAT(create_at,'%Y-%m-%d') AS date
+                   FROM user_record
+                  WHERE user_idx = ${userIdx}
+                    AND record_type = ${type}
+                    AND DATE(create_at) BETWEEN DATE('${startDate}') AND DATE('${endDate}') + 1
+               ORDER BY user_record_idx DESC`;
+
+    const [row] = await connection.query(sql);
+    return row;
+  } catch (err) {
+    console.error(`=== Record Dao getSearchRecords Error: ${err} === `);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
 module.exports = {
   createRecord,
   updateRecord,
@@ -145,4 +167,5 @@ module.exports = {
   deleteRecord,
   getSummaryRecords,
   getRecords,
+  getSearchRecords,
 };
