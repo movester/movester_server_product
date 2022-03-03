@@ -16,7 +16,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(helmet());
 app.use(cookieParser());
-
 app.use('/api', router);
 
 module.exports = app;
