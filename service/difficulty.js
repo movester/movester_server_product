@@ -33,8 +33,19 @@ const updateDifficulty = async (userIdx, stretchingIdx, difficulty) => {
   }
 };
 
+const getDifficulty = async (userIdx, stretchingIdx) => {
+  try {
+    const difficulty = await difficultyDao.findDifficultyByUserIdxAndStretchingIdx(userIdx, stretchingIdx);
+    return difficulty;
+  } catch (err) {
+    console.error(`=== Difficulty Service getDifficulty Error: ${err} === `);
+    throw new Error(err);
+  }
+};
+
 module.exports = {
   createDifficulty,
   deleteDifficulty,
   updateDifficulty,
+  getDifficulty,
 };

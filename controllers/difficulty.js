@@ -54,8 +54,26 @@ const updateDifficulty = async (req, res) => {
   }
 };
 
+const getDifficulty = async (req, res) => {
+  try {
+    const { userIdx } = req.cookies;
+    const stretchingIdx = req.params.idx;
+
+    const isValidStretching = await stretchingService.findStretchingByIdx(stretchingIdx);
+    if (!isValidStretching) return res.status(CODE.NOT_FOUND).json(form.fail(MSG.IDX_NOT_EXIST));
+
+    const difficulty = await difficultyService.getDifficulty(userIdx, stretchingIdx);
+
+    return res.status(CODE.OK).json(form.success(difficulty));
+  } catch (err) {
+    console.error(`=== Difficulty Ctrl getDifficulty Error: ${err} === `);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
 module.exports = {
   createDifficulty,
   deleteDifficulty,
   updateDifficulty,
+  getDifficulty,
 };

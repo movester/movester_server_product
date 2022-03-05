@@ -7,6 +7,7 @@ const findDifficultyByUserIdxAndStretchingIdx = async (userIdx, stretchingIdx) =
     connection = await pool.getConnection(async conn => conn);
 
     const sql = `SELECT stretching_difficulty_idx AS 'difficultyIdx'
+                      , difficulty
                    FROM stretching_difficulty
                   WHERE user_idx = ${userIdx}
                     AND stretching_idx = ${stretchingIdx};`;
