@@ -53,7 +53,7 @@ const deleteLike = async likeIdx => {
 
     const [row] = await connection.query(sql);
 
-    return row?.affectedRows
+    return row?.affectedRows;
   } catch (err) {
     console.error(`=== Like Dao deleteLike Error: ${err} === `);
     throw new Error(err);
@@ -68,16 +68,31 @@ const getLikes = async userIdx => {
   try {
     connection = await pool.getConnection(async conn => conn);
 
-    const sql = `SELECT a.user_like_idx AS 'likeIdx', a.stretching_idx AS 'stretchingIdx', DATE_FORMAT(a.create_at,'%Y-%m-%d') AS date, b.title, b.main_body AS 'mainBody', b.sub_body AS 'subBody', b.image
-                   FROM movester_db.user_like AS a
-                   JOIN movester_db.stretching AS b
-                     ON a.stretching_idx = b.stretching_idx
-                  WHERE a.user_idx = ${userIdx}
-               ORDER BY a.user_like_idx DESC;`;
+    const sql = `SELECT a.user_like_idx AS 'likeIdx'
+                      , a.stretching_idx AS 'stretchingIdx'
+                      , DATE_FORMAT(a.create_at,'%Y-%m-%d') AS date
+                      , b.title, b.main_body AS 'mainBody'
+                      , b.sub_body AS 'subBody'
+                      , b.image
+                      , (SELECT group_concat(effect_type SEPARATOR ' ')
+                           FROM movester_db.stretching_effect AS c
+                          WHERE c.stretching_idx = b.stretching_idx
+                       GROUP BY c.stretching_idx
+                        ) AS 'effects'
+                      , (SELECT group_concat(posture_type SEPARATOR ' ')
+                           FROM movester_db.stretching_posture AS d
+                          WHERE d.stretching_idx = b.stretching_idx
+                       GROUP BY d.stretching_idx
+                        ) AS 'postures'
+                  FROM movester_db.user_like AS a
+                  JOIN movester_db.stretching AS b
+                    ON a.stretching_idx = b.stretching_idx
+                 WHERE a.user_idx = ${userIdx}
+              ORDER BY a.user_like_idx DESC;`;
 
     const [row] = await connection.query(sql);
 
-    return row
+    return row;
   } catch (err) {
     console.error(`=== Like Dao getLikes Error: ${err} === `);
     throw new Error(err);
@@ -86,10 +101,9 @@ const getLikes = async userIdx => {
   }
 };
 
-
 module.exports = {
   findLikeByUserIdxAndStretchingIdx,
   createLike,
   deleteLike,
-  getLikes
+  getLikes,
 };

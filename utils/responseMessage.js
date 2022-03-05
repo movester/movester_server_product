@@ -27,6 +27,7 @@ const responseMessage = {
   ID_NOT_EXIST: '존재하지 않는 유저 ID 입니다.',
   NAME_ALREADY_EXIST: '존재하는 username 입니다.',
   IDX_NOT_EXIST: '존재하지 않는 idx 입니다.',
+  EMAIL_ALREADY_EXIST: '이미 존재하는 이메일입니다.',
 
   PW_MISMATCH: '비밀번호가 일치하지 않습니다',
   CONFIRM_PW_MISMATCH: '비밀번호 확인이 일치하지 않습니다.',

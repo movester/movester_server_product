@@ -36,7 +36,18 @@ const deleteLike = async likeIdx => {
 const getLikes = async userIdx => {
   try {
     const likes = await likeDao.getLikes(userIdx);
-    return likes;
+
+    const managedLikes = likes.map(like => {
+      if (like.effects) {
+        like.effects = like.effects.split(' ').map(v => +v);
+      }
+      if (like.postures) {
+        like.postures = like.postures.split(' ').map(v => +v);
+      }
+      return like;
+    });
+
+    return managedLikes;
   } catch (err) {
     console.error(`=== Like Service getLikes Error: ${err} === `);
     throw new Error(err);
