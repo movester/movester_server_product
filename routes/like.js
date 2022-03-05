@@ -9,5 +9,6 @@ const auth = require('../middleware/auth');
 
 router.post('/', auth.checkToken, validator.create, validatorError.err, likeCtrl.createLike);
 router.delete('/:idx', auth.checkToken, commonValidator.checkParamIdx, validatorError.err, likeCtrl.deleteLike);
+router.get('/', auth.checkToken, likeCtrl.getLikes);
 
 module.exports = router;

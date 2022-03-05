@@ -36,7 +36,21 @@ const deleteLike = async (req, res) => {
   }
 };
 
+const getLikes = async (req, res) => {
+  try {
+    const { userIdx } = req.cookies;
+
+    const likes = await likeService.getLikes(userIdx);
+
+    return res.status(CODE.OK).json(form.success(likes));
+  } catch (err) {
+    console.error(`=== Like Ctrl getLikes Error: ${err} === `);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
 module.exports = {
   createLike,
   deleteLike,
+  getLikes,
 };

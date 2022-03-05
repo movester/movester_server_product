@@ -62,8 +62,34 @@ const deleteLike = async likeIdx => {
   }
 };
 
+const getLikes = async userIdx => {
+  let connection;
+
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `SELECT a.user_like_idx AS 'likeIdx', a.stretching_idx AS 'stretchingIdx', DATE_FORMAT(a.create_at,'%Y-%m-%d') AS date, b.title, b.main_body AS 'mainBody', b.sub_body AS 'subBody', b.image
+                   FROM movester_db.user_like AS a
+                   JOIN movester_db.stretching AS b
+                     ON a.stretching_idx = b.stretching_idx
+                  WHERE a.user_idx = ${userIdx}
+               ORDER BY a.user_like_idx DESC;`;
+
+    const [row] = await connection.query(sql);
+
+    return row
+  } catch (err) {
+    console.error(`=== Like Dao getLikes Error: ${err} === `);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
+
 module.exports = {
   findLikeByUserIdxAndStretchingIdx,
   createLike,
   deleteLike,
+  getLikes
 };
