@@ -42,7 +42,7 @@ const createDifficulty = async (userIdx, stretchingIdx, difficulty) => {
   }
 };
 
-const deleteDifficulty = async difficultyIdx => {
+const deleteDifficulty = async (userIdx, stretchingIdx) => {
   let connection;
 
   try {
@@ -50,7 +50,8 @@ const deleteDifficulty = async difficultyIdx => {
 
     const sql = `DELETE
                    FROM stretching_difficulty
-                  WHERE stretching_difficulty_idx = ${difficultyIdx};`;
+                  WHERE user_idx = ${userIdx}
+                    AND stretching_idx = ${stretchingIdx};`;
 
     const [row] = await connection.query(sql);
     return row?.affectedRows;

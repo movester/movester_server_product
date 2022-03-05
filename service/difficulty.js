@@ -13,9 +13,9 @@ const createDifficulty = async (userIdx, stretchingIdx, difficulty) => {
   }
 };
 
-const deleteDifficulty = async difficultyIdx => {
+const deleteDifficulty = async (userIdx, stretchingIdx) => {
   try {
-    const isDelete = await difficultyDao.deleteDifficulty(difficultyIdx);
+    const isDelete = await difficultyDao.deleteDifficulty(userIdx, stretchingIdx);
     return isDelete;
   } catch (err) {
     console.error(`=== Difficulty Service deleteDifficulty Error: ${err} === `);

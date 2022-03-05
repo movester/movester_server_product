@@ -24,10 +24,11 @@ const createDifficulty = async (req, res) => {
 
 const deleteDifficulty = async (req, res) => {
   try {
-    const difficultyIdx = req.params.idx;
+    const { userIdx } = req.cookies;
+    const stretchingIdx = req.params.idx;
 
-    const isDelete = await difficultyService.deleteDifficulty(difficultyIdx);
-    if (!isDelete) return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.IDX_NOT_EXIST));
+    const isDelete = await difficultyService.deleteDifficulty(userIdx, stretchingIdx);
+    if (!isDelete) return res.status(CODE.BAD_REQUEST).json(form.fail('기존에 등록된 평가가 없습니다.'));
 
     return res.status(CODE.OK).json(form.success());
   } catch (err) {
