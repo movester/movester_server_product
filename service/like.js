@@ -23,7 +23,18 @@ const createLike = async (userIdx, stretchingIdx) => {
   }
 };
 
+const deleteLike = async (likeIdx) => {
+  try {
+    const isDelete = await likeDao.deleteLike(likeIdx);
+    return isDelete;
+  } catch (err) {
+    console.error(`=== Like Service deleteLike Error: ${err} === `);
+    throw new Error(err);
+  }
+};
+
 module.exports = {
   findLikeByUserIdxAndStretchingIdx,
   createLike,
+  deleteLike
 };

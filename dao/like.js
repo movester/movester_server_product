@@ -41,7 +41,29 @@ const createLike = async (userIdx, stretchingIdx) => {
   }
 };
 
+const deleteLike = async likeIdx => {
+  let connection;
+
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `DELETE
+                   FROM user_like
+                  WHERE user_like_idx = ${likeIdx};`;
+
+    const [row] = await connection.query(sql);
+
+    return row?.affectedRows
+  } catch (err) {
+    console.error(`=== Like Dao deleteLike Error: ${err} === `);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
 module.exports = {
   findLikeByUserIdxAndStretchingIdx,
   createLike,
+  deleteLike,
 };

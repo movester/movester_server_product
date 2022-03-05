@@ -22,6 +22,21 @@ const createLike = async (req, res) => {
   }
 };
 
+const deleteLike = async (req, res) => {
+  try {
+    const likeIdx = req.params.idx;
+
+    const isDelete = await likeService.deleteLike(likeIdx);
+    if (!isDelete) return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.IDX_NOT_EXIST));
+
+    return res.status(CODE.OK).json(form.success());
+  } catch (err) {
+    console.error(`=== Like Ctrl deleteLike Error: ${err} === `);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
 module.exports = {
   createLike,
+  deleteLike,
 };
