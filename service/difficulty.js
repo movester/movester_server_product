@@ -13,6 +13,17 @@ const createDifficulty = async (userIdx, stretchingIdx, difficulty) => {
   }
 };
 
+const deleteDifficulty = async difficultyIdx => {
+  try {
+    const isDelete = await difficultyDao.deleteDifficulty(difficultyIdx);
+    return isDelete;
+  } catch (err) {
+    console.error(`=== Difficulty Service deleteDifficulty Error: ${err} === `);
+    throw new Error(err);
+  }
+};
+
 module.exports = {
   createDifficulty,
+  deleteDifficulty,
 };

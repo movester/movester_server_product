@@ -22,6 +22,21 @@ const createDifficulty = async (req, res) => {
   }
 };
 
+const deleteDifficulty = async (req, res) => {
+  try {
+    const difficultyIdx = req.params.idx;
+
+    const isDelete = await difficultyService.deleteDifficulty(difficultyIdx);
+    if (!isDelete) return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.IDX_NOT_EXIST));
+
+    return res.status(CODE.OK).json(form.success());
+  } catch (err) {
+    console.error(`=== Difficulty Ctrl deleteDifficulty Error: ${err} === `);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
 module.exports = {
   createDifficulty,
+  deleteDifficulty,
 };

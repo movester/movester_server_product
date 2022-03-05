@@ -41,7 +41,28 @@ const createDifficulty = async (userIdx, stretchingIdx, difficulty) => {
   }
 };
 
+const deleteDifficulty = async difficultyIdx => {
+  let connection;
+
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `DELETE
+                   FROM stretching_difficulty
+                  WHERE stretching_difficulty_idx = ${difficultyIdx};`;
+
+    const [row] = await connection.query(sql);
+    return row?.affectedRows;
+  } catch (err) {
+    console.error(`=== Difficulty Dao deleteDifficulty Error: ${err} === `);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
 module.exports = {
   findDifficultyByUserIdxAndStretchingIdx,
   createDifficulty,
+  deleteDifficulty,
 };
