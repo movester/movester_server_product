@@ -36,7 +36,26 @@ const deleteDifficulty = async (req, res) => {
   }
 };
 
+const updateDifficulty = async (req, res) => {
+  try {
+    const { userIdx } = req.cookies;
+    const { stretchingIdx, difficulty } = req.body;
+
+    const isValidStretching = await stretchingService.findStretchingByIdx(stretchingIdx);
+    if (!isValidStretching) return res.status(CODE.NOT_FOUND).json(form.fail(MSG.IDX_NOT_EXIST));
+
+    const isUpdate = await difficultyService.updateDifficulty(userIdx, stretchingIdx, difficulty);
+    if (!isUpdate) return res.status(CODE.BAD_REQUEST).json(form.fail('기존에 등록된 평가가 없습니다.'));
+
+    return res.status(CODE.OK).json(form.success());
+  } catch (err) {
+    console.error(`=== Difficulty Ctrl updateDifficulty Error: ${err} === `);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
 module.exports = {
   createDifficulty,
   deleteDifficulty,
+  updateDifficulty,
 };

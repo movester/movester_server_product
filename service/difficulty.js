@@ -23,7 +23,18 @@ const deleteDifficulty = async difficultyIdx => {
   }
 };
 
+const updateDifficulty = async (userIdx, stretchingIdx, difficulty) => {
+  try {
+    const isUpdate = await difficultyDao.updateDifficulty(userIdx, stretchingIdx, difficulty);
+    return isUpdate;
+  } catch (err) {
+    console.error(`=== Difficulty Service updateDifficulty Error: ${err} === `);
+    throw new Error(err);
+  }
+};
+
 module.exports = {
   createDifficulty,
   deleteDifficulty,
+  updateDifficulty,
 };
