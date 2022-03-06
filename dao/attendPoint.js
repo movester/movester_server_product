@@ -18,28 +18,6 @@ const createAttendPoint = async (userIdx, year, month) => {
   }
 };
 
-const findRecentAttendPoint = async userIdx => {
-  let connection;
-
-  try {
-    connection = await pool.getConnection(async conn => conn);
-
-    const sql = `SELECT DATE_FORMAT(create_at,'%Y %m %d') AS date
-                   FROM attend_point
-                  WHERE user_idx = ${userIdx}
-               ORDER BY create_at DESC
-                  LIMIT 1;`;
-
-    const [row] = await connection.query(sql);
-    return row[0]?.date;
-  } catch (err) {
-    console.error(`=== AttendPoint Dao createAttendPoint Error: ${err} === `);
-    throw new Error(err);
-  } finally {
-    connection.release();
-  }
-};
-
 const getAttendPointsByYearMonth = async (userIdx, year, month) => {
   let connection;
 
@@ -63,8 +41,29 @@ const getAttendPointsByYearMonth = async (userIdx, year, month) => {
   }
 };
 
+const findAttendPointByDate = async (userIdx, year, month, date) => {
+  let connection;
+
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `SELECT user_idx, create_at
+                   FROM attend_point
+                  WHERE user_idx = ${userIdx}
+                    AND DATE(create_at) = '${year}-${month}-${date}';`;
+
+    const [row] = await connection.query(sql);
+    return !!row.length;
+  } catch (err) {
+    console.error(`=== AttendPoint Dao findAttendPointByDate Error: ${err} === `);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
 module.exports = {
   createAttendPoint,
-  findRecentAttendPoint,
   getAttendPointsByYearMonth,
+  findAttendPointByDate,
 };
