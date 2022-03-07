@@ -1,7 +1,7 @@
 const stretchingDao = require('../dao/stretching');
 
 const makeNullToEmptyStr = str => (str === '' ? "''" : str);
-const makeStringToArray = str => (!str ? str : str.split(' '));
+const makeStringToArray = str => (!str ? str : str.split(' ').map(v => +v));
 
 const findStretchingByIdx = async idx => {
   try {
@@ -61,8 +61,38 @@ const getStretching = async stretchingIdx => {
   }
 };
 
+const getTagStretchings = async tag => {
+  try {
+    const makeRegExpSql = tag => {
+      const makeStr = arr => (arr.length ? `'${arr.join('|')}'` : '');
+
+      const keys = Object.keys(tag);
+      const managedTag = keys.reduce((acc, key) => {
+        acc[key] = makeStr(tag[key]);
+        return acc;
+      }, {});
+
+      return managedTag;
+    };
+
+    const stretchings = await stretchingDao.getTagStretchings(makeRegExpSql(tag));
+
+    const managedStretchings = stretchings.map(stretching => {
+      stretching.effect = makeStringToArray(stretching.effect);
+      stretching.posture = makeStringToArray(stretching.posture);
+      return stretching;
+    });
+
+    return managedStretchings;
+  } catch (err) {
+    console.error(`=== Stretching Service getTagStretchings Error: ${err} === `);
+    throw new Error(err);
+  }
+};
+
 module.exports = {
   findStretchingByIdx,
   getStretchings,
   getStretching,
+  getTagStretchings,
 };

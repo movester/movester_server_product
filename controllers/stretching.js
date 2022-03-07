@@ -31,7 +31,27 @@ const getStretching = async (req, res) => {
   }
 };
 
+const getTagStretchings = async (req, res) => {
+  try {
+    const tag = {
+      main: JSON.parse(req.query.main),
+      sub: JSON.parse(req.query.effect),
+      tool: JSON.parse(req.query.tool),
+      posture: JSON.parse(req.query.posture),
+      effect: JSON.parse(req.query.effect),
+    };
+
+    const stretchings = await stretchingService.getTagStretchings(tag);
+
+    return res.status(CODE.OK).json(form.success(stretchings));
+  } catch (err) {
+    console.error(`=== Stretching Ctrl getTagStretchings Error: ${err} === `);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
 module.exports = {
   getStretchings,
   getStretching,
+  getTagStretchings,
 };
