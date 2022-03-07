@@ -15,6 +15,23 @@ const getStretchings = async (req, res) => {
   }
 };
 
+const getStretching = async (req, res) => {
+  try {
+    const stretchingIdx = req.params.idx;
+
+    const stretching = await stretchingService.getStretching(stretchingIdx);
+    if (!stretching) {
+      return res.status(CODE.NOT_FOUND).json(form.fail(MSG.IDX_NOT_EXIST));
+    }
+
+    return res.status(CODE.OK).json(form.success(stretching));
+  } catch (err) {
+    console.error(`=== Stretching Ctrl getStretching Error: ${err} === `);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
 module.exports = {
   getStretchings,
+  getStretching,
 };

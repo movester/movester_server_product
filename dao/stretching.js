@@ -134,9 +134,51 @@ const getStretchingsByEffect = async main => {
   }
 };
 
+const getStretching = async stretchingIdx => {
+  let connection;
+
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `SELECT stretching_idx AS 'stretchingIdx'
+                     , title
+                     , contents
+                     , main_body AS 'mainBody'
+                     , sub_body AS 'subBody'
+                     , tool
+                     , youtube_url AS 'youtube'
+                     , image
+                     , (SELECT group_concat(posture_type SEPARATOR ' ')
+                          FROM movester_db.stretching_posture AS b
+                         WHERE a.stretching_idx = b.stretching_idx
+                      GROUP BY b.stretching_idx
+                       ) AS 'posture'
+                    , (SELECT group_concat(effect_type SEPARATOR ' ')
+                         FROM movester_db.stretching_effect AS c
+                        WHERE a.stretching_idx = c.stretching_idx
+                     GROUP BY c.stretching_idx
+                      ) AS 'effect'
+                    , (SELECT AVG(difficulty)
+                         FROM stretching_difficulty d
+                        WHERE a.stretching_idx = d.stretching_idx
+                      ) AS 'difficulty'
+                  FROM stretching a
+                 WHERE a.stretching_idx = ${stretchingIdx}`;
+
+    const [row] = await connection.query(sql);
+    return row.length ? row[0] : null;
+  } catch (err) {
+    console.error(`=== Stretching Dao getStretching Error: ${err} === `);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
 module.exports = {
   findStretchingByIdx,
   getStretchingsByBodypart,
   getStretchingsByPosture,
   getStretchingsByEffect,
+  getStretching
 };
