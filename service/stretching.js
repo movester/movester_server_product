@@ -94,9 +94,9 @@ const getTagStretchings = async tag => {
   }
 };
 
-const getRecommendStretchings = async stretchingIdx => {
+const getRecommendStretchings = async (stretchingIdx, userIdx) => {
   try {
-    const stretchings = await stretchingDao.getRecommendStretchings(stretchingIdx);
+    const stretchings = await stretchingDao.getRecommendStretchings(stretchingIdx, userIdx);
 
     const managedStretchings = makeArrayStretching(stretchings);
 

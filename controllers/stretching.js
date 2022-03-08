@@ -1,4 +1,5 @@
 const stretchingService = require('../service/stretching');
+const userService = require('../service/user');
 const CODE = require('../utils/statusCode');
 const MSG = require('../utils/responseMessage');
 const form = require('../utils/responseForm');
@@ -53,8 +54,16 @@ const getTagStretchings = async (req, res) => {
 const getRecommendStretchings = async (req, res) => {
   try {
     const stretchingIdx = req.params.idx;
+    const { userIdx } = req.query;
 
-    const stretchings = await stretchingService.getRecommendStretchings(stretchingIdx);
+    if (userIdx) {
+      const isValidUser = await userService.findUserByIdx(userIdx);
+      if (!isValidUser) {
+        return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.IDX_NOT_EXIST));
+      }
+    }
+
+    const stretchings = await stretchingService.getRecommendStretchings(stretchingIdx, userIdx);
 
     return res.status(CODE.OK).json(form.success(stretchings));
   } catch (err) {

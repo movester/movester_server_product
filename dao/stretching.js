@@ -1,5 +1,12 @@
 const pool = require('./pool');
 
+const addLikeSql = `, CASE WHEN (SELECT user_like_idx
+                                   FROM movester_db.user_like AS d
+                                  WHERE a.stretching_idx = d.stretching_idx
+                                    AND d.user_idx = 1
+                                 ) IS NULL THEN FALSE ELSE TRUE END
+                      AS 'like'`;
+
 const findStretchingByIdx = async idx => {
   let connection;
 
@@ -185,12 +192,16 @@ const getTagStretchings = async ({ main, sub, tool, posture, effect }) => {
       main: main && `a.main_body REGEXP ${main}`,
       sub: sub && `OR a.sub_body REGEXP ${sub}`,
       tool: tool && `OR a.tool REGEXP ${tool}`,
-      effect: effect && `OR IFNULL((SELECT GROUP_CONCAT(effect_type SEPARATOR ' ')
+      effect:
+        effect &&
+        `OR IFNULL((SELECT GROUP_CONCAT(effect_type SEPARATOR ' ')
                                       FROM stretching_effect AS b
                                      WHERE a.stretching_idx = b.stretching_idx
                                   GROUP BY b.stretching_idx
                                   ), '') REGEXP ${effect}`,
-      posture: posture && `OR IFNULL((SELECT GROUP_CONCAT(posture_type SEPARATOR ' ')
+      posture:
+        posture &&
+        `OR IFNULL((SELECT GROUP_CONCAT(posture_type SEPARATOR ' ')
                                         FROM stretching_posture AS c
                                        WHERE a.stretching_idx = c.stretching_idx
                                     GROUP BY c.stretching_idx
@@ -230,7 +241,7 @@ const getTagStretchings = async ({ main, sub, tool, posture, effect }) => {
   }
 };
 
-const getRecommendStretchings = async (stretchingIdx) => {
+const getRecommendStretchings = async (stretchingIdx, userIdx) => {
   let connection;
 
   try {
@@ -251,6 +262,7 @@ const getRecommendStretchings = async (stretchingIdx) => {
                           WHERE a.stretching_idx = c.stretching_idx
                        GROUP BY c.stretching_idx
                         ) AS 'posture'
+                      ${userIdx ? addLikeSql : ''}
                    FROM stretching a
                   WHERE IFNULL((SELECT GROUP_CONCAT(effect_type SEPARATOR ' ')
                                   FROM stretching_effect AS b
@@ -279,5 +291,5 @@ module.exports = {
   getStretchingsByEffect,
   getStretching,
   getTagStretchings,
-  getRecommendStretchings
+  getRecommendStretchings,
 };
