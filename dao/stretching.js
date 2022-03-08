@@ -1,5 +1,12 @@
 const pool = require('./pool');
 
+const addLikeSql = `, CASE WHEN (SELECT user_like_idx
+                                   FROM movester_db.user_like AS d
+                                  WHERE a.stretching_idx = d.stretching_idx
+                                    AND d.user_idx = 1
+                                 ) IS NULL THEN FALSE ELSE TRUE END
+                      AS 'like'`
+
 const findStretchingByIdx = async idx => {
   let connection;
 
@@ -20,8 +27,9 @@ const findStretchingByIdx = async idx => {
   }
 };
 
-const getStretchingsByBodypart = async (main, sub) => {
+const getStretchingsByBodypart = async (main, sub, userIdx) => {
   let connection;
+  if(userIdx) console.log("있다!")
 
   try {
     connection = await pool.getConnection(async conn => conn);
@@ -41,6 +49,7 @@ const getStretchingsByBodypart = async (main, sub) => {
                           WHERE a.stretching_idx = c.stretching_idx
                        GROUP BY c.stretching_idx
                         ) AS 'effect'
+                      ${userIdx ? addLikeSql : ""}
                   FROM stretching a
                  WHERE main_body LIKE CONCAT('%', ${main},'%')
                    AND IFNULL(sub_body, '') LIKE CONCAT('%', ${sub},'%')
@@ -56,7 +65,7 @@ const getStretchingsByBodypart = async (main, sub) => {
   }
 };
 
-const getStretchingsByPosture = async main => {
+const getStretchingsByPosture = async (main, userIdx) => {
   let connection;
 
   try {
@@ -77,6 +86,7 @@ const getStretchingsByPosture = async main => {
                           WHERE a.stretching_idx = c.stretching_idx
                        GROUP BY c.stretching_idx
                         ) AS 'effect'
+                      ${userIdx ? addLikeSql : ""}
                   FROM stretching a
                  WHERE IFNULL((SELECT group_concat(posture_type SEPARATOR ' ')
                                  FROM stretching_posture AS b
@@ -95,7 +105,7 @@ const getStretchingsByPosture = async main => {
   }
 };
 
-const getStretchingsByEffect = async main => {
+const getStretchingsByEffect = async (main, userIdx) => {
   let connection;
 
   try {
@@ -116,6 +126,7 @@ const getStretchingsByEffect = async main => {
                           WHERE a.stretching_idx = c.stretching_idx
                        GROUP BY c.stretching_idx
                         ) AS 'effect'
+                      ${userIdx ? addLikeSql : ""}
                   FROM stretching a
                  WHERE IFNULL((SELECT group_concat(effect_type SEPARATOR ' ')
                                  FROM stretching_effect AS c
