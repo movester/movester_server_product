@@ -1,5 +1,12 @@
 const pool = require('./pool');
 
+const addLikeSql = `, CASE WHEN (SELECT user_like_idx
+                                   FROM movester_db.user_like AS d
+                                  WHERE a.stretching_idx = d.stretching_idx
+                                    AND d.user_idx = 1
+                                 ) IS NULL THEN FALSE ELSE TRUE END
+                                 AS 'like'`;
+
 const findStretchingByIdx = async idx => {
   let connection;
 
@@ -175,7 +182,7 @@ const getStretching = async stretchingIdx => {
   }
 };
 
-const getTagStretchings = async ({ main, sub, tool, posture, effect }) => {
+const getTagStretchings = async ({ main, sub, tool, posture, effect }, userIdx) => {
   let connection;
 
   try {
@@ -212,6 +219,7 @@ const getTagStretchings = async ({ main, sub, tool, posture, effect }) => {
                           WHERE a.stretching_idx = c.stretching_idx
                        GROUP BY c.stretching_idx
                         ) AS 'posture'
+                       ${userIdx ? addLikeSql : ''}
                    FROM stretching a
                   WHERE ${whereParam.main}
                         ${whereParam.sub}

@@ -61,7 +61,7 @@ const getStretching = async stretchingIdx => {
   }
 };
 
-const getTagStretchings = async tag => {
+const getTagStretchings = async (tag, userIdx) => {
   try {
     const makeRegExpSql = tag => {
       const makeStr = arr => (arr.length ? `'${arr.join('|')}'` : '');
@@ -75,7 +75,7 @@ const getTagStretchings = async tag => {
       return managedTag;
     };
 
-    const stretchings = await stretchingDao.getTagStretchings(makeRegExpSql(tag));
+    const stretchings = await stretchingDao.getTagStretchings(makeRegExpSql(tag), userIdx);
 
     const managedStretchings = stretchings.map(stretching => {
       stretching.effect = makeStringToArray(stretching.effect);
