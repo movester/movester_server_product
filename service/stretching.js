@@ -90,9 +90,27 @@ const getTagStretchings = async tag => {
   }
 };
 
+const getRecommendStretchings = async stretchingIdx => {
+  try {
+    const stretchings = await stretchingDao.getRecommendStretchings(stretchingIdx);
+
+    const managedStretchings = stretchings.map(stretching => {
+      stretching.effect = makeStringToArray(stretching.effect);
+      stretching.posture = makeStringToArray(stretching.posture);
+      return stretching;
+    });
+
+    return managedStretchings;
+  } catch (err) {
+    console.error(`=== Stretching Service getRecommendStretchings Error: ${err} === `);
+    throw new Error(err);
+  }
+};
+
 module.exports = {
   findStretchingByIdx,
   getStretchings,
   getStretching,
   getTagStretchings,
+  getRecommendStretchings,
 };
