@@ -46,9 +46,9 @@ const getStretchings = async (searchType, main, sub) => {
   }
 };
 
-const getStretching = async stretchingIdx => {
+const getStretching = async (stretchingIdx, userIdx) => {
   try {
-    const stretching = await stretchingDao.getStretching(stretchingIdx);
+    const stretching = await stretchingDao.getStretching(stretchingIdx, userIdx);
     if (stretching) {
       stretching.effect = makeStringToArray(stretching.effect);
       stretching.posture = makeStringToArray(stretching.posture);
