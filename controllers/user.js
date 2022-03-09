@@ -6,87 +6,90 @@ const form = require('../utils/responseForm');
 const redis = require('../modules/redis');
 
 const join = async (req, res) => {
-  const joinUser = req.body;
-  if (joinUser.password !== joinUser.confirmPassword) {
-    return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.CONFIRM_PW_MISMATCH));
-  }
-
   try {
+    const joinUser = req.body;
+    if (joinUser.password !== joinUser.confirmPassword) {
+      return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.CONFIRM_PW_MISMATCH));
+    }
+
     const isEmailDuplicate = await userService.findUserByEmail(joinUser.email);
     if (isEmailDuplicate) {
       return res.status(CODE.DUPLICATE).json(form.fail(MSG.EMAIL_ALREADY_EXIST));
     }
-  } catch (err) {
-    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
-  }
-  const isJoin = await userService.join(joinUser);
 
-  if (isJoin === CODE.INTERNAL_SERVER_ERROR) {
+    await userService.join(joinUser);
+
+    res.status(CODE.CREATED).json(form.success());
+  } catch (err) {
+    console.log('Ctrl Error: join ', err);
     return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
-  res.status(CODE.CREATED).json(form.success());
 };
 
 const login = async (req, res) => {
-  const reqUser = req.body;
-  const loginUser = await userService.login(reqUser);
+  try {
+    const reqUser = req.body;
+    const loginUser = await userService.login(reqUser);
 
-  if (typeof loginUser === 'number') {
-    if (loginUser === CODE.BAD_REQUEST) {
-      return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_NOT_EXIST));
+    switch (loginUser) {
+      case CODE.NOT_FOUND:
+        return res.status(CODE.NOT_FOUND).json(form.fail(MSG.PW_MISMATCH));
+      case CODE.BAD_REQUEST:
+        return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_NOT_EXIST));
+      case CODE.UNAUTHORIZED:
+        return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_AUTH_NOT));
+      case CODE.OK:
+        return res
+          .status(CODE.OK)
+          .cookie('accessToken', loginUser.token.accessToken, { httpOnly: true })
+          .cookie('refreshToken', loginUser.token.refreshToken, { httpOnly: true })
+          .json(form.success(loginUser.user));
+      default:
     }
-    if (loginUser === CODE.NOT_FOUND) {
-      return res.status(CODE.NOT_FOUND).json(form.fail(MSG.PW_MISMATCH));
-    }
-    if (loginUser === CODE.UNAUTHORIZED) {
-      return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_AUTH_NOT));
-    }
-    if (loginUser === CODE.INTERNAL_SERVER_ERROR) {
-      return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
-    }
+  } catch (err) {
+    console.log('Ctrl Error: login ', err);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
-
-  return res
-    .status(CODE.OK)
-    .cookie('accessToken', loginUser.token.accessToken, { httpOnly: true })
-    .cookie('refreshToken', loginUser.token.refreshToken, { httpOnly: true })
-    .json(form.success(loginUser.user));
 };
 
 const logout = async (req, res) => {
-  redis.del(req.cookies.userIdx);
-  res.clearCookie('accessToken').clearCookie('refreshToken').status(CODE.OK).json(form.success(MSG.LOGOUT_SUCCESS));
+  try {
+    redis.del(req.cookies.userIdx);
+    res.clearCookie('accessToken').clearCookie('refreshToken').status(CODE.OK).json(form.success(MSG.LOGOUT_SUCCESS));
+  } catch (err) {
+    console.log('Ctrl Error: logout ', err);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
 };
 
 const emailAuthForJoin = async (req, res) => {
-  const emailAuthUser = req.body;
-  const isEmailAuth = await userService.emailAuthForJoin(emailAuthUser);
+  try {
+    const emailAuthUser = req.body;
+    const isEmailAuth = await userService.emailAuthForJoin(emailAuthUser);
 
-  if (typeof isEmailAuth === 'number') {
-    if (isEmailAuth === CODE.NOT_FOUND) {
-      return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
+    switch (isEmailAuth) {
+      case CODE.NOT_FOUND:
+        return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
+      case CODE.BAD_REQUEST:
+        return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_AUTH_NUM_MISMATCH));
+      case CODE.DUPLICATE:
+        return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_AUTH_NOT_FIND));
+      case CODE.UNAUTHORIZED:
+        return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_AUTH_ALREADY));
+      case CODE.OK:
+        return res.status(CODE.OK).json(form.success());
+      default:
     }
-    if (isEmailAuth === CODE.UNAUTHORIZED) {
-      return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_AUTH_ALREADY));
-    }
-    if (isEmailAuth === CODE.BAD_REQUEST) {
-      return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_AUTH_NUM_MISMATCH));
-    }
-    if (isEmailAuth === CODE.DUPLICATE) {
-      return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_AUTH_NOT_FIND));
-    }
-    if (isEmailAuth === CODE.INTERNAL_SERVER_ERROR) {
-      return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
-    }
+  } catch (err) {
+    console.log('Ctrl Error: emailAuthForJoin ', err);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
-
-  return res.status(CODE.OK).json(form.success());
 };
 
 const sendEmailForPwReset = async (req, res) => {
-  const { email } = req.body;
-
   try {
+    const { email } = req.body;
+
     const isExistUser = await userService.findUserByEmail(email);
     if (!isExistUser) return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
 
@@ -101,9 +104,9 @@ const sendEmailForPwReset = async (req, res) => {
 };
 
 const emailAuthForPwReset = async (req, res) => {
-  const { email, emailAuthNum } = req.query;
-
   try {
+    const { email, emailAuthNum } = req.query;
+
     const isExistUser = await userService.findUserByEmail(email);
     if (!isExistUser) {
       return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
@@ -127,13 +130,13 @@ const emailAuthForPwReset = async (req, res) => {
 };
 
 const resetPassword = async (req, res) => {
-  const { email, password, confirmPassword } = req.body;
-
-  if (password !== confirmPassword) {
-    return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.CONFIRM_PW_MISMATCH));
-  }
-
   try {
+    const { email, password, confirmPassword } = req.body;
+
+    if (password !== confirmPassword) {
+      return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.CONFIRM_PW_MISMATCH));
+    }
+
     const isExistUser = await userService.findUserByEmail(email);
     if (!isExistUser) return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
 
@@ -147,14 +150,14 @@ const resetPassword = async (req, res) => {
 };
 
 const changePassword = async (req, res) => {
-  const userIdx = req.cookies.idx;
-  const { curPassword, newPassword, confirmPassword } = req.body;
-
-  if (newPassword !== confirmPassword) {
-    return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.CONFIRM_PW_MISMATCH));
-  }
-
   try {
+    const { userIdx } = req.cookies;
+    const { curPassword, newPassword, confirmPassword } = req.body;
+
+    if (newPassword !== confirmPassword) {
+      return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.CONFIRM_PW_MISMATCH));
+    }
+
     const user = await userService.findUserByIdx(userIdx);
     if (!user) return res.status(CODE.NOT_FOUND).json(form.fail(MSG.USER_NOT_EXIST));
 
@@ -162,7 +165,8 @@ const changePassword = async (req, res) => {
     if (!isCorrectPassword) return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.PW_MISMATCH));
 
     const isSamePassword = await encrypt.compare(newPassword, user.password);
-    if (isSamePassword) return res.status(CODE.BAD_REQUEST).json(form.fail("기존 비밀번호와 동일한 비밀번호로 변경할 수 없습니다."));
+    if (isSamePassword)
+      return res.status(CODE.BAD_REQUEST).json(form.fail('기존 비밀번호와 동일한 비밀번호로 변경할 수 없습니다.'));
 
     await userService.resetPassword(userIdx, newPassword);
 
@@ -174,15 +178,28 @@ const changePassword = async (req, res) => {
 };
 
 const isCorrectPassword = async (req, res) => {
-  const userIdx = req.cookies.idx;
-  const { password } = req.query;
-
   try {
+    const { userIdx } = req.cookies;
+    const { password } = req.query;
+
     const isCorrectPassword = await userService.isCorrectPassword(userIdx, password);
     if (!isCorrectPassword) return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.PW_MISMATCH));
+
     return res.status(CODE.OK).json(form.success());
   } catch (err) {
     console.log('Ctrl Error: isCorrectPassword ', err);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    const { userIdx } = req.cookies;
+    await userService.deleteUser(userIdx);
+
+    return res.clearCookie('accessToken').clearCookie('refreshToken').status(CODE.OK).json(form.success());
+  } catch (err) {
+    console.log('Ctrl Error: deleteUser ', err);
     return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
 };
@@ -197,4 +214,5 @@ module.exports = {
   resetPassword,
   changePassword,
   isCorrectPassword,
+  deleteUser,
 };

@@ -15,5 +15,6 @@ router.get('/email-auth/password', Validator.emailAuthForPwReset, ValidatorError
 router.patch('/password/reset', Validator.resetPassword, ValidatorError.err, userCtrl.resetPassword);
 router.patch('/password', auth.checkToken, Validator.changePassword, ValidatorError.err, userCtrl.changePassword);
 router.get('/password', auth.checkToken, Validator.checkPassword, ValidatorError.err, userCtrl.isCorrectPassword);
+router.delete('/', auth.checkToken, userCtrl.deleteUser);
 
 module.exports = router;

@@ -194,6 +194,27 @@ const joinKakao = async (email, name, kakaoId) => {
   }
 };
 
+const deleteUser = async (idx) => {
+  let connection;
+
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `DELETE
+                   FROM user
+                  WHERE user_idx = ${idx}`;
+
+    const [row] = await connection.query(sql);
+
+    return row;
+  } catch (err) {
+    console.log(`===DB Error > ${err}===`);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
 module.exports = {
   join,
   findUserByEmail,
@@ -205,4 +226,5 @@ module.exports = {
   findUserByKakaoId,
   updateUserKakaoId,
   joinKakao,
+  deleteUser
 };

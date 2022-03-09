@@ -216,6 +216,16 @@ const authKaKako = async user => {
   }
 };
 
+const deleteUser = async idx => {
+  try {
+    await userDao.deleteUser(idx);
+    redis.del(idx);
+  } catch (err) {
+    console.log('Service Error: deleteUser ', err);
+    throw new Error(err);
+  }
+};
+
 module.exports = {
   sendEmail,
   join,
@@ -228,4 +238,5 @@ module.exports = {
   resetPassword,
   isCorrectPassword,
   authKaKako,
+  deleteUser,
 };
