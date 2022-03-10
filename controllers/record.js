@@ -50,15 +50,16 @@ const deleteRecord = async (req, res) => {
   }
 };
 
-const getSummaryRecords = async (req, res) => {
+const getGraphRecords = async (req, res) => {
   try {
     const { userIdx } = req.cookies;
+    const { type } = req.params;
 
-    const summaryRecords = await recordService.getSummaryRecords(userIdx);
+    const records = await recordService.getGraphRecords(userIdx, type);
 
-    return res.status(CODE.OK).json(form.success(summaryRecords));
+    return res.status(CODE.OK).json(form.success(records));
   } catch (err) {
-    console.error(`=== Record Ctrl getSummaryRecords Error: ${err} === `);
+    console.error(`=== Record Ctrl getGraphRecords Error: ${err} === `);
     return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
 };
@@ -102,7 +103,7 @@ module.exports = {
   createRecord,
   updateRecord,
   deleteRecord,
-  getSummaryRecords,
   getRecords,
   getSearchRecords,
+  getGraphRecords,
 };
