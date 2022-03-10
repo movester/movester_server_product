@@ -74,18 +74,18 @@ const getLikes = async userIdx => {
                       , b.title, b.main_body AS 'mainBody'
                       , b.sub_body AS 'subBody'
                       , b.image
-                      , (SELECT group_concat(effect_type SEPARATOR ' ')
-                           FROM movester_db.stretching_effect AS c
+                      , (SELECT group_concat(effect_type SEPARATOR ',')
+                           FROM stretching_effect AS c
                           WHERE c.stretching_idx = b.stretching_idx
                        GROUP BY c.stretching_idx
                         ) AS 'effects'
-                      , (SELECT group_concat(posture_type SEPARATOR ' ')
-                           FROM movester_db.stretching_posture AS d
+                      , (SELECT group_concat(posture_type SEPARATOR ',')
+                           FROM stretching_posture AS d
                           WHERE d.stretching_idx = b.stretching_idx
                        GROUP BY d.stretching_idx
                         ) AS 'postures'
-                  FROM movester_db.user_like AS a
-                  JOIN movester_db.stretching AS b
+                  FROM user_like AS a
+                  JOIN stretching AS b
                     ON a.stretching_idx = b.stretching_idx
                  WHERE a.user_idx = ${userIdx}
               ORDER BY a.user_like_idx DESC;`;

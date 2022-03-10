@@ -13,7 +13,7 @@ const createLike = async (req, res) => {
     if (!isValidStretching) return res.status(CODE.NOT_FOUND).json(form.fail(MSG.IDX_NOT_EXIST));
 
     const likeIdx = await likeService.createLike(userIdx, stretchingIdx);
-    if (!likeIdx) return res.status(CODE.DUPLICATE).json(form.fail('이미 존재하는 찜입니다.'));
+    if (!likeIdx) return res.status(CODE.DUPLICATE).json(form.fail('이미 등록된 찜입니다.'));
 
     return res.status(CODE.CREATED).json(form.success({ likeIdx }));
   } catch (err) {

@@ -39,10 +39,10 @@ const getLikes = async userIdx => {
 
     const managedLikes = likes.map(like => {
       if (like.effects) {
-        like.effects = like.effects.split(' ').map(v => +v);
+        like.effects = like.effects.split(',').map(v => +v);
       }
       if (like.postures) {
-        like.postures = like.postures.split(' ').map(v => +v);
+        like.postures = like.postures.split(',').map(v => +v);
       }
       return like;
     });
