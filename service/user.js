@@ -28,29 +28,36 @@ const join = async joinUser => {
     joinUser.password = hashPassword;
 
     const userIdx = await userDao.join({ joinUser });
-    sendEmail(userIdx, joinUser.email, EMAIL_AUTH_TYPE.JOIN);
+    await sendEmail(userIdx, joinUser.email, EMAIL_AUTH_TYPE.JOIN);
+
+    return userIdx;
   } catch (err) {
     console.error('User Service Error: join ', err);
-    return CODE.INTERNAL_SERVER_ERROR;
+    throw new Error(err);
   }
 };
 
 const login = async ({ email, password }) => {
   try {
+    const isLogin = {};
     const user = await userDao.findUserByEmail(email);
 
     if (!user) {
-      return CODE.BAD_REQUEST;
+      isLogin.code = CODE.BAD_REQUEST;
+      return isLogin;
     }
 
     const isCorrectPassword = await encrypt.compare(password, user.password);
 
     if (!isCorrectPassword) {
-      return CODE.NOT_FOUND;
+      isLogin.code = CODE.NOT_FOUND;
+      return isLogin;
     }
 
     if (!user.isEmailAuth) {
-      return CODE.UNAUTHORIZED;
+      isLogin.code = CODE.UNAUTHORIZED;
+      isLogin.userIdx = user.userIdx;
+      return isLogin;
     }
 
     const token = {
@@ -70,7 +77,7 @@ const login = async ({ email, password }) => {
     };
   } catch (err) {
     console.error('User Service Error: login ', err);
-    return CODE.INTERNAL_SERVER_ERROR;
+    throw new Error(err);
   }
 };
 
@@ -111,7 +118,7 @@ const emailAuthForJoin = async ({ userIdx, emailAuthNum: reqNum }) => {
     return isEmailAuth;
   } catch (err) {
     console.error('User Service Error: emailAuthForJoin ', err);
-    return CODE.INTERNAL_SERVER_ERROR;
+    throw new Error(err);
   }
 };
 
@@ -221,7 +228,7 @@ const deleteUser = async idx => {
     await userDao.deleteUser(idx);
     redis.del(idx);
   } catch (err) {
-    console.log('Service Error: deleteUser ', err);
+    console.error('Service Error: deleteUser ', err);
     throw new Error(err);
   }
 };

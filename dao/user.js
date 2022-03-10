@@ -194,7 +194,7 @@ const joinKakao = async (email, name, kakaoId) => {
   }
 };
 
-const deleteUser = async (idx) => {
+const deleteUser = async idx => {
   let connection;
 
   try {
@@ -208,7 +208,7 @@ const deleteUser = async (idx) => {
 
     return row;
   } catch (err) {
-    console.log(`===DB Error > ${err}===`);
+    console.error(`=== User Dao deleteUser Error: ${err} === `);
     throw new Error(err);
   } finally {
     connection.release();
@@ -226,5 +226,5 @@ module.exports = {
   findUserByKakaoId,
   updateUserKakaoId,
   joinKakao,
-  deleteUser
+  deleteUser,
 };

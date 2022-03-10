@@ -21,6 +21,7 @@
       "comma-dangle": "off",
       "no-param-reassign": "off",
       "no-shadow": "off",
-      "no-console": "off"
+      "no-console": "off",
+      "default-case": "off"
     }
 }

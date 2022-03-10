@@ -17,11 +17,10 @@ const join = async (req, res) => {
       return res.status(CODE.DUPLICATE).json(form.fail(MSG.EMAIL_ALREADY_EXIST));
     }
 
-    await userService.join(joinUser);
-
-    res.status(CODE.CREATED).json(form.success());
+    const userIdx = await userService.join(joinUser);
+    res.status(CODE.CREATED).json(form.success({ userIdx }));
   } catch (err) {
-    console.log('Ctrl Error: join ', err);
+    console.error(`=== User Ctrl join Error: ${err} === `);
     return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
 };
@@ -31,23 +30,22 @@ const login = async (req, res) => {
     const reqUser = req.body;
     const loginUser = await userService.login(reqUser);
 
-    switch (loginUser) {
-      case CODE.NOT_FOUND:
-        return res.status(CODE.NOT_FOUND).json(form.fail(MSG.PW_MISMATCH));
+    switch (loginUser.code) {
       case CODE.BAD_REQUEST:
         return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_NOT_EXIST));
+      case CODE.NOT_FOUND:
+        return res.status(CODE.NOT_FOUND).json(form.fail(MSG.PW_MISMATCH));
       case CODE.UNAUTHORIZED:
-        return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_AUTH_NOT));
-      case CODE.OK:
-        return res
-          .status(CODE.OK)
-          .cookie('accessToken', loginUser.token.accessToken, { httpOnly: true })
-          .cookie('refreshToken', loginUser.token.refreshToken, { httpOnly: true })
-          .json(form.success(loginUser.user));
-      default:
+        return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_AUTH_NOT, { userIdx: loginUser.userIdx }));
     }
+
+    return res
+      .status(CODE.OK)
+      .cookie('accessToken', loginUser.token.accessToken, { httpOnly: true })
+      .cookie('refreshToken', loginUser.token.refreshToken, { httpOnly: true })
+      .json(form.success(loginUser.user));
   } catch (err) {
-    console.log('Ctrl Error: login ', err);
+    console.error(`=== User Ctrl login Error: ${err} === `);
     return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
 };
@@ -57,7 +55,7 @@ const logout = async (req, res) => {
     redis.del(req.cookies.userIdx);
     res.clearCookie('accessToken').clearCookie('refreshToken').status(CODE.OK).json(form.success(MSG.LOGOUT_SUCCESS));
   } catch (err) {
-    console.log('Ctrl Error: logout ', err);
+    console.error(`=== User Ctrl logout Error: ${err} === `);
     return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
 };
@@ -70,18 +68,17 @@ const emailAuthForJoin = async (req, res) => {
     switch (isEmailAuth) {
       case CODE.NOT_FOUND:
         return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
+      case CODE.UNAUTHORIZED:
+        return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_AUTH_ALREADY));
       case CODE.BAD_REQUEST:
         return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_AUTH_NUM_MISMATCH));
       case CODE.DUPLICATE:
         return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_AUTH_NOT_FIND));
-      case CODE.UNAUTHORIZED:
-        return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_AUTH_ALREADY));
-      case CODE.OK:
-        return res.status(CODE.OK).json(form.success());
-      default:
     }
+
+    return res.status(CODE.OK).json(form.success());
   } catch (err) {
-    console.log('Ctrl Error: emailAuthForJoin ', err);
+    console.error(`=== User Ctrl emailAuthForJoin Error: ${err} === `);
     return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
 };
@@ -89,7 +86,6 @@ const emailAuthForJoin = async (req, res) => {
 const sendEmailForPwReset = async (req, res) => {
   try {
     const { email } = req.body;
-
     const isExistUser = await userService.findUserByEmail(email);
     if (!isExistUser) return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
 
@@ -98,7 +94,7 @@ const sendEmailForPwReset = async (req, res) => {
     await userService.sendEmailForPwReset(isExistUser.userIdx, email);
     return res.status(CODE.OK).json(form.success());
   } catch (err) {
-    console.log('Ctrl Error: sendEmailForPwReset ', err);
+    console.error(`=== User Ctrl sendEmailForPwReset Error: ${err} === `);
     return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
 };
@@ -106,7 +102,6 @@ const sendEmailForPwReset = async (req, res) => {
 const emailAuthForPwReset = async (req, res) => {
   try {
     const { email, emailAuthNum } = req.query;
-
     const isExistUser = await userService.findUserByEmail(email);
     if (!isExistUser) {
       return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
@@ -119,12 +114,11 @@ const emailAuthForPwReset = async (req, res) => {
         return res.status(CODE.NOT_FOUND).json(form.fail('인증 번호 발송 내역이 없습니다.'));
       case CODE.BAD_REQUEST:
         return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_AUTH_NUM_MISMATCH));
-      case CODE.OK:
-        return res.status(CODE.OK).json(form.success());
-      default:
     }
+    
+    return res.status(CODE.OK).json(form.success());
   } catch (err) {
-    console.log('Ctrl Error: emailAuthForPwReset ', err);
+    console.error(`=== User Ctrl emailAuthForPwReset Error: ${err} === `);
     return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
 };
@@ -136,7 +130,6 @@ const resetPassword = async (req, res) => {
     if (password !== confirmPassword) {
       return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.CONFIRM_PW_MISMATCH));
     }
-
     const isExistUser = await userService.findUserByEmail(email);
     if (!isExistUser) return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
 
@@ -144,7 +137,7 @@ const resetPassword = async (req, res) => {
 
     return res.status(CODE.OK).json(form.success());
   } catch (err) {
-    console.log('Ctrl Error: resetPassword ', err);
+    console.error(`=== User Ctrl resetPassword Error: ${err} === `);
     return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
 };
@@ -157,7 +150,6 @@ const changePassword = async (req, res) => {
     if (newPassword !== confirmPassword) {
       return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.CONFIRM_PW_MISMATCH));
     }
-
     const user = await userService.findUserByIdx(userIdx);
     if (!user) return res.status(CODE.NOT_FOUND).json(form.fail(MSG.USER_NOT_EXIST));
 
@@ -172,7 +164,7 @@ const changePassword = async (req, res) => {
 
     return res.status(CODE.OK).json(form.success());
   } catch (err) {
-    console.log('Ctrl Error: changePassword ', err);
+    console.error(`=== User Ctrl changePassword Error: ${err} === `);
     return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
 };
@@ -187,7 +179,7 @@ const isCorrectPassword = async (req, res) => {
 
     return res.status(CODE.OK).json(form.success());
   } catch (err) {
-    console.log('Ctrl Error: isCorrectPassword ', err);
+    console.error(`=== User Ctrl isCorrectPassword Error: ${err} === `);
     return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
   }
 };
