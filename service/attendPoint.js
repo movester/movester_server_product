@@ -11,13 +11,13 @@ const createAttendPoint = async userIdx => {
   }
 };
 
-const isOverlapAttendPoint = async userIdx => {
+const isDuplicateAttendPoint = async userIdx => {
   try {
     const { year, month, date } = getToday();
-    const isOverlapAttendPoint = await attendPointDao.findAttendPointByDate(userIdx, year, month, date);
-    return isOverlapAttendPoint;
+    const isDuplicateAttendPoint = await attendPointDao.findAttendPointByDate(userIdx, year, month, date);
+    return isDuplicateAttendPoint;
   } catch (err) {
-    console.error(`=== AttendPoint Service isOverlapAttendPoint Error: ${err} === `);
+    console.error(`=== AttendPoint Service isDuplicateAttendPoint Error: ${err} === `);
     throw new Error(err);
   }
 };
@@ -42,6 +42,6 @@ const getAttendPoints = async (userIdx, year, month) => {
 
 module.exports = {
   createAttendPoint,
-  isOverlapAttendPoint,
+  isDuplicateAttendPoint,
   getAttendPoints,
 };

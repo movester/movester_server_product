@@ -7,8 +7,8 @@ const createAttendPoint = async (req, res) => {
   try {
     const { userIdx } = req.cookies;
 
-    const isOverlapAttendPoint = await attendPointService.isOverlapAttendPoint(userIdx);
-    if (isOverlapAttendPoint)
+    const isDuplicateAttendPoint = await attendPointService.isDuplicateAttendPoint(userIdx);
+    if (isDuplicateAttendPoint)
       return res.status(CODE.BAD_REQUEST).json(form.fail('이미 당일 출석 포인트를 적립하였습니다.'));
 
     await attendPointService.createAttendPoint(userIdx);
