@@ -8,5 +8,6 @@ router.use('/records', require('./record'));
 router.use('/attend-points', require('./attendPoint'));
 router.use('/auth', require('./auth'));
 router.use('/likes', require('./like'));
+router.use('/weeks', require('./week'));
 
 module.exports = router;
