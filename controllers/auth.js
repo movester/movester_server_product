@@ -42,7 +42,7 @@ const getToken = async (req, res) => {
     .cookie('accessToken', authUser.token.accessToken, { httpOnly: true })
     .cookie('refreshToken', authUser.token.refreshToken, { httpOnly: true })
     .json(form.success(authUser.user));
-
+    
   } catch (err) {
     console.error(`=== Auth Ctrl getToken Error: ${err.data} === `);
     return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
