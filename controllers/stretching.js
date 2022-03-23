@@ -68,8 +68,30 @@ const getTagStretchings = async (req, res) => {
   }
 };
 
+const getRecommendStretchings = async (req, res) => {
+  try {
+    const stretchingIdx = req.params.idx;
+    const { userIdx } = req.query;
+
+    if (userIdx) {
+      const isValidUser = await userService.findUserByIdx(userIdx);
+      if (!isValidUser) {
+        return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.IDX_NOT_EXIST));
+      }
+    }
+
+    const stretchings = await stretchingService.getRecommendStretchings(stretchingIdx, userIdx);
+
+    return res.status(CODE.OK).json(form.success(stretchings));
+  } catch (err) {
+    console.error(`=== Stretching Ctrl getRecommendStretchings Error: ${err} === `);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
 module.exports = {
   getStretchings,
   getStretching,
   getTagStretchings,
+  getRecommendStretchings,
 };

@@ -2,6 +2,14 @@ const stretchingDao = require('../dao/stretching');
 
 const makeNullToEmptyStr = str => (str === '' ? "''" : str);
 const makeStringToArray = str => (!str ? str : str.split(' ').map(v => +v));
+const makeArrayStretching = stretchings => {
+  const arrayStretching = stretchings.map(stretching => {
+    stretching.effect = makeStringToArray(stretching.effect);
+    stretching.posture = makeStringToArray(stretching.posture);
+    return stretching;
+  });
+  return arrayStretching;
+};
 
 const findStretchingByIdx = async idx => {
   try {
@@ -77,15 +85,24 @@ const getTagStretchings = async (tag, userIdx) => {
 
     const stretchings = await stretchingDao.getTagStretchings(makeRegExpSql(tag), userIdx);
 
-    const managedStretchings = stretchings.map(stretching => {
-      stretching.effect = makeStringToArray(stretching.effect);
-      stretching.posture = makeStringToArray(stretching.posture);
-      return stretching;
-    });
+    const managedStretchings = makeArrayStretching(stretchings);
 
     return managedStretchings;
   } catch (err) {
     console.error(`=== Stretching Service getTagStretchings Error: ${err} === `);
+    throw new Error(err);
+  }
+};
+
+const getRecommendStretchings = async (stretchingIdx, userIdx) => {
+  try {
+    const stretchings = await stretchingDao.getRecommendStretchings(stretchingIdx, userIdx);
+
+    const managedStretchings = makeArrayStretching(stretchings);
+
+    return managedStretchings;
+  } catch (err) {
+    console.error(`=== Stretching Service getRecommendStretchings Error: ${err} === `);
     throw new Error(err);
   }
 };
@@ -95,4 +112,5 @@ module.exports = {
   getStretchings,
   getStretching,
   getTagStretchings,
+  getRecommendStretchings,
 };
