@@ -10,5 +10,6 @@ router.use('/auth', require('./auth'));
 router.use('/likes', require('./like'));
 router.use('/weeks', require('./week'));
 router.use('/stretchings/difficulty', require('./difficulty'));
+router.use('/stretchings', require('./stretching'));
 
 module.exports = router;
