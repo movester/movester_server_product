@@ -36,7 +36,7 @@ const login = async (req, res) => {
       case CODE.NOT_FOUND:
         return res.status(CODE.NOT_FOUND).json(form.fail(MSG.PW_MISMATCH));
       case CODE.UNAUTHORIZED:
-        return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_AUTH_NOT, { userIdx: loginUser.userIdx }));
+        return res.status(CODE.UNAUTHORIZED).json(form.fail("이메일 인증을 해주세요.", { userIdx: loginUser.userIdx }));
     }
 
     return res
@@ -67,13 +67,13 @@ const emailAuthForJoin = async (req, res) => {
 
     switch (isEmailAuth) {
       case CODE.NOT_FOUND:
-        return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
+        return res.status(CODE.NOT_FOUND).json(form.fail("가입되지 않은 유저입니다."));
       case CODE.UNAUTHORIZED:
-        return res.status(CODE.UNAUTHORIZED).json(form.fail(MSG.EMAIL_AUTH_ALREADY));
+        return res.status(CODE.UNAUTHORIZED).json(form.fail("이미 인증된 사용자입니다."));
       case CODE.BAD_REQUEST:
-        return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_AUTH_NUM_MISMATCH));
+        return res.status(CODE.BAD_REQUEST).json(form.fail("인증 번호가 일치하지 않습니다."));
       case CODE.DUPLICATE:
-        return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_AUTH_NOT_FIND));
+        return res.status(CODE.BAD_REQUEST).json(form.fail("이메일 인증 발송 내역이 없습니다."));
     }
 
     return res.status(CODE.OK).json(form.success());
@@ -115,7 +115,7 @@ const emailAuthForPwReset = async (req, res) => {
       case CODE.BAD_REQUEST:
         return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_AUTH_NUM_MISMATCH));
     }
-    
+
     return res.status(CODE.OK).json(form.success());
   } catch (err) {
     console.error(`=== User Ctrl emailAuthForPwReset Error: ${err} === `);

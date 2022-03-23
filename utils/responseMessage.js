@@ -27,11 +27,13 @@ const responseMessage = {
   ID_NOT_EXIST: '존재하지 않는 유저 ID 입니다.',
   NAME_ALREADY_EXIST: '존재하는 username 입니다.',
   IDX_NOT_EXIST: '존재하지 않는 idx 입니다.',
+  EMAIL_NOT_EXIST: '존재하지 않는 이메일입니다.',
   EMAIL_ALREADY_EXIST: '이미 존재하는 이메일입니다.',
   USER_NOT_EXIST: '존재하지 않는 회원입니다',
 
   PW_MISMATCH: '비밀번호가 일치하지 않습니다',
   CONFIRM_PW_MISMATCH: '비밀번호 확인이 일치하지 않습니다.',
+  EMAIL_AUTH_NUM_MISMATCH: '이메일 인증번호가 일치하지 않습니다.',
 
   UNAUTHORIZED: 'api 사용 권한이 없습니다.',
   SUPER_ADMIN_ONLY: 'super admin 계정만 사용 가능한 api 입니다.',
