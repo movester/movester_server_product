@@ -74,7 +74,7 @@ const findUserByIdx = async idx => {
     const sql = `SELECT user_idx AS userIdx, email, password, name, is_email_auth AS isEmailAuth
                    FROM user
                   WHERE user_idx = ${idx}
-                    AND delete_at = null`;
+                    AND delete_at IS NULL`;
 
     const [row] = await connection.query(sql);
     return row.length ? row[0] : undefined;
@@ -174,7 +174,7 @@ const findUserByKakaoId = async kakaoId => {
     const sql = `SELECT user_idx AS userIdx, email, password, name, is_email_auth AS isEmailAuth
                    FROM user
                   WHERE kakao_id = '${kakaoId}'
-                    AND delete_at = null`;
+                    AND delete_at IS NULL`;
 
     const [row] = await connection.query(sql);
     return row.length ? row[0] : undefined;
