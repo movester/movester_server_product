@@ -13,8 +13,14 @@ const join = async (req, res) => {
     }
 
     const isEmailDuplicate = await userService.findUserByEmail(joinUser.email);
+
     if (isEmailDuplicate) {
-      return res.status(CODE.DUPLICATE).json(form.fail(MSG.EMAIL_ALREADY_EXIST));
+      if (!isEmailDuplicate.deleteAt) {
+        return res.status(CODE.DUPLICATE).json(form.fail(MSG.EMAIL_ALREADY_EXIST));
+      }
+      joinUser.userIdx = isEmailDuplicate.userIdx;
+      const userIdx = await userService.rejoin(joinUser);
+      return res.status(CODE.CREATED).json(form.success({ userIdx }));
     }
 
     const userIdx = await userService.join(joinUser);
@@ -36,7 +42,7 @@ const login = async (req, res) => {
       case CODE.NOT_FOUND:
         return res.status(CODE.NOT_FOUND).json(form.fail(MSG.PW_MISMATCH));
       case CODE.UNAUTHORIZED:
-        return res.status(CODE.UNAUTHORIZED).json(form.fail("이메일 인증을 해주세요.", { userIdx: loginUser.userIdx }));
+        return res.status(CODE.UNAUTHORIZED).json(form.fail('이메일 인증을 해주세요.', { userIdx: loginUser.userIdx }));
     }
 
     return res
@@ -67,13 +73,13 @@ const emailAuthForJoin = async (req, res) => {
 
     switch (isEmailAuth) {
       case CODE.NOT_FOUND:
-        return res.status(CODE.NOT_FOUND).json(form.fail("가입되지 않은 유저입니다."));
+        return res.status(CODE.NOT_FOUND).json(form.fail('가입되지 않은 유저입니다.'));
       case CODE.UNAUTHORIZED:
-        return res.status(CODE.UNAUTHORIZED).json(form.fail("이미 인증된 사용자입니다."));
+        return res.status(CODE.UNAUTHORIZED).json(form.fail('이미 인증된 사용자입니다.'));
       case CODE.BAD_REQUEST:
-        return res.status(CODE.BAD_REQUEST).json(form.fail("인증 번호가 일치하지 않습니다."));
+        return res.status(CODE.BAD_REQUEST).json(form.fail('인증 번호가 일치하지 않습니다.'));
       case CODE.DUPLICATE:
-        return res.status(CODE.BAD_REQUEST).json(form.fail("이메일 인증 발송 내역이 없습니다."));
+        return res.status(CODE.BAD_REQUEST).json(form.fail('이메일 인증 발송 내역이 없습니다.'));
     }
 
     return res.status(CODE.OK).json(form.success());

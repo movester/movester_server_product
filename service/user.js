@@ -37,12 +37,26 @@ const join = async joinUser => {
   }
 };
 
+const rejoin = async joinUser => {
+  try {
+    const hashPassword = await encrypt.hash(joinUser.password);
+
+    await userDao.rejoin(joinUser.email, hashPassword, joinUser.name);
+    await sendEmail(joinUser.userIdx, joinUser.email, EMAIL_AUTH_TYPE.JOIN);
+
+    return joinUser.userIdx;
+  } catch (err) {
+    console.error('Service Error: rejoin ', err);
+    throw new Error(err);
+  }
+};
+
 const login = async ({ email, password }) => {
   try {
     const isLogin = {};
     const user = await userDao.findUserByEmail(email);
 
-    if (!user) {
+    if (!user || user.deleteAt) {
       isLogin.code = CODE.BAD_REQUEST;
       return isLogin;
     }
@@ -236,6 +250,7 @@ const deleteUser = async idx => {
 module.exports = {
   sendEmail,
   join,
+  rejoin,
   login,
   findUserByEmail,
   findUserByIdx,

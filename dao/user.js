@@ -19,15 +19,42 @@ const join = async ({ joinUser }) => {
   }
 };
 
+const rejoin = async (email, password, name) => {
+  let connection;
+
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `UPDATE user
+                    SET is_email_auth = 0
+                      , password = '${password}'
+                      , name = '${name}'
+                      , delete_at = null
+                  WHERE email = '${email}'`;
+
+    const [row] = await connection.query(sql);
+    return row?.affectedRows;
+  } catch (err) {
+    console.error(`=== User Dao rejoin Error: ${err} === `);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
 const findUserByEmail = async email => {
   let connection;
   try {
     connection = await pool.getConnection(async conn => conn);
 
-    const sql = `SELECT user_idx AS userIdx, email, password, name, is_email_auth AS isEmailAuth
+    const sql = `SELECT user_idx AS userIdx
+                      , email
+                      , password
+                      , name
+                      , is_email_auth AS isEmailAuth
+                      , delete_at AS deleteAt
                    FROM user
-                  WHERE email = '${email}'
-                    AND delete_at = null`;
+                  WHERE email = '${email}'`;
 
     const [row] = await connection.query(sql);
     return row.length ? row[0] : undefined;
@@ -220,6 +247,7 @@ const deleteUser = async idx => {
 
 module.exports = {
   join,
+  rejoin,
   findUserByEmail,
   findUserByIdx,
   setEmailAuthNum,
