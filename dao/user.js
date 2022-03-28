@@ -26,7 +26,8 @@ const findUserByEmail = async email => {
 
     const sql = `SELECT user_idx AS userIdx, email, password, name, is_email_auth AS isEmailAuth
                    FROM user
-                  WHERE email = '${email}'`;
+                  WHERE email = '${email}'
+                    AND delete_at = null`;
 
     const [row] = await connection.query(sql);
     return row.length ? row[0] : undefined;
@@ -45,7 +46,8 @@ const findUserByIdx = async idx => {
 
     const sql = `SELECT user_idx AS userIdx, email, password, name, is_email_auth AS isEmailAuth
                    FROM user
-                  WHERE user_idx = ${idx}`;
+                  WHERE user_idx = ${idx}
+                    AND delete_at = null`;
 
     const [row] = await connection.query(sql);
     return row.length ? row[0] : undefined;
@@ -63,7 +65,7 @@ const setEmailAuthNum = async (userIdx, emailAuthNum, type) => {
     connection = await pool.getConnection(async conn => conn);
 
     const sql = `INSERT
-                 INTO user_auth (user_idx, auth_num, auth_type) VALUES (${userIdx}, ${emailAuthNum}, ${type});`;
+                   INTO user_auth (user_idx, auth_num, auth_type) VALUES (${userIdx}, ${emailAuthNum}, ${type});`;
 
     const [row] = await connection.query(sql);
     return !!Object.keys(row);
@@ -144,7 +146,8 @@ const findUserByKakaoId = async kakaoId => {
 
     const sql = `SELECT user_idx AS userIdx, email, password, name, is_email_auth AS isEmailAuth
                    FROM user
-                  WHERE kakao_id = '${kakaoId}'`;
+                  WHERE kakao_id = '${kakaoId}'
+                    AND delete_at = null`;
 
     const [row] = await connection.query(sql);
     return row.length ? row[0] : undefined;
@@ -200,8 +203,8 @@ const deleteUser = async idx => {
   try {
     connection = await pool.getConnection(async conn => conn);
 
-    const sql = `DELETE
-                   FROM user
+    const sql = `UPDATE user
+                    SET delete_at = CURRENT_TIMESTAMP()
                   WHERE user_idx = ${idx}`;
 
     const [row] = await connection.query(sql);
