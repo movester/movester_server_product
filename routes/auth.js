@@ -5,7 +5,6 @@ require('dotenv').config();
 
 const router = express.Router();
 
-router.get('/kakao', authCtrl.getAuthCode);
-router.get('/kakao/callback', authCtrl.getToken);
+router.get('/kakao/callback', authCtrl.getKakaoToken);
 
 module.exports = router;
