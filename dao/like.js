@@ -41,7 +41,7 @@ const createLike = async (userIdx, stretchingIdx) => {
   }
 };
 
-const deleteLike = async likeIdx => {
+const deleteLike = async (userIdx, stretchingIdx) => {
   let connection;
 
   try {
@@ -49,7 +49,8 @@ const deleteLike = async likeIdx => {
 
     const sql = `DELETE
                    FROM user_like
-                  WHERE user_like_idx = ${likeIdx};`;
+                  WHERE user_idx = ${userIdx}
+                    AND stretching_idx = ${stretchingIdx};`;
 
     const [row] = await connection.query(sql);
 
