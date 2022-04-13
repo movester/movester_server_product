@@ -5,13 +5,12 @@ const getExposedWeek = async () => {
     const week = await weekDao.getExposedWeek();
     if (!week) return week;
 
-    const managedWeek = {
-      weekIdx: week.weekIdx,
-      title: week.title,
-      stretchings: [week.mon, week.tue, week.wed, week.thu, week.fri, week.sat, week.sun],
-    };
-
-    return managedWeek;
+    const weekStretching = week.reduce((acc, { weekDay, image }) => {
+      acc[weekDay] = image;
+      return acc;
+    }, []);
+    
+    return weekStretching;
   } catch (err) {
     console.error(`=== Week Service getExposedWeek Error: ${err} === `);
     throw new Error(err);
