@@ -28,7 +28,7 @@ const findStretchingByIdx = async idx => {
   }
 };
 
-const getStretchingsByBodypart = async (main, sub) => {
+const getStretchingsByBodypart = async (main, sub, page) => {
   let connection;
 
   try {
@@ -52,7 +52,8 @@ const getStretchingsByBodypart = async (main, sub) => {
                   FROM stretching a
                  WHERE main_body LIKE CONCAT('%', ${main},'%')
                    AND IFNULL(sub_body, '') LIKE CONCAT('%', ${sub},'%')
-              ORDER BY a.create_at DESC`;
+              ORDER BY a.create_at DESC
+                 LIMIT ${page}, 20;`
 
     const [row] = await connection.query(sql);
     return row;
@@ -64,7 +65,7 @@ const getStretchingsByBodypart = async (main, sub) => {
   }
 };
 
-const getStretchingsByPosture = async main => {
+const getStretchingsByPosture = async (main, page) => {
   let connection;
 
   try {
@@ -91,7 +92,8 @@ const getStretchingsByPosture = async main => {
                                 WHERE a.stretching_idx = b.stretching_idx
                              GROUP BY b.stretching_idx
                        ), '') LIKE CONCAT('%', ${main} ,'%')
-              ORDER BY a.create_at DESC`;
+              ORDER BY a.create_at DESC
+                 LIMIT ${page}, 20;`
 
     const [row] = await connection.query(sql);
     return row;
@@ -103,7 +105,7 @@ const getStretchingsByPosture = async main => {
   }
 };
 
-const getStretchingsByEffect = async main => {
+const getStretchingsByEffect = async (main, page) => {
   let connection;
 
   try {
@@ -130,7 +132,8 @@ const getStretchingsByEffect = async main => {
                                 WHERE a.stretching_idx = c.stretching_idx
                              GROUP BY c.stretching_idx
                        ), '') LIKE CONCAT('%', ${main} ,'%')
-              ORDER BY a.create_at DESC`;
+              ORDER BY a.create_at DESC
+                 LIMIT ${page}, 20;`
 
     const [row] = await connection.query(sql);
     return row;

@@ -6,9 +6,9 @@ const form = require('../utils/responseForm');
 
 const getStretchings = async (req, res) => {
   try {
-    const { searchType, main, sub } = req.query;
+    const { searchType, main, sub, page } = req.query;
 
-    const stretchings = await stretchingService.getStretchings(+searchType, main, sub);
+    const stretchings = await stretchingService.getStretchings(+searchType, main, sub, +page);
     return res.status(CODE.OK).json(form.success(stretchings));
   } catch (err) {
     console.error(`=== Stretching Ctrl getStretchings Error: ${err} === `);
