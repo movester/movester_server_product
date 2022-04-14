@@ -21,7 +21,7 @@ const findStretchingByIdx = async idx => {
   }
 };
 
-const getStretchings = async (searchType, main, sub, page) => {
+const getStretchings = async (searchType, main, sub, userIdx, page) => {
   try {
     let stretchings;
 
@@ -32,13 +32,13 @@ const getStretchings = async (searchType, main, sub, page) => {
 
     switch (searchType) {
       case 1:
-        stretchings = await stretchingDao.getStretchingsByBodypart(main, sub, page);
+        stretchings = await stretchingDao.getStretchingsByBodypart(main, sub, userIdx, page);
         break;
       case 2:
-        stretchings = await stretchingDao.getStretchingsByPosture(main, page);
+        stretchings = await stretchingDao.getStretchingsByPosture(main, userIdx, page);
         break;
       case 3:
-        stretchings = await stretchingDao.getStretchingsByEffect(main, page);
+        stretchings = await stretchingDao.getStretchingsByEffect(main, userIdx, page);
         break;
     }
 

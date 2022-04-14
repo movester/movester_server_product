@@ -1,12 +1,11 @@
 const pool = require('./pool');
 
-const addLikeSql = userIdx =>
-  `, CASE WHEN (SELECT user_like_idx
-                                     FROM movester_db.user_like AS d
-                                    WHERE a.stretching_idx = d.stretching_idx
-                                      AND d.user_idx = ${userIdx}
-                                   ) IS NULL THEN FALSE ELSE TRUE END
-                        AS 'like'`;
+const addLikeSql = `, CASE WHEN (SELECT user_like_idx
+                                   FROM movester_db.user_like AS d
+                                  WHERE a.stretching_idx = d.stretching_idx
+                                    AND d.user_idx = 1
+                                 ) IS NULL THEN FALSE ELSE TRUE END
+                      AS 'like'`
 
 const findStretchingByIdx = async idx => {
   let connection;
@@ -28,7 +27,7 @@ const findStretchingByIdx = async idx => {
   }
 };
 
-const getStretchingsByBodypart = async (main, sub, page) => {
+const getStretchingsByBodypart = async (main, sub, userIdx, page) => {
   let connection;
 
   try {
@@ -49,6 +48,7 @@ const getStretchingsByBodypart = async (main, sub, page) => {
                           WHERE a.stretching_idx = c.stretching_idx
                        GROUP BY c.stretching_idx
                         ) AS 'effect'
+                      ${userIdx ? addLikeSql : ""}
                   FROM stretching a
                  WHERE main_body LIKE CONCAT('%', ${main},'%')
                    AND IFNULL(sub_body, '') LIKE CONCAT('%', ${sub},'%')
@@ -65,7 +65,7 @@ const getStretchingsByBodypart = async (main, sub, page) => {
   }
 };
 
-const getStretchingsByPosture = async (main, page) => {
+const getStretchingsByPosture = async (main, userIdx, page) => {
   let connection;
 
   try {
@@ -86,6 +86,7 @@ const getStretchingsByPosture = async (main, page) => {
                           WHERE a.stretching_idx = c.stretching_idx
                        GROUP BY c.stretching_idx
                         ) AS 'effect'
+                      ${userIdx ? addLikeSql : ""}
                   FROM stretching a
                  WHERE IFNULL((SELECT GROUP_CONCAT(posture_type SEPARATOR ' ')
                                  FROM stretching_posture AS b
@@ -105,7 +106,7 @@ const getStretchingsByPosture = async (main, page) => {
   }
 };
 
-const getStretchingsByEffect = async (main, page) => {
+const getStretchingsByEffect = async (main, userIdx, page) => {
   let connection;
 
   try {
@@ -126,6 +127,7 @@ const getStretchingsByEffect = async (main, page) => {
                           WHERE a.stretching_idx = c.stretching_idx
                        GROUP BY c.stretching_idx
                         ) AS 'effect'
+                      ${userIdx ? addLikeSql : ""}
                   FROM stretching a
                  WHERE IFNULL((SELECT GROUP_CONCAT(effect_type SEPARATOR ' ')
                                  FROM stretching_effect AS c

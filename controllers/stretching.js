@@ -6,9 +6,16 @@ const form = require('../utils/responseForm');
 
 const getStretchings = async (req, res) => {
   try {
-    const { searchType, main, sub, page } = req.query;
+    const { searchType, main, sub, userIdx, page } = req.query;
 
-    const stretchings = await stretchingService.getStretchings(+searchType, main, sub, +page);
+    if (userIdx) {
+      const isValidUser = await userService.findUserByIdx(userIdx);
+      if (!isValidUser) {
+        return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.IDX_NOT_EXIST));
+      }
+    }
+
+    const stretchings = await stretchingService.getStretchings(+searchType, main, sub, userIdx, page);
     return res.status(CODE.OK).json(form.success(stretchings));
   } catch (err) {
     console.error(`=== Stretching Ctrl getStretchings Error: ${err} === `);
