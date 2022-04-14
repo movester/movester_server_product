@@ -53,7 +53,7 @@ const getStretchingsByBodypart = async (main, sub, userIdx, page) => {
                  WHERE main_body LIKE CONCAT('%', ${main},'%')
                    AND IFNULL(sub_body, '') LIKE CONCAT('%', ${sub},'%')
               ORDER BY a.create_at DESC
-                 LIMIT ${page}, 20;`
+                 LIMIT ${page}, 16;`
 
     const [row] = await connection.query(sql);
     return row;
@@ -94,7 +94,7 @@ const getStretchingsByPosture = async (main, userIdx, page) => {
                              GROUP BY b.stretching_idx
                        ), '') LIKE CONCAT('%', ${main} ,'%')
               ORDER BY a.create_at DESC
-                 LIMIT ${page}, 20;`
+                 LIMIT ${page}, 16;`
 
     const [row] = await connection.query(sql);
     return row;
@@ -135,7 +135,7 @@ const getStretchingsByEffect = async (main, userIdx, page) => {
                              GROUP BY c.stretching_idx
                        ), '') LIKE CONCAT('%', ${main} ,'%')
               ORDER BY a.create_at DESC
-                 LIMIT ${page}, 20;`
+                 LIMIT ${page}, 16;`
 
     const [row] = await connection.query(sql);
     return row;
