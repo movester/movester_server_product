@@ -7,6 +7,7 @@ const getExposedWeek = async () => {
     connection = await pool.getConnection(async conn => conn);
 
     const sql = `SELECT a.week_day AS 'weekDay'
+                      , b.stretching_idx AS 'stretchingIdx'
                       , b.image
                   FROM week_day_stretching a
                   JOIN stretching b

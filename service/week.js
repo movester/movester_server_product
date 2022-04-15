@@ -3,14 +3,7 @@ const weekDao = require('../dao/week');
 const getExposedWeek = async () => {
   try {
     const week = await weekDao.getExposedWeek();
-    if (!week) return week;
-
-    const weekStretching = week.reduce((acc, { weekDay, image }) => {
-      acc[weekDay] = image;
-      return acc;
-    }, []);
-    
-    return weekStretching;
+    return week;
   } catch (err) {
     console.error(`=== Week Service getExposedWeek Error: ${err} === `);
     throw new Error(err);
