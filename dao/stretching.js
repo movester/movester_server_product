@@ -27,7 +27,7 @@ const findStretchingByIdx = async idx => {
   }
 };
 
-const getStretchingsByBodypart = async (main, sub) => {
+const getStretchingsByBodypart = async (main, sub, userIdx) => {
   let connection;
 
   try {
@@ -48,6 +48,7 @@ const getStretchingsByBodypart = async (main, sub) => {
                           WHERE a.stretching_idx = c.stretching_idx
                        GROUP BY c.stretching_idx
                         ) AS 'effect'
+                      ${userIdx ? addLikeSql : ""}
                   FROM stretching a
                  WHERE main_body LIKE CONCAT('%', ${main},'%')
                    AND IFNULL(sub_body, '') LIKE CONCAT('%', ${sub},'%')
@@ -63,7 +64,7 @@ const getStretchingsByBodypart = async (main, sub) => {
   }
 };
 
-const getStretchingsByPosture = async main => {
+const getStretchingsByPosture = async (main, userIdx) => {
   let connection;
 
   try {
@@ -84,6 +85,7 @@ const getStretchingsByPosture = async main => {
                           WHERE a.stretching_idx = c.stretching_idx
                        GROUP BY c.stretching_idx
                         ) AS 'effect'
+                      ${userIdx ? addLikeSql : ""}
                   FROM stretching a
                  WHERE IFNULL((SELECT GROUP_CONCAT(posture_type SEPARATOR ' ')
                                  FROM stretching_posture AS b
@@ -102,7 +104,7 @@ const getStretchingsByPosture = async main => {
   }
 };
 
-const getStretchingsByEffect = async main => {
+const getStretchingsByEffect = async (main, userIdx) => {
   let connection;
 
   try {
@@ -123,6 +125,7 @@ const getStretchingsByEffect = async main => {
                           WHERE a.stretching_idx = c.stretching_idx
                        GROUP BY c.stretching_idx
                         ) AS 'effect'
+                      ${userIdx ? addLikeSql : ""}
                   FROM stretching a
                  WHERE IFNULL((SELECT GROUP_CONCAT(effect_type SEPARATOR ' ')
                                  FROM stretching_effect AS c
