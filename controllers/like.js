@@ -24,9 +24,10 @@ const createLike = async (req, res) => {
 
 const deleteLike = async (req, res) => {
   try {
-    const likeIdx = req.params.idx;
+    const { userIdx } = req.cookies;
+    const stretchingIdx = req.params.idx;
 
-    const isDelete = await likeService.deleteLike(likeIdx);
+    const isDelete = await likeService.deleteLike(userIdx, stretchingIdx);
     if (!isDelete) return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.IDX_NOT_EXIST));
 
     return res.status(CODE.OK).json(form.success());

@@ -23,9 +23,9 @@ const createLike = async (userIdx, stretchingIdx) => {
   }
 };
 
-const deleteLike = async likeIdx => {
+const deleteLike = async (userIdx, stretchingIdx) => {
   try {
-    const isDelete = await likeDao.deleteLike(likeIdx);
+    const isDelete = await likeDao.deleteLike(userIdx, stretchingIdx);
     return isDelete;
   } catch (err) {
     console.error(`=== Like Service deleteLike Error: ${err} === `);
