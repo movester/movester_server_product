@@ -28,7 +28,7 @@ const findStretchingByIdx = async idx => {
   }
 };
 
-const getStretchingsByBodypart = async (main, sub, userIdx) => {
+const getStretchingsByBodypart = async (main, sub, userIdx, page) => {
   let connection;
 
   try {
@@ -53,7 +53,8 @@ const getStretchingsByBodypart = async (main, sub, userIdx) => {
                   FROM stretching a
                  WHERE main_body LIKE CONCAT('%', ${main},'%')
                    AND IFNULL(sub_body, '') LIKE CONCAT('%', ${sub},'%')
-              ORDER BY a.create_at DESC`;
+              ORDER BY a.create_at DESC
+                 LIMIT ${page}, 12;`
 
     const [row] = await connection.query(sql);
     return row;
@@ -65,7 +66,7 @@ const getStretchingsByBodypart = async (main, sub, userIdx) => {
   }
 };
 
-const getStretchingsByPosture = async (main, userIdx) => {
+const getStretchingsByPosture = async (main, userIdx, page) => {
   let connection;
 
   try {
@@ -93,7 +94,8 @@ const getStretchingsByPosture = async (main, userIdx) => {
                                 WHERE a.stretching_idx = b.stretching_idx
                              GROUP BY b.stretching_idx
                        ), '') LIKE CONCAT('%', ${main} ,'%')
-              ORDER BY a.create_at DESC`;
+              ORDER BY a.create_at DESC
+                 LIMIT ${page}, 12;`
 
     const [row] = await connection.query(sql);
     return row;
@@ -105,7 +107,7 @@ const getStretchingsByPosture = async (main, userIdx) => {
   }
 };
 
-const getStretchingsByEffect = async (main, userIdx) => {
+const getStretchingsByEffect = async (main, userIdx, page) => {
   let connection;
 
   try {
@@ -133,7 +135,8 @@ const getStretchingsByEffect = async (main, userIdx) => {
                                 WHERE a.stretching_idx = c.stretching_idx
                              GROUP BY c.stretching_idx
                        ), '') LIKE CONCAT('%', ${main} ,'%')
-              ORDER BY a.create_at DESC`;
+              ORDER BY a.create_at DESC
+                 LIMIT ${page}, 12;`
 
     const [row] = await connection.query(sql);
     return row;

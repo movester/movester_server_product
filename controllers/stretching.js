@@ -6,7 +6,7 @@ const form = require('../utils/responseForm');
 
 const getStretchings = async (req, res) => {
   try {
-    const { searchType, main, sub, userIdx } = req.query;
+    const { searchType, main, sub, userIdx, page } = req.query;
 
     if (userIdx) {
       const isValidUser = await userService.findUserByIdx(userIdx);
@@ -15,7 +15,7 @@ const getStretchings = async (req, res) => {
       }
     }
 
-    const stretchings = await stretchingService.getStretchings(+searchType, main, sub, userIdx);
+    const stretchings = await stretchingService.getStretchings(+searchType, main, sub, userIdx, page);
     return res.status(CODE.OK).json(form.success(stretchings));
   } catch (err) {
     console.error(`=== Stretching Ctrl getStretchings Error: ${err} === `);
