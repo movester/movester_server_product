@@ -187,30 +187,30 @@ const getStretching = async (stretchingIdx, userIdx) => {
   }
 };
 
-const getTagStretchings = async ({ main, sub, tool, posture, effect }, userIdx) => {
+const getTagStretchings = async (tag, userIdx) => {
   let connection;
-
+  const firstSearch = Object.values(tag).findIndex(v => v);
   try {
     connection = await pool.getConnection(async conn => conn);
 
     const whereParam = {
-      main: main && `a.main_body REGEXP ${main}`,
-      sub: sub && `OR a.sub_body REGEXP ${sub}`,
-      tool: tool && `OR a.tool REGEXP ${tool}`,
+      main: tag.main && `a.main_body REGEXP ${tag.main}`,
+      sub: tag.sub && `${firstSearch < 1 ? 'OR' : ''} a.sub_body REGEXP ${tag.sub}`,
+      tool: tag.tool && `${firstSearch < 2 ? 'OR' : ''} a.tool REGEXP ${tag.tool}`,
       effect:
-        effect &&
-        `OR IFNULL((SELECT GROUP_CONCAT(effect_type SEPARATOR ' ')
+        tag.effect &&
+        `${firstSearch < 3 ? 'OR' : ''} IFNULL((SELECT GROUP_CONCAT(effect_type SEPARATOR ' ')
                                       FROM stretching_effect AS b
                                      WHERE a.stretching_idx = b.stretching_idx
                                   GROUP BY b.stretching_idx
-                                  ), '') REGEXP ${effect}`,
+                                  ), '') REGEXP ${tag.effect}`,
       posture:
-        posture &&
-        `OR IFNULL((SELECT GROUP_CONCAT(posture_type SEPARATOR ' ')
+        tag.posture &&
+        `${firstSearch < 4 ? 'OR' : ''} IFNULL((SELECT GROUP_CONCAT(posture_type SEPARATOR ' ')
                                         FROM stretching_posture AS c
                                        WHERE a.stretching_idx = c.stretching_idx
                                     GROUP BY c.stretching_idx
-                                   ) REGEXP ${posture}`,
+                                  ), '') REGEXP ${tag.posture}`,
     };
 
     const sql = `SELECT stretching_idx AS 'stretchingIdx'
@@ -246,7 +246,6 @@ const getTagStretchings = async ({ main, sub, tool, posture, effect }, userIdx) 
     connection.release();
   }
 };
-
 const getRecommendStretchings = async (stretchingIdx, userIdx) => {
   let connection;
 

@@ -51,10 +51,10 @@ const getTagStretchings = async (req, res) => {
   try {
     const tag = {
       main: JSON.parse(req.query.main),
-      sub: JSON.parse(req.query.effect),
+      sub: JSON.parse(req.query.sub),
       tool: JSON.parse(req.query.tool),
-      posture: JSON.parse(req.query.posture),
       effect: JSON.parse(req.query.effect),
+      posture: JSON.parse(req.query.posture),
     };
 
     const { userIdx } = req.query;
