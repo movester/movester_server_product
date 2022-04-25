@@ -28,7 +28,7 @@ const getStretchings = async (searchType, main, sub, userIdx, page) => {
     searchType = makeNullToEmptyStr(searchType);
     main = makeNullToEmptyStr(main);
     sub = makeNullToEmptyStr(sub);
-    page = (page - 1) * 16;
+    page = (page - 1) * 12;
 
     switch (searchType) {
       case 1:
