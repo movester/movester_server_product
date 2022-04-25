@@ -49,7 +49,7 @@ const getStretchingsByBodypart = async (main, sub, userIdx, page) => {
                           WHERE a.stretching_idx = c.stretching_idx
                        GROUP BY c.stretching_idx
                         ) AS 'effect'
-                      ${userIdx ? addLikeSql : ""}
+                      ${userIdx ? addLikeSql(userIdx) : ""}
                   FROM stretching a
                  WHERE main_body LIKE CONCAT('%', ${main},'%')
                    AND IFNULL(sub_body, '') LIKE CONCAT('%', ${sub},'%')
@@ -87,7 +87,7 @@ const getStretchingsByPosture = async (main, userIdx, page) => {
                           WHERE a.stretching_idx = c.stretching_idx
                        GROUP BY c.stretching_idx
                         ) AS 'effect'
-                      ${userIdx ? addLikeSql : ""}
+                      ${userIdx ? addLikeSql(userIdx) : ""}
                   FROM stretching a
                  WHERE IFNULL((SELECT GROUP_CONCAT(posture_type SEPARATOR ' ')
                                  FROM stretching_posture AS b
@@ -128,7 +128,7 @@ const getStretchingsByEffect = async (main, userIdx, page) => {
                           WHERE a.stretching_idx = c.stretching_idx
                        GROUP BY c.stretching_idx
                         ) AS 'effect'
-                      ${userIdx ? addLikeSql : ""}
+                      ${userIdx ? addLikeSql(userIdx) : ""}
                   FROM stretching a
                  WHERE IFNULL((SELECT GROUP_CONCAT(effect_type SEPARATOR ' ')
                                  FROM stretching_effect AS c
