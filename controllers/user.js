@@ -66,6 +66,22 @@ const logout = async (req, res) => {
   }
 };
 
+const sendEmailForJoin = async (req, res) => {
+  try {
+    const { idx } = req.body;
+    const isExistUser = await userService.findUserByIdx(idx);
+    if (!isExistUser) return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
+
+    if (isExistUser.isEmailAuth) return res.status(CODE.BAD_REQUEST).json(form.fail("이미 이메일 인증된 사용자입니다."));
+
+    await userService.sendEmailForJoin(idx, isExistUser.email);
+    return res.status(CODE.OK).json(form.success());
+  } catch (err) {
+    console.error(`=== User Ctrl sendEmailForJoin Error: ${err} === `);
+    return res.status(CODE.INTERNAL_SERVER_ERROR).json(form.fail(MSG.INTERNAL_SERVER_ERROR));
+  }
+};
+
 const emailAuthForJoin = async (req, res) => {
   try {
     const emailAuthUser = req.body;
@@ -206,6 +222,7 @@ module.exports = {
   join,
   login,
   logout,
+  sendEmailForJoin,
   emailAuthForJoin,
   sendEmailForPwReset,
   emailAuthForPwReset,

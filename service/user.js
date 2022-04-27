@@ -115,6 +115,15 @@ const findUserByIdx = async idx => {
   }
 };
 
+const sendEmailForJoin = async (userIdx, email) => {
+  try {
+    sendEmail(userIdx, email, EMAIL_AUTH_TYPE.JOIN);
+  } catch (err) {
+    console.error('User Service Error: sendEmailForJoin ', err);
+    throw new Error(err);
+  }
+};
+
 const emailAuthForJoin = async ({ userIdx, emailAuthNum: reqNum }) => {
   try {
     const user = await findUserByIdx(userIdx);
@@ -254,6 +263,7 @@ module.exports = {
   login,
   findUserByEmail,
   findUserByIdx,
+  sendEmailForJoin,
   emailAuthForJoin,
   sendEmailForPwReset,
   emailAuthForPwReset,
