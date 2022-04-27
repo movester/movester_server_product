@@ -31,7 +31,7 @@ const responseMessage = {
   EMAIL_ALREADY_EXIST: '이미 존재하는 이메일입니다.',
   USER_NOT_EXIST: '존재하지 않는 회원입니다',
 
-  PW_MISMATCH: '비밀번호가 일치하지 않습니다',
+  PW_MISMATCH: '잘못된 비밀번호입니다.',
   CONFIRM_PW_MISMATCH: '비밀번호 확인이 일치하지 않습니다.',
   EMAIL_AUTH_NUM_MISMATCH: '이메일 인증번호가 일치하지 않습니다.',
 
@@ -43,7 +43,7 @@ const responseMessage = {
   TOKEN_GENERATE_REFRESH_SUCCESS: '토큰 재발급 성공',
 
   VALUE_NULL: '필요한 값이 없습니다.',
-  VALUE_INVALID: '파라미터 값이 잘못 되었습니다.',
+  VALUE_INVALID: '입력값이 잘못 되었습니다.',
 
   TITLE_ALREADY_EXIST: '존재하는 TITLE 입니다.',
 

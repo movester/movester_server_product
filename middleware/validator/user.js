@@ -5,24 +5,22 @@ const join = [
     .notEmpty()
     .withMessage('이메일을 입력해주세요.')
     .isEmail()
-    .withMessage('이메일은 이메일 형식이어야 합니다.')
-    .isLength({ min: 10, max: 50 })
-    .withMessage('이메일은 최소 10글자부터 최대 50글자까지 가능합니다.'),
+    .withMessage('이메일은 이메일 형식이어야 합니다.'),
   body('password')
     .notEmpty()
     .withMessage('비밀번호를 입력해주세요.')
-    .isLength({ min: 5, max: 20 })
-    .withMessage('비밀번호는 최소 5글자부터 최대 20글자까지 가능합니다.'),
+    .matches(/^(?=.*[a-zA-Z])(?=.*[0-9]).{8,20}$/)
+    .withMessage('비밀번호는 영문, 숫자를 반드시 포함하여 8자리 이상 20자리 이하로 입력해주세요.'),
   body('confirmPassword')
     .notEmpty()
-    .withMessage('확인 비밀번호를 입력해주세요.')
-    .isLength({ min: 5, max: 20 })
-    .withMessage('비밀번호는 최소 5글자부터 최대 20글자까지 가능합니다.'),
+    .withMessage('비밀번호를 입력해주세요.')
+    .matches(/^(?=.*[a-zA-Z])(?=.*[0-9]).{8,20}$/)
+    .withMessage('비밀번호는 영문, 숫자를 반드시 포함하여 8자리 이상 20자리 이하로 입력해주세요.'),
   body('name')
     .notEmpty()
     .withMessage('이름 입력해주세요.')
-    .isLength({ min: 1, max: 12 })
-    .withMessage('이름은 최소 1글자부터 최대 12글자까지 가능합니다.'),
+    .matches(/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]{2,12}$/)
+    .withMessage('이름은 한글, 영문, 숫자로 조합된 2자리 이상 12자리 이하로 입력해주세요.'),
 ];
 
 const login = [
@@ -30,14 +28,12 @@ const login = [
     .notEmpty()
     .withMessage('이메일을 입력해주세요.')
     .isEmail()
-    .withMessage('이메일은 이메일 형식이어야 합니다.')
-    .isLength({ min: 10, max: 50 })
-    .withMessage('이메일은 최소 10글자부터 최대 50글자까지 가능합니다.'),
+    .withMessage('이메일은 이메일 형식이어야 합니다.'),
   body('password')
     .notEmpty()
     .withMessage('비밀번호를 입력해주세요.')
-    .isLength({ min: 5, max: 20 })
-    .withMessage('비밀번호는 최소 5글자부터 최대 20글자까지 가능합니다.'),
+    .matches(/^(?=.*[a-zA-Z])(?=.*[0-9]).{8,20}$/)
+    .withMessage('비밀번호는 영문, 숫자를 반드시 포함하여 8자리 이상 20자리 이하로 입력해주세요.'),
 ];
 
 const emailAuthForJoin = [

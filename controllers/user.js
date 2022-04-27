@@ -9,14 +9,14 @@ const join = async (req, res) => {
   try {
     const joinUser = req.body;
     if (joinUser.password !== joinUser.confirmPassword) {
-      return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.CONFIRM_PW_MISMATCH));
+      return res.status(CODE.BAD_REQUEST).json(form.fail("비밀번호 확인이 일치하지 않습니다."));
     }
 
     const isEmailDuplicate = await userService.findUserByEmail(joinUser.email);
 
     if (isEmailDuplicate) {
       if (!isEmailDuplicate.deleteAt) {
-        return res.status(CODE.DUPLICATE).json(form.fail(MSG.EMAIL_ALREADY_EXIST));
+        return res.status(CODE.DUPLICATE).json(form.fail("이미 존재하는 이메일입니다."));
       }
       joinUser.userIdx = isEmailDuplicate.userIdx;
       const userIdx = await userService.rejoin(joinUser);
@@ -42,7 +42,7 @@ const login = async (req, res) => {
       case CODE.NOT_FOUND:
         return res.status(CODE.NOT_FOUND).json(form.fail(MSG.PW_MISMATCH));
       case CODE.UNAUTHORIZED:
-        return res.status(CODE.UNAUTHORIZED).json(form.fail('이메일 인증을 해주세요.', { userIdx: loginUser.userIdx }));
+        return res.status(CODE.UNAUTHORIZED).json(form.fail('아직 이메일 인증을 하지 않았습니다.', { userIdx: loginUser.userIdx }));
     }
 
     return res
