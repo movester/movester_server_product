@@ -24,7 +24,7 @@ const isDuplicateAttendPoint = async userIdx => {
 
 const getAttendPoints = async (userIdx, year, month) => {
   try {
-    const lastDateOfMonth = new Date(year, month - 1, 0).getDate();
+    const lastDateOfMonth = new Date(year, month, 0).getDate();
     const monthArray = new Array(lastDateOfMonth).fill(0);
 
     const attendPoints = await attendPointDao.getAttendPointsByYearMonth(userIdx, year, month);
@@ -32,7 +32,6 @@ const getAttendPoints = async (userIdx, year, month) => {
     attendPoints.forEach(attendPoint => {
       monthArray[+attendPoint.day - 1] = 1;
     });
-
     return monthArray;
   } catch (err) {
     console.error(`=== AttendPoint Service getAttendPoints Error: ${err} === `);
