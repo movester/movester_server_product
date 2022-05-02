@@ -86,7 +86,7 @@ const login = async ({ email, password }) => {
         userIdx: user.userIdx,
         email: user.email,
         name: user.name,
-        isKakao: !!user.kakaoId
+        isKakao: !!user.kakaoId,
       },
       token,
     };
@@ -215,7 +215,7 @@ const getTokenAndSetRedis = async (userIdx, email, name) => {
       userIdx,
       email,
       name,
-      isKakao: true
+      isKakao: true,
     },
     token,
   };
@@ -235,11 +235,16 @@ const authKaKako = async user => {
 
     const isExistEmailUser = await findUserByEmail(email);
     if (isExistEmailUser) {
+      if (isExistEmailUser.deleteAt) {
+        // 카카오로 가입했다가 탈퇴한 유저
+        await userDao.rejoinKakao(email, name, kakaoId);
+        return await getTokenAndSetRedis(isExistEmailUser.userIdx, isExistEmailUser.email, name);
+      }
       // 뭅스터 가입 되있지만 카카오 연동 x
       // PS: 아래 두줄 실행시, 기존 뭅스터 계정에 카카오id 추가 > 뭅스터&&카카오 통합계정 불가능하게 바껴 해당 코드 주석 처리함.
       // await userDao.updateUserKakaoId(isExistEmailUser.userIdx, kakaoId);
       // return await getTokenAndSetRedis(isExistEmailUser.userIdx, isExistEmailUser.email, isExistEmailUser.name);
-      return undefined
+      return undefined;
     }
     // 뭅스터 가입도 안되있는 유저
     const newUserIdx = await userDao.joinKakao(email, name, kakaoId);

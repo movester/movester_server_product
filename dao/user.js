@@ -225,6 +225,29 @@ const joinKakao = async (email, name, kakaoId) => {
   }
 };
 
+const rejoinKakao = async (email, name, kakaoId) => {
+  let connection;
+
+  try {
+    connection = await pool.getConnection(async conn => conn);
+
+    const sql = `UPDATE user
+                    SET is_email_auth = 1
+                      , name = '${name}'
+                      , kakao_id = ${kakaoId}
+                      , delete_at = null
+                  WHERE email = '${email}'`;
+
+    const [row] = await connection.query(sql);
+    return row?.affectedRows;
+  } catch (err) {
+    console.error(`=== User Dao rejoin Error: ${err} === `);
+    throw new Error(err);
+  } finally {
+    connection.release();
+  }
+};
+
 const deleteUser = async idx => {
   let connection;
 
@@ -233,6 +256,7 @@ const deleteUser = async idx => {
 
     const sql = `UPDATE user
                     SET delete_at = CURRENT_TIMESTAMP()
+                      , kakao_id = null
                   WHERE user_idx = ${idx}`;
 
     const [row] = await connection.query(sql);
@@ -258,5 +282,6 @@ module.exports = {
   findUserByKakaoId,
   updateUserKakaoId,
   joinKakao,
+  rejoinKakao,
   deleteUser,
 };
