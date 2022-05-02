@@ -52,6 +52,7 @@ const findUserByEmail = async email => {
                       , password
                       , name
                       , is_email_auth AS isEmailAuth
+                      , kakao_id AS kakaoId
                       , delete_at AS deleteAt
                    FROM user
                   WHERE email = '${email}'`;

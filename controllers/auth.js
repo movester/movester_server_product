@@ -32,6 +32,10 @@ const getKakaoToken = async (req, res) => {
 
     const authUser = await userService.authKaKako(user.data)
 
+    if(!authUser){
+      return res.status(CODE.DUPLICATE).json(form.fail("이미 뭅스터 계정으로 가입된 계정입니다."));
+    }
+
     return res
     .status(CODE.OK)
     .cookie('accessToken', authUser.token.accessToken, { httpOnly: true })
