@@ -9,14 +9,14 @@ const join = async (req, res) => {
   try {
     const joinUser = req.body;
     if (joinUser.password !== joinUser.confirmPassword) {
-      return res.status(CODE.BAD_REQUEST).json(form.fail("비밀번호 확인이 일치하지 않습니다."));
+      return res.status(CODE.BAD_REQUEST).json(form.fail('비밀번호 확인이 일치하지 않습니다.'));
     }
 
     const isEmailDuplicate = await userService.findUserByEmail(joinUser.email);
 
     if (isEmailDuplicate) {
       if (!isEmailDuplicate.deleteAt) {
-        return res.status(CODE.DUPLICATE).json(form.fail("이미 존재하는 이메일입니다."));
+        return res.status(CODE.DUPLICATE).json(form.fail('이미 존재하는 이메일입니다.'));
       }
       joinUser.userIdx = isEmailDuplicate.userIdx;
       const userIdx = await userService.rejoin(joinUser);
@@ -42,7 +42,9 @@ const login = async (req, res) => {
       case CODE.NOT_FOUND:
         return res.status(CODE.NOT_FOUND).json(form.fail(MSG.PW_MISMATCH));
       case CODE.UNAUTHORIZED:
-        return res.status(CODE.UNAUTHORIZED).json(form.fail('아직 이메일 인증을 하지 않았습니다.', { userIdx: loginUser.userIdx }));
+        return res
+          .status(CODE.UNAUTHORIZED)
+          .json(form.fail('아직 이메일 인증을 하지 않았습니다.', { userIdx: loginUser.userIdx }));
     }
 
     return res
@@ -72,7 +74,8 @@ const sendEmailForJoin = async (req, res) => {
     const isExistUser = await userService.findUserByIdx(idx);
     if (!isExistUser) return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
 
-    if (isExistUser.isEmailAuth) return res.status(CODE.BAD_REQUEST).json(form.fail("이미 이메일 인증된 사용자입니다."));
+    if (isExistUser.isEmailAuth)
+      return res.status(CODE.BAD_REQUEST).json(form.fail('이미 이메일 인증된 사용자입니다.'));
 
     await userService.sendEmailForJoin(idx, isExistUser.email);
     return res.status(CODE.OK).json(form.success());
@@ -109,9 +112,10 @@ const sendEmailForPwReset = async (req, res) => {
   try {
     const { email } = req.body;
     const isExistUser = await userService.findUserByEmail(email);
-    if (!isExistUser) return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
 
+    if (!isExistUser || isExistUser.deleteAt) return res.status(CODE.NOT_FOUND).json(form.fail(MSG.EMAIL_NOT_EXIST));
     if (!isExistUser.isEmailAuth) return res.status(CODE.BAD_REQUEST).json(form.fail(MSG.EMAIL_AUTH_NOT));
+    if (isExistUser.kakaoId) return res.status(CODE.BAD_REQUEST).json(form.fail("카카오 계정으로 가입된 계정입니다."));
 
     await userService.sendEmailForPwReset(isExistUser.userIdx, email);
     return res.status(CODE.OK).json(form.success());
