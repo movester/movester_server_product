@@ -28,7 +28,7 @@ const createLike = async (userIdx, stretchingIdx) => {
     connection = await pool.getConnection(async conn => conn);
 
     const sql = `INSERT
-                   INTO user_Like (stretching_idx, user_idx)
+                   INTO user_like (stretching_idx, user_idx)
                  VALUES (${stretchingIdx}, ${userIdx});`;
 
     const [row] = await connection.query(sql);
