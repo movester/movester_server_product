@@ -257,6 +257,7 @@ const deleteUser = async idx => {
     const sql = `UPDATE user
                     SET delete_at = CURRENT_TIMESTAMP()
                       , kakao_id = null
+                      , email = null
                   WHERE user_idx = ${idx}`;
 
     const [row] = await connection.query(sql);
