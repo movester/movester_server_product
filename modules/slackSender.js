@@ -9,7 +9,7 @@ const slackSender = err => {
         color: '#ff0000',
         fields: [
           {
-            title: err.message,
+            title: `🚨  ${err.message}`,
             value: err.stack,
             short: false,
           },
