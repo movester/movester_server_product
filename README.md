@@ -70,32 +70,32 @@ WITH, TOGETHER: 혼자가 아닌 뭅스터와 같이, 함께해요!
 - `MVC` 패턴 구조 [Controller > Service > Dao]
 - `JWT` 활용한 인증 체계 구축
 - `Bcrypt` 활용한 비밀번호 암호화 관리
-- `Redis`를 활용한 회원 세션 관리
-- `Nodemailer`를 활용한 메일 전송
-- `Sentry`를 활용한 에러 수집 및 `Slack` 으로 에러 메세지 전송
+- `Redis` 활용한 회원 세션 관리
+- `Nodemailer` 활용한 메일 전송
+- `Sentry` 활용한 에러 수집 및 `Slack` 으로 에러 메세지 전송
 
 <br><br>
 
 ### FE
 
 - `Javascript`, `React`로 `CSR`, `SPA` 구현
-- `Styled-component`를 활용한 컴포넌트 스타일링
-- `Redux-toolkit` 을 활용한 전역 상태 관리
-- `Axios` 를 활용한 API 요청
-- `Recharts`, `rc-slider`, `Quill` 를 활용한 사용자 입력 데이터 시각화
+- `Styled-component` 활용한 컴포넌트 스타일링
+- `Redux-toolkit` 활용한 전역 상태 관리
+- `Axios` 활용한 API 요청
+- `Recharts`, `rc-slider`, `Quill` 활용한 사용자 입력 데이터 시각화
 
 <br><br>
 
 ## 프로젝트 관리
 
-- 주 단위 스프린트 회의를 통한 진행사항 관리
-- `Figma`를 활용하여 프로토타입 구축
-- `Notion`을 활용하여 프로젝트 기획 및 관리
-- `Slack`을 활용하여 멤버 간 소통
-- `MySQL Worckbentch`를 활용하여 데이터베이스 설계
-- `Postman`을 활용하여 api 테스트 및 문서화
-- `Sentry`, `Slack` 을 활용하여 실시간 에러 관리
-- `Prettier`, `Eslint` 를 활용한 코드 스타일 관리
+- 주 단위 스프린트 회의를 통한 이슈 및 티켓 관리
+- `Figma` 활용한 프로토타입 구축
+- `Notion` 활용한 프로젝트 기획 및 관리
+- `Slack` 활용한 멤버 간 소통
+- `MySQL Worckbentch` 활용한 데이터베이스 설계
+- `Postman` 활용한 api 테스트 및 문서화
+- `Sentry`, `Slack` 활용한 실시간 에러 관리
+- `Prettier`, `Eslint` 활용한 코드 스타일 관리
 
 <br><br>
 
