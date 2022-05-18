@@ -5,11 +5,11 @@
 
 # 소개
 
-MOVE : 부담스러운 운동은 NO! 
+`MOVE` : 부담스러운 운동은 NO! 
 
-START : 가볍게 스트레칭으로 시작하세요!
+`START` : 가볍게 스트레칭으로 시작하세요!
 
-WITH, TOGETHER: 혼자가 아닌 뭅스터와 같이, 함께해요!
+`WITH, TOGETHER` : 혼자가 아닌 뭅스터와 같이, 함께해요!
 
 뭅스터 웹사이트 바로가기 : [https://movester.kr](https://movester.kr)
 
@@ -34,7 +34,19 @@ WITH, TOGETHER: 혼자가 아닌 뭅스터와 같이, 함께해요!
 
 <br><br>
 
+## 화면 미리보기
+
+![product](https://user-images.githubusercontent.com/57309520/169086008-7231b9fe-5ff0-4e18-a039-2e1353553967.gif)
+
+<br>
+
+![backoffice](https://user-images.githubusercontent.com/57309520/169086167-0a167d26-73ab-4f27-810a-c641443da885.gif)
+
+
+<br><br>
+
 ## 주요 기능
+
 ### 프로덕트
 - 맞춤 스트레칭 검색 (부위별, 자세별, 효과별, 태그별 스트레칭 검색)
     - 신체부위별로 원하는 스트레칭을 찾아볼 수 있도록 하였습니다.
@@ -69,10 +81,14 @@ WITH, TOGETHER: 혼자가 아닌 뭅스터와 같이, 함께해요!
 
 ## 기술 스택
 
-- BE : <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=Node.js&logoColor=white"/> &nbsp; <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=Redis&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/JSON Web Tokens-000000?style=flat-square&logo=JSON Web Tokens&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/ESLint-4B32C3?style=flat-square&logo=ESLint&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Prettier-F7B93E?style=flat-square&logo=Prettier&logoColor=white"/>&nbsp; `express.js`, `bcrypt`, `nodemailer`, `kakaoOauth`
-- FE : <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Redux-764ABC?style=flat-square&logo=Redux&logoColor=white"/> &nbsp; <img src="https://img.shields.io/badge/styled-components-DB7093?style=flat-square&logo=styled-components&logoColor=white"/> &nbsp; <img src="https://img.shields.io/badge/ESLint-4B32C3?style=flat-square&logo=ESLint&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Prettier-F7B93E?style=flat-square&logo=Prettier&logoColor=white"/>&nbsp; `redux-toolkit`, `axios`, `immer`, `quill`, `recharts`, `rc-slider`
-- DEVOPS : `EC2`, `RDS`, `S3`, `ROUTE53`, <img src="https://img.shields.io/badge/Sentry-362D59?style=flat-square&logo=Sentry&logoColor=white"/>&nbsp;  <img src="https://img.shields.io/badge/NGINX-009639?style=flat-square&logo=NGINX&logoColor=white"/>&nbsp;  <img src="https://img.shields.io/badge/PM2-2B037A?style=flat-square&logo=PM2&logoColor=white"/>
-- DEV TOOL : <img src="https://img.shields.io/badge/VisualStudioCode-007ACC?style=flat-square&logo=VisualStudioCode&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Postman-FF6C37?style=flat-square&logo=Postman&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=Git&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Figma-F24E1E?style=flat-square&logo=Figma&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Slack-4A154B?style=flat-square&logo=Slack&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/Notion-000000?style=flat-square&logo=Notion&logoColor=white"/>
+### BE
+<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=Node.js&logoColor=white"/> &nbsp; <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=Redis&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/JSON Web Tokens-000000?style=flat-square&logo=JSON Web Tokens&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/ESLint-4B32C3?style=flat-square&logo=ESLint&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Prettier-F7B93E?style=flat-square&logo=Prettier&logoColor=white"/>&nbsp; `express.js`, `bcrypt`, `nodemailer`, `kakaoOauth`
+### FE 
+<img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Redux-764ABC?style=flat-square&logo=Redux&logoColor=white"/> &nbsp; <img src="https://img.shields.io/badge/styled-components-DB7093?style=flat-square&logo=styled-components&logoColor=white"/> &nbsp; <img src="https://img.shields.io/badge/ESLint-4B32C3?style=flat-square&logo=ESLint&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Prettier-F7B93E?style=flat-square&logo=Prettier&logoColor=white"/>&nbsp; `redux-toolkit`, `axios`, `immer`, `quill`, `recharts`, `rc-slider`
+### DEVOPS 
+`EC2`, `RDS`, `S3`, `ROUTE53`, <img src="https://img.shields.io/badge/NGINX-009639?style=flat-square&logo=NGINX&logoColor=white"/>&nbsp;  <img src="https://img.shields.io/badge/PM2-2B037A?style=flat-square&logo=PM2&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Sentry-362D59?style=flat-square&logo=Sentry&logoColor=white"/>
+### DEV TOOL
+<img src="https://img.shields.io/badge/VisualStudioCode-007ACC?style=flat-square&logo=VisualStudioCode&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Postman-FF6C37?style=flat-square&logo=Postman&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=Git&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Figma-F24E1E?style=flat-square&logo=Figma&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Slack-4A154B?style=flat-square&logo=Slack&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/Notion-000000?style=flat-square&logo=Notion&logoColor=white"/>
 
 <br><br>
 
