@@ -29,8 +29,8 @@ WITH, TOGETHER: 혼자가 아닌 뭅스터와 같이, 함께해요!
 
 |Role|Member|
 |------|---|
-|FULL-STACK, DESIGN|[조나현]([https://movester.kr](https://github.com/jnhro1))|
-|MENTOR|[최용권]([https://movester.kr](https://github.com/hiYong94))|
+|FULL-STACK, DESIGN|[조나현](https://github.com/jnhro1)|
+|MENTOR|[최용권](https://github.com/hiYong94)|
 
 <br><br>
 
