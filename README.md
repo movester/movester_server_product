@@ -5,11 +5,21 @@
 
 # 소개
 
+누구나, 어디서든, 가볍게 할 수 있는 스트레칭을 소개하여, 바쁜 현대인들의 일상 속, 몸과 마음을 위한 시간을 틈틈이 만들어가자는 취지로 시작하였습니다.
+
+네이버 블로그, 카카오 오픈채팅방을 통해 2021년부터 진행해오던 서비스이며, 
+
+더 많은 사용자에게, 더 좋은 편의성(찜, 출석포인트 등)을 제공하고자 웹페이지를 제작하게 되었습니다.
+
+<br>
+
 `MOVE` : 부담스러운 운동은 NO! 
 
 `START` : 가볍게 스트레칭으로 시작하세요!
 
 `WITH, TOGETHER` : 혼자가 아닌 뭅스터와 같이, 함께해요!
+
+<br>
 
 뭅스터 웹사이트 바로가기 : [https://movester.kr](https://movester.kr)
 
@@ -151,16 +161,17 @@
 - `Service` : 비지니스 로직 처리, `Dao` 호출
 - `Dao` : `DB`에 접근하여 데이터 조회 및 가공
 - `Middleware` : `JWT` 활용한 인증, 입력 데이터 유효성 검증
-- `Modules` : 독립적으로 존재하는 라이브러리
+- `Modules` : 외부 라이브러리를 활용한 공통 함수
+- `Util` : 공통적으로 사용되는 사용자 정의 함수 
 
 <br>
 
 ### FE : presentational & container 패턴
 - `Page` : `container component` 역할. `API` 요청 및 `state` 관리 후 `Component` 에 `props` 전달
 - `Component` : `presentational component` 역할. `state` 직접 조작하지 않고, `Page`에서 전달받은 `props` 활용하여 랜더링 화면 구성
-- `Store` : `Redu`x 전역 상태 관리 및 `Redux-toolkit` 의 `createAsyncThunk`, `createSlice` 로 액션 생성
+- `Store` : `Redux` 전역 상태 관리 및 `Redux-toolkit` 의 `createAsyncThunk`, `createSlice` 로 액션 생성
 - `Service` : `Axios` 세팅 및 `API fetch` 생성
-- `Util` : 공통적으로 쓰이는 사용자 함수 선언
+- `Util` : 공통적으로 사용되는 사용자 정의 함수
 
 <br>
 
