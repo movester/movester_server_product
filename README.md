@@ -82,11 +82,11 @@
 ## 기술 스택
 
 ### BE
-<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=Node.js&logoColor=white"/> &nbsp; <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=Redis&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/JSON Web Tokens-000000?style=flat-square&logo=JSON Web Tokens&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/ESLint-4B32C3?style=flat-square&logo=ESLint&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Prettier-F7B93E?style=flat-square&logo=Prettier&logoColor=white"/>&nbsp; `express.js`, `bcrypt`, `nodemailer`, `kakaoOauth`
+<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=Node.js&logoColor=white"/> &nbsp; <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=Redis&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/JSON Web Tokens-000000?style=flat-square&logo=JSON Web Tokens&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/ESLint-4B32C3?style=flat-square&logo=ESLint&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Prettier-F7B93E?style=flat-square&logo=Prettier&logoColor=white"/>&nbsp; 
 ### FE 
-<img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Redux-764ABC?style=flat-square&logo=Redux&logoColor=white"/> &nbsp; <img src="https://img.shields.io/badge/styled-components-DB7093?style=flat-square&logo=styled-components&logoColor=white"/> &nbsp; <img src="https://img.shields.io/badge/ESLint-4B32C3?style=flat-square&logo=ESLint&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Prettier-F7B93E?style=flat-square&logo=Prettier&logoColor=white"/>&nbsp; `redux-toolkit`, `axios`, `immer`, `quill`, `recharts`, `rc-slider`
+<img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Redux-764ABC?style=flat-square&logo=Redux&logoColor=white"/> &nbsp; <img src="https://img.shields.io/badge/styled-components-DB7093?style=flat-square&logo=styled-components&logoColor=white"/> &nbsp; <img src="https://img.shields.io/badge/ESLint-4B32C3?style=flat-square&logo=ESLint&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Prettier-F7B93E?style=flat-square&logo=Prettier&logoColor=white"/>&nbsp;
 ### DEVOPS 
-`EC2`, `RDS`, `S3`, `ROUTE53`, <img src="https://img.shields.io/badge/NGINX-009639?style=flat-square&logo=NGINX&logoColor=white"/>&nbsp;  <img src="https://img.shields.io/badge/PM2-2B037A?style=flat-square&logo=PM2&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Sentry-362D59?style=flat-square&logo=Sentry&logoColor=white"/>
+`EC2`, `RDS`, `S3`, `Route53`, <img src="https://img.shields.io/badge/NGINX-009639?style=flat-square&logo=NGINX&logoColor=white"/>&nbsp;  <img src="https://img.shields.io/badge/PM2-2B037A?style=flat-square&logo=PM2&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Sentry-362D59?style=flat-square&logo=Sentry&logoColor=white"/>
 ### DEV TOOL
 <img src="https://img.shields.io/badge/VisualStudioCode-007ACC?style=flat-square&logo=VisualStudioCode&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Postman-FF6C37?style=flat-square&logo=Postman&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=Git&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Figma-F24E1E?style=flat-square&logo=Figma&logoColor=white"/>&nbsp; <img src="https://img.shields.io/badge/Slack-4A154B?style=flat-square&logo=Slack&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/Notion-000000?style=flat-square&logo=Notion&logoColor=white"/>
 
@@ -96,11 +96,12 @@
 
 ### BE
 
-- `Javascript`, `Node.js`로 `REST API` 구현 (회원, 스트레칭 등등의 `CRUD`)
-- `MVC` 패턴 구조 [Controller > Service > Dao]
+- `Javascript`, `Node.js` 의 `Express` 로 `REST API` 구현 (회원, 스트레칭 등등의 `CRUD`)
+- `MVC` 패턴 구조 [`Controller` > `Service` > `Dao`]
+- `KakaoOauth` 활용한 회원 계정 관리 
+- `Redis` 활용한 회원 세션 관리
 - `JWT` 활용한 인증 체계 구축
 - `Bcrypt` 활용한 비밀번호 암호화 관리
-- `Redis` 활용한 회원 세션 관리
 - `Nodemailer` 활용한 메일 전송
 - `Sentry` 활용한 에러 수집 및 `Slack` 으로 에러 메세지 전송
 
@@ -111,8 +112,21 @@
 - `Javascript`, `React`로 `CSR`, `SPA` 구현
 - `Styled-component` 활용한 컴포넌트 스타일링
 - `Redux-toolkit` 활용한 전역 상태 관리
+- `Ìmmer` 활용한 불변성 유지
 - `Axios` 활용한 API 요청
-- `Recharts`, `rc-slider`, `Quill` 활용한 사용자 입력 데이터 시각화
+- `Quill`, `Recharts`, `rc-slider` 활용한 사용자 입력 데이터 시각화
+
+<br>
+
+### DEVOPS
+
+- `ÀWS` `EC2` 활용한 클라우드 서버 세팅
+- `ÀWS` `RDS` 활용한 클라우드 DB 세팅
+- `ÀWS` `S3` 활용한 클라우드 스토리지 세팅
+- `ÀWS` `Route53` 활용한 호스팅
+- `NGINX` 활용한 리버스 프록시
+- `PM2` 활용한 무중단 데모 서버 세팅
+- `Sentry`, `Slack` 활용한 실시간 에러 관리
 
 <br><br>
 
@@ -123,28 +137,35 @@
 - `Notion` 활용한 프로젝트 기획 및 관리
 - `Slack` 활용한 멤버 간 소통
 - `MySQL Worckbentch` 활용한 데이터베이스 설계
-- `Postman` 활용한 api 테스트 및 문서화
-- `Sentry`, `Slack` 활용한 실시간 에러 관리
-- `Prettier`, `Eslint` 활용한 코드 스타일 관리
+- `Postman` 활용한 API 테스트 및 문서화
+- `Prettier`, `ESlint` 활용한 코드 스타일 관리
 
 <br><br>
 
-## 프로젝트 아키텍처
-
-![스크린샷 2022-05-18 오후 3 34 05](https://user-images.githubusercontent.com/57309520/168983207-983c711b-da7d-43b3-b14f-90d104c85903.png)
-
-<br><br>
-
-## 프로젝트 IA
-
-<img width="1192" alt="스크린샷 2022-05-18 오후 3 38 49" src="https://user-images.githubusercontent.com/57309520/168983162-53792e56-d0be-4275-aa78-ed8104920e09.png">
-
-<br><br>
 
 ## 디렉터리 구조
 
+### BE : MVC 패턴
+- `Routes` : `REST API` 요청을 받아, 라우팅 > `Middleware` 호출 > `Controller` 호출
+- `Controller` : `Request` 받아, 유효성 검증 후 `Service` 호출 > `Response` 반환
+- `Service` : 비지니스 로직 처리, `Dao` 호출
+- `Dao` : `DB`에 접근하여 데이터 조회 및 가공
+- `Middleware` : `JWT` 활용한 인증, 입력 데이터 유효성 검증
+- `Modules` : 독립적으로 존재하는 라이브러리
+
+<br>
+
+### FE : presentational & container 패턴
+- `Page` : `container component` 역할. `API` 요청 및 `state` 관리 후 `Component` 에 `props` 전달
+- `Component` : `presentational component` 역할. `state` 직접 조작하지 않고, `Page`에서 전달받은 `props` 활용하여 랜더링 화면 구성
+- `Store` : `Redu`x 전역 상태 관리 및 `Redux-toolkit` 의 `createAsyncThunk`, `createSlice` 로 액션 생성
+- `Service` : `Axios` 세팅 및 `API fetch` 생성
+- `Util` : 공통적으로 쓰이는 사용자 함수 선언
+
+<br>
+
 <details>
-  <summary>product server</summary>
+  <summary>프로덕트 BE</summary>
 
     .
     ├── bin
@@ -222,7 +243,7 @@
   </details>
     
 <details>
-  <summary>product client</summary>
+  <summary>프로덕트 FE</summary>
     
     .
     ├── README.md
@@ -368,7 +389,7 @@
   </details>
   
   <details>
-  <summary>backoffice server</summary>
+  <summary>백오피스 BE</summary>
    
 
     .
@@ -436,7 +457,7 @@
   </details>
   
   <details>
-  <summary>backoffice client</summary>
+  <summary>백오피스 FE</summary>
 
     .
     ├── README.md
@@ -570,3 +591,17 @@
             └── stretchingEnum.js
    
   </details>
+  
+  
+<br><br>
+
+## 프로젝트 아키텍처
+
+![스크린샷 2022-05-18 오후 3 34 05](https://user-images.githubusercontent.com/57309520/168983207-983c711b-da7d-43b3-b14f-90d104c85903.png)
+
+<br><br>
+
+## 프로젝트 IA
+
+<img width="1192" alt="스크린샷 2022-05-18 오후 3 38 49" src="https://user-images.githubusercontent.com/57309520/168983162-53792e56-d0be-4275-aa78-ed8104920e09.png">
+
