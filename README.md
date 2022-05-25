@@ -1,17 +1,6 @@
 # MOVESTER : 1일 1스트레칭 습관만들기
 ![logo](https://user-images.githubusercontent.com/57309520/168982858-45910ef6-e0c3-4e31-b0f8-1ef6e6af88f4.png)
 
-<br><br>
-
-# 소개
-
-누구나, 어디서든, 가볍게 할 수 있는 스트레칭을 소개하여, 바쁜 현대인들의 일상 속, 몸과 마음을 위한 시간을 틈틈이 만들어가자는 취지로 시작하였습니다.
-
-네이버 블로그, 카카오 오픈채팅방을 통해 2021년부터 진행해오던 서비스이며, 
-
-더 많은 사용자에게, 더 좋은 편의성(찜, 출석포인트 등)을 제공하고자 웹페이지를 제작하게 되었습니다.
-
-<br>
 
 `MOVE` : 부담스러운 운동은 NO! 
 
@@ -21,13 +10,23 @@
 
 <br>
 
+**누구나, 어디서든, 가볍게 할 수 있는 스트레칭**을 소개하여, 
+
+바쁜 현대인들의 일상 속, **몸과 마음을 위한 시간을 틈틈이 만들어가자** 는 취지로 시작하였습니다.
+
+<br>
+
+2021년부터 네이버 블로그, 카카오 오픈채팅방으로 시작한 서비스이며,
+
+더 많은 사용자에게, 더 좋은 편의성(찜, 출석포인트 등)을 제공하고자 웹서비스로 제작하게 되었습니다.
+
+<br>
+
 뭅스터 웹사이트 바로가기 : [https://movester.kr](https://movester.kr)
 
 뭅스터 어드민 웹사이트 바로가기 : [https://movester-admin.shop](https://movester-admin.shop)
 
 <br><br>
-
-# 프로젝트 개요
 
 ## 프로젝트 기간
 
@@ -39,16 +38,19 @@
 
 |Role|Member|
 |------|---|
-|FULL-STACK, DESIGN|[조나현](https://github.com/jnhro1)|
-|MENTOR|[최용권](https://github.com/hiYong94)|
+|Full-Stack, Web-Design|[조나현](https://github.com/jnhro1)|
+|Mentor|[최용권](https://github.com/hiYong94)|
 
 <br><br>
 
 ## 화면 미리보기
+- 서비스 웹사이트
 
 ![product](https://user-images.githubusercontent.com/57309520/169086008-7231b9fe-5ff0-4e18-a039-2e1353553967.gif)
 
 <br>
+
+- 관리자 웹사이트
 
 ![backoffice](https://user-images.githubusercontent.com/57309520/169086167-0a167d26-73ab-4f27-810a-c641443da885.gif)
 
@@ -122,7 +124,7 @@
 - `Javascript`, `React`로 `CSR`, `SPA` 구현
 - `Styled-component` 활용한 컴포넌트 스타일링
 - `Redux-toolkit` 활용한 전역 상태 관리
-- `Ìmmer` 활용한 불변성 유지
+- `Ìmmer` 활용한 전역 데이터 불변성 유지
 - `Axios` 활용한 API 요청
 - `Quill`, `Recharts`, `rc-slider` 활용한 사용자 입력 데이터 시각화
 
@@ -135,8 +137,8 @@
 - `ÀWS` `S3` 활용한 클라우드 스토리지 세팅
 - `ÀWS` `Route53` 활용한 호스팅
 - `NGINX` 활용한 리버스 프록시
-- `PM2` 활용한 무중단 데모 서버 세팅
-- `Sentry`, `Slack` 활용한 실시간 에러 관리
+- `PM2` 활용한 무중단 서비스 세팅
+- `Sentry`, `Slack` 활용한 실시간 에러 모니터링
 
 <br><br>
 
@@ -146,7 +148,7 @@
 - `Figma` 활용한 프로토타입 구축
 - `Notion` 활용한 프로젝트 기획 및 관리
 - `Slack` 활용한 멤버 간 소통
-- `MySQL Worckbentch` 활용한 데이터베이스 설계
+- `MySQL Worckbentch` 활용한 데이터베이스 관리
 - `Postman` 활용한 API 테스트 및 문서화
 - `Prettier`, `ESlint` 활용한 코드 스타일 관리
 
@@ -160,7 +162,7 @@
 - `Controller` : `Request` 받아, 유효성 검증 후 `Service` 호출 > `Response` 반환
 - `Service` : 비지니스 로직 처리, `Dao` 호출
 - `Dao` : `DB`에 접근하여 데이터 조회 및 가공
-- `Middleware` : `JWT` 활용한 인증, 입력 데이터 유효성 검증
+- `Middleware` : `Controller` 호출 전, 공통적으로 적용되는 로직 처리
 - `Modules` : 외부 라이브러리를 활용한 공통 함수
 - `Util` : 공통적으로 사용되는 사용자 정의 함수 
 
@@ -169,7 +171,7 @@
 ### FE : presentational & container 패턴
 - `Page` : `container component` 역할. `API` 요청 및 `state` 관리 후 `Component` 에 `props` 전달
 - `Component` : `presentational component` 역할. `state` 직접 조작하지 않고, `Page`에서 전달받은 `props` 활용하여 랜더링 화면 구성
-- `Store` : `Redux` 전역 상태 관리 및 `Redux-toolkit` 의 `createAsyncThunk`, `createSlice` 로 액션 생성
+- `Store` : `Redux` 전역 상태 관리
 - `Service` : `Axios` 세팅 및 `API fetch` 생성
 - `Util` : 공통적으로 사용되는 사용자 정의 함수
 
